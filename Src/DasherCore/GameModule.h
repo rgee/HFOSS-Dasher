@@ -17,7 +17,7 @@ namespace Dasher {
 
 namespace Dasher {
 
-/*
+/**
  * This Dasher Module encapsulates all game mode logic. In game mode, users will be given
  * a target string to type as well as visual feedback for their progress and a helpful 
  * arrow to guide them in the right path through the dasher model.
@@ -31,28 +31,31 @@ class CGameModule : public CDasherModule {
   CGameModule(Dasher::CEventHandler *pEventHandler, CSettingsStore *pSettingsStore, CDasherInterfaceBase *pInterface, ModuleID_t iID, const char *szName)
   : CDasherModule(pEventHandler, pSettingsStore, iID, 0, szName)
 
-  // TODO: Methods will go here, clearly.
-
+  /**
+   * Handle events from the event processing system
+   * @param pEvent The event to be processed.
+   */
+  void HandleEvent(Dasher::CEvent *pEvent);
  private:
-  //
-  // The last node the user typed.
-  //
+  /**
+   * The last node the user typed.
+   */
   CDasherNode *pLastTypedNode;
 
-  //
-  // The next node the user must type
-  //
+  /**
+   * The next node (character) the user must type.
+   */
   CDasherNode *pNextTargetNode;
-
-  //
-  // The current target string (That the user must type)
-  //
+  
+  /**
+   * The target string the user must type.
+   */	
   std::string targetString;
 
-  //
-  // The current position in the string. Stored as a size_t to easily use
-  // substring to determine what's been typed and what hasn't.
-  //
+  /**
+   * The current position in the string. 
+   * Stored as a size_t to easily use substrings to determine what's been typed and what hasn't.
+   */
   size_t currentStringPos;
 };
 } 
