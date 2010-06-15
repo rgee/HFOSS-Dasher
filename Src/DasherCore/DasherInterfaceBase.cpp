@@ -99,6 +99,7 @@ CDasherInterfaceBase::CDasherInterfaceBase() {
   m_pUserLog = NULL;
   m_pNCManager = NULL;
   m_defaultPolicy = NULL;
+  m_pGameModule = NULL;
 
   // Various state variables
   m_bRedrawScheduled = false;
@@ -166,6 +167,10 @@ void CDasherInterfaceBase::Realize() {
   SetupActionButtons();
   CParameterNotificationEvent oEvent(LP_NODE_BUDGET);
   InterfaceEventHandler(&oEvent);
+
+  //if game mode is enabled , initialize the game module
+  if(GetBoolParameter(BP_GAME_MODE))
+	InitGameModule();
 
   // Set up real orientation to match selection
   if(GetLongParameter(LP_ORIENTATION) == Dasher::Opts::AlphabetDefault)
@@ -866,6 +871,12 @@ void CDasherInterfaceBase::KeyUp(int iTime, int iId, bool bPos, int iX, int iY) 
   }
 }
 
+void CDasherInterFaceBase::InitGameModule() {
+
+	if(m_pGameModule == NULL)
+		m_pGameModule = (CGameModule*) GetModuleByName(GetStringParameter(BP_GAME_MODULE));
+}
+
 void CDasherInterfaceBase::CreateInputFilter()
 {
   if(m_pInputFilter) {
@@ -935,6 +946,13 @@ void CDasherInterfaceBase::CreateModules() {
   RegisterModule(new CAlternatingDirectMode(m_pEventHandler, m_pSettingsStore, this));
   RegisterModule(new CCompassMode(m_pEventHandler, m_pSettingsStore, this));
   RegisterModule(new CStylusFilter(m_pEventHandler, m_pSettingsStore, this, 15, _("Stylus Control")));
+
+  // Register game mode with the module manager
+  // TODO should this be wrapped in an "if game mode enabled"
+  // conditional?
+  // TODO: I don't know what a sensible module ID should be
+  // for this, so I chose an arbitrary value
+  RegisterModule(new CGameModule(m_pEventHandler, m_pSettingsStore, this, 21, _("GameMode")));
 }
 
 void CDasherInterfaceBase::GetPermittedValues(int iParameter, std::vector<std::string> &vList) {

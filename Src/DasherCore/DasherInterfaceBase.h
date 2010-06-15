@@ -518,6 +518,12 @@ protected:
 
   void CreateInput();
 	
+  
+  /* Initialize m_pGameModule by fetching the
+  * constructed module from the module manager.
+  */
+  void InitGameModule();
+
   void CreateInputFilter();
 
   void CreateModel(int iOffset);
@@ -554,7 +560,11 @@ protected:
   CAlphIO *m_AlphIO;
   CColourIO *m_ColourIO;
   CNodeCreationManager *m_pNCManager;
-  CUserLogBase *m_pUserLog; 
+  CUserLogBase *m_pUserLog;
+
+  // the game mode module - only
+  // initialized if game mode is enabled
+  CGameModule *m_pGameModule;
   /// @}
 
   std::string strTrainfileBuffer;

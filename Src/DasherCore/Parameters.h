@@ -140,7 +140,7 @@ static bp_table boolparamtable[] = {
   {BP_PALETTE_CHANGE, "PaletteChange", PERS, true, "PaletteChange"},
   {BP_AUTOCALIBRATE, "Autocalibrate", PERS, true, "Autocalibrate"},
   {BP_DASHER_PAUSED, "DasherPaused", !PERS, true, "Dasher Paused"},
-  {BP_GAME_MODE, "GameMode", !PERS, false, "Dasher Game Mode"},
+  {BP_GAME_MODE, "GameMode", PERS, false, "Dasher Game Mode"},
   {BP_TRAINING, "Training", !PERS, false, "Provides locking during training"},
   {BP_REDRAW, "Redraw", !PERS, false, "Force a full redraw at the next timer event"},
   {BP_LM_DICTIONARY, "Dictionary", PERS, true, "Whether the word-based language model uses a dictionary"},
