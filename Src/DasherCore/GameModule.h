@@ -25,13 +25,13 @@ namespace Dasher {
  * This class handles logic and drawing code with respect to the above.
  */
 class CGameModule : public CDasherModule {
- pulbic:
+ public:
   // I don't actually know what the type is supposed to be for this...it's not an input method or an input filter.
   // Maybe we should define a new one. I've labeled it 0 for now. - rgee
   CGameModule(Dasher::CEventHandler *pEventHandler, CSettingsStore *pSettingsStore, CDasherInterfaceBase *pInterface, ModuleID_t iID, const char *szName)
   : CDasherModule(pEventHandler, pSettingsStore, iID, 0, szName)
 
-  // TODO: Methods will go here, clearly.
+  
 
  private:
   //
