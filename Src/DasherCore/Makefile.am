@@ -86,6 +86,8 @@ libdashercore_a_SOURCES = \
 		GameScorer.cpp \
 		GameScorer.h \
 		GameStatistics.h \
+                GameModule.h \
+		GameModule.cpp \
 		GnomeSettingsStore.cpp \
 		GnomeSettingsStore.h \
 		InputFilter.h \
