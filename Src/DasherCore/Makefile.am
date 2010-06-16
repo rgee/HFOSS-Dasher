@@ -78,16 +78,18 @@ libdashercore_a_SOURCES = \
 		EyetrackerFilter.h \
 		FileLogger.cpp \
 		FileLogger.h \
+		FileWordGenerator.h \
+		FileWordGenerator.cpp \
 		FrameRate.h \
 		FrameRate.cpp \
 		GameLevel.cpp \
 		GameLevel.h \
 		GameMessages.h \
+		GameModule.h \
+		GameModule.cpp \
 		GameScorer.cpp \
 		GameScorer.h \
 		GameStatistics.h \
-                GameModule.h \
-		GameModule.cpp \
 		GnomeSettingsStore.cpp \
 		GnomeSettingsStore.h \
 		InputFilter.h \
@@ -143,6 +145,7 @@ libdashercore_a_SOURCES = \
 		UserLogParam.h \
 		UserLogTrial.cpp \
 		UserLogTrial.h \
+		WordGeneratorBase.h \
 		XMLUtil.cpp \
 		XMLUtil.h
 
