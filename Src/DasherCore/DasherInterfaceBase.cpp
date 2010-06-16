@@ -169,7 +169,7 @@ void CDasherInterfaceBase::Realize() {
   InterfaceEventHandler(&oEvent);
 
   //if game mode is enabled , initialize the game module
-  if(GetBoolParameter(BP_GAME_MODE))
+ // if(GetBoolParameter(BP_GAME_MODE))
 	InitGameModule();
 
   // Set up real orientation to match selection
@@ -600,6 +600,14 @@ void CDasherInterfaceBase::Redraw(bool bRedrawNodes, CExpansionPolicy &policy) {
     bDecorationsChanged = m_pInputFilter->DecorateView(m_pDasherView);
   }
 
+  if(m_pGameModule) {
+	g_pLogger->Log("The game module was initialized.");
+    bDecorationsChanged = m_pGameModule->DecorateView(m_pDasherView) || bDecorationsChanged;
+  }
+  else {
+	g_pLogger->Log("FUUUUUUCCCCCCKKKKKKKKKK");
+  }
+
   bool bActionButtonsChanged(false);
 #ifdef EXPERIMENTAL_FEATURES
   bActionButtonsChanged = DrawActionButtons();
@@ -871,10 +879,13 @@ void CDasherInterfaceBase::KeyUp(int iTime, int iId, bool bPos, int iX, int iY) 
   }
 }
 
-void CDasherInterFaceBase::InitGameModule() {
+void CDasherInterfaceBase::InitGameModule() {
 
-	if(m_pGameModule == NULL)
-		m_pGameModule = (CGameModule*) GetModuleByName(GetStringParameter(BP_GAME_MODULE));
+	//TODO - don't use magic number here!!!
+	if(m_pGameModule == NULL) {
+		g_pLogger->Log("InitGameModule");
+		m_pGameModule = (CGameModule*) GetModule(21);
+	}
 }
 
 void CDasherInterfaceBase::CreateInputFilter()
