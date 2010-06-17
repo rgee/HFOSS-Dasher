@@ -169,7 +169,7 @@ void CDasherInterfaceBase::Realize() {
   InterfaceEventHandler(&oEvent);
 
   //if game mode is enabled , initialize the game module
-  if(GetBoolParameter(BP_GAME_MODE))
+ // if(GetBoolParameter(BP_GAME_MODE))
 	InitGameModule();
 
   // Set up real orientation to match selection
@@ -600,6 +600,10 @@ void CDasherInterfaceBase::Redraw(bool bRedrawNodes, CExpansionPolicy &policy) {
     bDecorationsChanged = m_pInputFilter->DecorateView(m_pDasherView);
   }
 
+  if(m_pGameModule) {
+    bDecorationsChanged = m_pGameModule->DecorateView(m_pDasherView) || bDecorationsChanged;
+  }
+
   bool bActionButtonsChanged(false);
 #ifdef EXPERIMENTAL_FEATURES
   bActionButtonsChanged = DrawActionButtons();
@@ -871,10 +875,12 @@ void CDasherInterfaceBase::KeyUp(int iTime, int iId, bool bPos, int iX, int iY) 
   }
 }
 
-void CDasherInterFaceBase::InitGameModule() {
+void CDasherInterfaceBase::InitGameModule() {
 
-	if(m_pGameModule == NULL)
-		m_pGameModule = (CGameModule*) GetModuleByName(GetStringParameter(BP_GAME_MODULE));
+	if(m_pGameModule == NULL) {
+		g_pLogger->Log("Initializing the game module.");
+		m_pGameModule = (CGameModule*) GetModuleByName("Game Mode");
+	}
 }
 
 void CDasherInterfaceBase::CreateInputFilter()
@@ -952,7 +958,9 @@ void CDasherInterfaceBase::CreateModules() {
   // conditional?
   // TODO: I don't know what a sensible module ID should be
   // for this, so I chose an arbitrary value
-  RegisterModule(new CGameModule(m_pEventHandler, m_pSettingsStore, this, 21, _("GameMode")));
+  // TODO: Put "Game Mode" in enumeration in Parameter.h
+	  
+  RegisterModule(new CGameModule(m_pEventHandler, m_pSettingsStore, this, 21, _("Game Mode")));
 }
 
 void CDasherInterfaceBase::GetPermittedValues(int iParameter, std::vector<std::string> &vList) {

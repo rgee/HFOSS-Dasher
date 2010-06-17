@@ -4,17 +4,15 @@
 #define GAME_MODULE_H
 
 #include <string>
+
 using namespace std;
 
-#include "DasherModule.h"
+#include "DasherView.h"
 #include "DasherModel.h"
+#include "DasherModule.h"
 #include "DasherNode.h"
 #include "DasherView.h"
 #include "DasherTypes.h"
-
-namespace Dasher {
-  class CDasherInterfaceBase;
-}
 
 namespace Dasher {
 
@@ -31,27 +29,37 @@ class CGameModule : public CDasherModule {
   // Maybe we should define a new one. I've labeled it 0 for now. - rgee
   CGameModule(Dasher::CEventHandler *pEventHandler, CSettingsStore *pSettingsStore, CDasherInterfaceBase *pInterface, ModuleID_t iID, const char *szName)
   : CDasherModule(pEventHandler, pSettingsStore, iID, 0, szName)
-  { m_pInterface = pInterface; }
+  { 
+      g_pLogger->Log("Inside game module constructor");	  
+	  m_pInterface = pInterface; 
+  }
 
-  /**
-   * Handle events from the event processing system
-   * @param pEvent The event to be processed.
-   */
-  void HandleEvent(Dasher::CEvent *pEvent);
+  virtual ~CGameModule() {};
 
   /**
    * Gets the typed portion of the target string
    * @return The string that represents the current word(s) that have not been typed
    */
-  inline std::string GetTypedTarget();
+  std::string GetTypedTarget();
 
   /**
    * Gets the portion of the target string that has yet to be completed
    * @return The string that represents the current word(s) that have been typed
    */
-  inline std::string GetUntypedTarget();
+  std::string GetUntypedTarget();
 
-  inline void SetDasherModel(CDasherModel *pModel) { m_pModel = pModel; }
+  bool DecorateView(CDasherView *pView) {
+	  //g_pLogger->Log("Decorating the view");
+	  return false;
+  }
+
+  void SetDasherModel(CDasherModel *pModel) { m_pModel = pModel; }
+
+  /**
+   * Handle events from the event processing system
+   * @param pEvent The event to be processed.
+   */
+  virtual void HandleEvent(Dasher::CEvent *pEvent); 
 
  private:
   /**
@@ -59,7 +67,7 @@ class CGameModule : public CDasherModule {
    * @param text The string to search for
    * @return The node representing the string parameter
    */
-  CDasherNode StringToNode(std::string sText) 
+ //Dasher::CDasherNode StringToNode(std::string sText); 
 
   /**
    * The last node the user typed.
@@ -86,6 +94,11 @@ class CGameModule : public CDasherModule {
    * The dasher model.
    */
   CDasherModel *m_pModel;
+
+  /**
+   * The dasher interface.
+   */
+  CDasherInterfaceBase *m_pInterface;
 };
 } 
 

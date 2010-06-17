@@ -40,6 +40,7 @@
 #include "ColourIO.h"
 #include "InputFilter.h"
 #include "ModuleManager.h"
+#include "GameModule.h"
 
 #include <map>
 #include <algorithm>
