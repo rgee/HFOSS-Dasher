@@ -4,6 +4,7 @@
 #define GAME_MODULE_H
 
 #include <string>
+
 using namespace std;
 
 #include "DasherView.h"
@@ -12,10 +13,6 @@ using namespace std;
 #include "DasherNode.h"
 #include "DasherView.h"
 #include "DasherTypes.h"
-
-namespace Dasher {
-  class CDasherInterfaceBase;
-}
 
 namespace Dasher {
 
@@ -37,15 +34,7 @@ class CGameModule : public CDasherModule {
 	  m_pInterface = pInterface; 
   }
 
-  ~CGameModule() {};
-
-  /**
-   * Handle events from the event processing system
-   * @param pEvent The event to be processed.
-   */
-  virtual void HandleEvent(Dasher::CEvent *pEvent) {
-	  g_pLogger->Log("In the header file!!!");
-  }
+  virtual ~CGameModule() {};
 
   /**
    * Gets the typed portion of the target string
@@ -66,13 +55,19 @@ class CGameModule : public CDasherModule {
 
   void SetDasherModel(CDasherModel *pModel) { m_pModel = pModel; }
 
+  /**
+   * Handle events from the event processing system
+   * @param pEvent The event to be processed.
+   */
+  virtual void HandleEvent(Dasher::CEvent *pEvent); 
+
  private:
   /**
    * Searches for the dasher node under the current root that represents the desired string
    * @param text The string to search for
    * @return The node representing the string parameter
    */
-  //Dasher::CDasherNode StringToNode(std::string sText); 
+ //Dasher::CDasherNode StringToNode(std::string sText); 
 
   /**
    * The last node the user typed.
