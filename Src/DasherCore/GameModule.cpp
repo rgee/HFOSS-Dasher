@@ -24,8 +24,14 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
 					break;
 			}
 			break;
+		case EV_TEXTDRAW:
+			CTextDrawEvent* evt = static_cast<CTextDrawEvent*>(pEvent);
+			if(!m_sTargetString[m_stCurrentStringPos + 1].compare(evt->m_sDisplayText)) {
+				// TODO: Write this function on the view to draw an arrow to a given point.
+				//m_pView->DrawArrowTo(evt->m_iX, evt->m_iY, evt->m_iSize);				
+			}
         default:
-			break;
+		break;
 
 	}
 	return;
@@ -42,3 +48,4 @@ std::string CGameModule::GetTypedTarget() {
 std::string CGameModule::GetUntypedtarget() {
 	return m_sTargetString.substr(m_stCurrentStringPos);
 }
+

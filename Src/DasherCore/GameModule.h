@@ -10,6 +10,8 @@ using namespace std;
 #include "DasherModel.h"
 #include "DasherModule.h"
 #include "DasherNode.h"
+#include "DasherView.h"
+#include "DasherTypes.h"
 
 namespace Dasher {
   class CDasherInterfaceBase;

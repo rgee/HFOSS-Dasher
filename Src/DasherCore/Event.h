@@ -20,7 +20,7 @@ namespace Dasher {
 }
 
 enum {
-  EV_PARAM_NOTIFY = 1, EV_EDIT, EV_EDIT_CONTEXT, EV_START, EV_STOP, EV_CONTROL, EV_LOCK, EV_MESSAGE, EV_COMMAND
+  EV_PARAM_NOTIFY = 1, EV_EDIT, EV_EDIT_CONTEXT, EV_START, EV_STOP, EV_CONTROL, EV_LOCK, EV_MESSAGE, EV_COMMAND, EV_TEXTDRAW
 };
 
 /// \ingroup Core
@@ -67,6 +67,39 @@ public:
 
   int m_iOffset;
   int m_iLength;
+};
+
+/**
+ * An event that signals text has been drawn. Useful for determining its location
+ * because that information is only available at draw time.
+ */
+class Dasher::CTextDrawEvent : public Dasher::CEvent {
+public:
+  CTextDrawEvent(std::string sDisplayText, screenint iX, screenint iY, int iSize)
+	:m_sDisplayText(sDisplayText),
+	 m_iX(iX),
+	 m_iY(iY),
+	 m_iSize(iSize) 
+	{  };
+  /**
+   * The text that has been drawn.
+   */
+  std::string m_sDisplayText;
+
+  /**
+   * The X position (in screen coordinates) of the center of the box surrounding the text.
+   */
+  screenint m_iX;
+
+  /**
+   * The Y position (in screen coordinates) of the center of the box surrounding the text.
+   */
+  screenint m_iY;
+
+  /**
+   * The size of the text. Useful for determining the boundaries of the text "box"
+   */
+  int m_iSize; 
 };
 
 class Dasher::CStartEvent:public Dasher::CEvent {
