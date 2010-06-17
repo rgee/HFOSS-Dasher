@@ -8,6 +8,7 @@
 
 namespace Dasher {
   class CEvent;
+  class CTextdrawEvent;
   class CParameterNotificationEvent;
   class CEditEvent;
   class CEditContextEvent;
