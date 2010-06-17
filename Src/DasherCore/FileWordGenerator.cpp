@@ -29,7 +29,3 @@ void CFileWordGenerator::SetSource(std::string newPath) {
 virtual std::string CFileWordGenerator::GetNextWord() {
 	return m_sGeneratedString.substr(m_uiPos, m_sGeneratedString.find(" "));
 }
-
-virtual std::string CFileWordGerneator::GetPreWord() {
-	return "Not yet implemented. Sorry!";
-}

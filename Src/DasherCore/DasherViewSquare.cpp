@@ -209,7 +209,12 @@ void CDasherViewSquare::DasherDrawText(myint iAnchorX1, myint iAnchorY1, myint i
     
     mostleft = std::min(iDasherNewRight, iDasherNewLeft);
   }
-  
+   
+
+  // Tell other listeners that text has been drawn and provide some information
+  // about the draw call.
+  m_pEventHandler->InsertEvent(new CTextDrawEvent(sDisplaytext, newleft2, newtop2, Size));
+
   // Actually draw the text. We use DelayDrawText as the text should
   // be overlayed once all of the boxes have been drawn.
   
