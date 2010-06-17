@@ -41,7 +41,9 @@ class CGameModule : public CDasherModule {
    * Handle events from the event processing system
    * @param pEvent The event to be processed.
    */
-  void HandleEvent(Dasher::CEvent *pEvent) {};
+  virtual void HandleEvent(Dasher::CEvent *pEvent) {
+	  g_pLogger->Log("In the header file!!!");
+  }
 
   /**
    * Gets the typed portion of the target string
@@ -56,7 +58,7 @@ class CGameModule : public CDasherModule {
   std::string GetUntypedTarget();
 
   bool DecorateView(CDasherView *pView) {
-	  g_pLogger->Log("Decorating the view");
+	  //g_pLogger->Log("Decorating the view");
 	  return false;
   }
 

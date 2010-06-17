@@ -1,9 +1,15 @@
 #include "GameModule.h"
 
 void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
+
+	g_pLogger->Log("Inside event handler");	  
+	
     switch(pEvent->m_iEventType)
 	{
 		case EV_EDIT:
+
+			g_pLogger->Log("Capturing an edit event");	  
+			
 			switch(static_cast<CEditEvent*>(pEvent)->m_iEditType)
 			{
 				// Added a new character (Stepped one node forward)

@@ -601,11 +601,7 @@ void CDasherInterfaceBase::Redraw(bool bRedrawNodes, CExpansionPolicy &policy) {
   }
 
   if(m_pGameModule) {
-	g_pLogger->Log("The game module was initialized.");
     bDecorationsChanged = m_pGameModule->DecorateView(m_pDasherView) || bDecorationsChanged;
-  }
-  else {
-	g_pLogger->Log("FUUUUUUCCCCCCKKKKKKKKKK");
   }
 
   bool bActionButtonsChanged(false);
@@ -881,10 +877,9 @@ void CDasherInterfaceBase::KeyUp(int iTime, int iId, bool bPos, int iX, int iY) 
 
 void CDasherInterfaceBase::InitGameModule() {
 
-	//TODO - don't use magic number here!!!
 	if(m_pGameModule == NULL) {
-		g_pLogger->Log("InitGameModule");
-		m_pGameModule = (CGameModule*) GetModule(21);
+		g_pLogger->Log("Initializing the game module.");
+		m_pGameModule = (CGameModule*) GetModuleByName("Game Mode");
 	}
 }
 
@@ -963,7 +958,9 @@ void CDasherInterfaceBase::CreateModules() {
   // conditional?
   // TODO: I don't know what a sensible module ID should be
   // for this, so I chose an arbitrary value
-  RegisterModule(new CGameModule(m_pEventHandler, m_pSettingsStore, this, 21, _("GameMode")));
+  // TODO: Put "Game Mode" in enumeration in Parameter.h
+	  
+  RegisterModule(new CGameModule(m_pEventHandler, m_pSettingsStore, this, 21, _("Game Mode")));
 }
 
 void CDasherInterfaceBase::GetPermittedValues(int iParameter, std::vector<std::string> &vList) {
