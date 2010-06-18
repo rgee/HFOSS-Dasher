@@ -76,8 +76,9 @@ public:
  */
 class Dasher::CTextDrawEvent : public Dasher::CEvent {
 public:
-  CTextDrawEvent(std::string sDisplayText, screenint iX, screenint iY, int iSize)
+  CTextDrawEvent(std::string sDisplayText, CDasherView pView, screenint iX, screenint iY, int iSize)
 	:m_sDisplayText(sDisplayText),
+	 m_pDasherView(pView),
 	 m_iX(iX),
 	 m_iY(iY),
 	 m_iSize(iSize) 
@@ -86,6 +87,11 @@ public:
    * The text that has been drawn.
    */
   std::string m_sDisplayText;
+
+  /**
+   * The dasher view that emitted this event.
+   */
+  CDasherView* m_pDasherView;
 
   /**
    * The X position (in screen coordinates) of the center of the box surrounding the text.
