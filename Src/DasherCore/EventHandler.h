@@ -30,6 +30,13 @@ public:
   // (Un)register a listener with the event handler.
 
   void RegisterListener(Dasher::CDasherComponent * pListener);
+
+  /**
+   * Register a listener to listen for specific events.
+   * @param pListener A pointer to the dasher component that will listen for events
+   * @param iEventType An integer defined in the event type enumeration in Event.h
+   */
+  void RegisterListener(Dasher::CDasherComponent * pListener, int iEventType);
   void UnregisterListener(Dasher::CDasherComponent * pListener);
 
 protected:
@@ -38,6 +45,14 @@ protected:
 
   std::vector < Dasher::CDasherComponent * >m_vListeners;
   std::vector < Dasher::CDasherComponent * >m_vListenerQueue;
+
+  /**
+   * A 2-dimensional vector of listeners where each sub-vector represents
+   * the listener for a specific event type (Defined in the event type enumeration
+   * in Event.h. To access a vector for a specific event type, index into the top-level
+   * vector using the event type as an index.
+   */
+  std::vector < std::vector < Dasher::CDasherComponent * > > m_vSpecificListeners;
 
   int m_iInHandler;
 

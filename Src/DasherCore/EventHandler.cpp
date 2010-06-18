@@ -4,6 +4,7 @@
 #include "EventHandler.h"
 #include "DasherComponent.h"
 #include "DasherInterfaceBase.h"
+#include "Event.h"
 
 #include <algorithm>
 #include <iostream>
@@ -62,6 +63,16 @@ void CEventHandler::RegisterListener(CDasherComponent *pListener) {
     // Can't add the same listener twice
   }
 }
+
+void CEventHandler::RegisterListener(CDasherComponent *pListener, int iEventType) {
+	if(iEventType >= m_vSpecificListeners.size()) {
+		m_vSpecificListeners.push_back(std::vector< Dasher::CDasherComponent * >(pListener));
+  }
+  else {
+		m_vSpecificListeners[iEventType].push_back(pListener);
+  }
+}
+
 
 void CEventHandler::UnregisterListener(CDasherComponent *pListener) {
 
