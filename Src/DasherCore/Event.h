@@ -18,6 +18,7 @@ namespace Dasher {
   class CLockEvent;
   class CMessageEvent;
   class CCommandEvent;
+  class CDasherView;
 }
 
 enum {
@@ -76,7 +77,7 @@ public:
  */
 class Dasher::CTextDrawEvent : public Dasher::CEvent {
 public:
-  CTextDrawEvent(std::string sDisplayText, CDasherView pView, screenint iX, screenint iY, int iSize)
+  CTextDrawEvent(std::string sDisplayText, CDasherView *pView, screenint iX, screenint iY, int iSize)
 	:m_sDisplayText(sDisplayText),
 	 m_pDasherView(pView),
 	 m_iX(iX),
