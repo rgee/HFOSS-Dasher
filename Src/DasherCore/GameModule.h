@@ -4,6 +4,7 @@
 #define GAME_MODULE_H
 
 #include <string>
+#include <cstring>
 
 using namespace std;
 
@@ -13,6 +14,7 @@ using namespace std;
 #include "DasherNode.h"
 #include "DasherView.h"
 #include "DasherTypes.h"
+#include "DasherInterfaceBase.h"
 
 namespace Dasher {
 
@@ -48,10 +50,7 @@ class CGameModule : public CDasherModule {
    */
   std::string GetUntypedTarget();
 
-  bool DecorateView(CDasherView *pView) {
-	  //g_pLogger->Log("Decorating the view");
-	  return false;
-  }
+  bool DecorateView(CDasherView *pView);
 
   void SetDasherModel(CDasherModel *pModel) { m_pModel = pModel; }
 
@@ -99,6 +98,16 @@ class CGameModule : public CDasherModule {
    * The dasher interface.
    */
   CDasherInterfaceBase *m_pInterface;
+  
+  /**
+   * The target x coordinate for the arrow to point to. 
+   */
+  myint m_iTargetX;
+
+  /**
+   * The target y coordinate for the arrow to point to.
+   */
+  myint m_iTargetY;
 };
 } 
 

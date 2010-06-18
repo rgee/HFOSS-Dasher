@@ -1,6 +1,6 @@
 #include <string>
-#include <iostream.h>
-#include <fstream.h>
+#include <iostream>
+#include <fstream>
 using namespace std;
 
 #include "WordGeneratorBase.h"
@@ -40,11 +40,11 @@ public:
 	 * @param newPath The path to the file to load from.
 	 */
 	void SetSource(std::string newPath);
-prviate:
+private:
 	/**
      * The string that has been generated.
      */
-	std::string m_sGeneratedString
+	std::string m_sGeneratedString;
 
 	/**
      * The path to the file this generator reads from.

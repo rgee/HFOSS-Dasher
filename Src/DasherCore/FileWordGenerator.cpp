@@ -1,13 +1,15 @@
 #include "FileWordGenerator.h"
 
+using namespace Dasher;
+
 bool CFileWordGenerator::Generate() {
 	if(!m_bWordsReady) {
 		ifstream file_in;
-		file_in.open(path.c_str());
+		file_in.open(m_sPath.c_str());
 		char buffer;
 		while(file_in.good()) {
-			buffer = file_in.get();
-			m_sGeneratedString.append(buffer);
+			file_in.get(buffer);
+			m_sGeneratedString.append(&buffer);
 		}
 		m_uiPos = 0;
 	}
@@ -26,6 +28,6 @@ void CFileWordGenerator::SetSource(std::string newPath) {
 	Generate();
 }
 
-virtual std::string CFileWordGenerator::GetNextWord() {
+std::string CFileWordGenerator::GetNextWord() {
 	return m_sGeneratedString.substr(m_uiPos, m_sGeneratedString.find(" "));
 }

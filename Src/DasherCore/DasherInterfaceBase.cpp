@@ -958,8 +958,7 @@ void CDasherInterfaceBase::CreateModules() {
   // conditional?
   // TODO: I don't know what a sensible module ID should be
   // for this, so I chose an arbitrary value
-  // TODO: Put "Game Mode" in enumeration in Parameter.h
-	  
+  // TODO: Put "Game Mode" in enumeration in Parameter.h	  
   RegisterModule(new CGameModule(m_pEventHandler, m_pSettingsStore, this, 21, _("Game Mode")));
 }
 

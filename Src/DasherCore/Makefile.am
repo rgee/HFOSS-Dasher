@@ -78,15 +78,15 @@ libdashercore_a_SOURCES = \
 		EyetrackerFilter.h \
 		FileLogger.cpp \
 		FileLogger.h \
-		FileWordGenerator.h \
 		FileWordGenerator.cpp \
+		FileWordGenerator.h \
 		FrameRate.h \
 		FrameRate.cpp \
 		GameLevel.cpp \
 		GameLevel.h \
 		GameMessages.h \
-		GameModule.h \
 		GameModule.cpp \
+		GameModule.h \
 		GameScorer.cpp \
 		GameScorer.h \
 		GameStatistics.h \
