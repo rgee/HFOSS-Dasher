@@ -83,7 +83,9 @@ public:
 	 m_iX(iX),
 	 m_iY(iY),
 	 m_iSize(iSize) 
-	{  };
+	{
+		m_iEventType = EV_TEXTDRAW;
+	};
   /**
    * The text that has been drawn.
    */
