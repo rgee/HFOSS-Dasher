@@ -30,7 +30,7 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
 				CTextDrawEvent *evt = static_cast<CTextDrawEvent*>(pEvent);
 				if(!m_sTargetString.substr(m_stCurrentStringPos+1, 1).compare(evt->m_sDisplayText)
 				   && evt->m_iY < GetLongParameter(LP_OX)) { 
-					evt->m_pDasherView->Screen2Dasher(evt->m_iX, evt->m_iY, m_iTargetX, m_iTargetY);
+					 evt->m_pDasherView->Screen2Dasher(evt->m_iX, evt->m_iY, m_iTargetX, m_iTargetY);
 				  }
 			}
 			break;
