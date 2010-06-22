@@ -24,8 +24,11 @@ namespace Dasher {
 enum {
   EV_PARAM_NOTIFY = 1, EV_EDIT, EV_EDIT_CONTEXT, EV_START, EV_STOP, EV_CONTROL, EV_LOCK, EV_MESSAGE, EV_COMMAND, EV_TEXTDRAW
 };
-
-int iNUM_EVENTS = 10;
+/**
+ * The number of event types. This is required for the event handler, but it's kept here to emphasize
+ * that this corresponds to the "length" above enum
+ */
+const int iNUM_EVENTS = 10;
 
 /// \ingroup Core
 /// @{
