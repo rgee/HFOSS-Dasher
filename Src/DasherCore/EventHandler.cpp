@@ -24,7 +24,7 @@ static char THIS_FILE[] = __FILE__;
 void CEventHandler::InsertEvent(CEvent *pEvent) {
 	++m_iInHandler;
 
-	for(std::vector<CdasherComponent*>::const_iterator it = m_vSpecificListeners[pEvent->m_iEventType].begin();
+	for(std::vector<CDasherComponent*>::const_iterator it = m_vSpecificListeners[pEvent->m_iEventType].begin();
 			it != m_vSpecificListeners[pEvent->m_iEventType].end();
 		 ++it) 
 	{
@@ -50,14 +50,14 @@ void CEventHandler::InsertEvent(CEvent *pEvent) {
 }
 
 void CEventHandler::RegisterListener(CDasherComponent *pListener) {
-	if((std::find(m_vSpecificListeners.begin(), m_vSpecificListeneres.end(), pListener)  == m_vListeners.end()) &&
-		 (std::find(m_vSpecificListeners.begin(), m_vListenerQueue.end(), pListener) == m_vSpecificListenerQueue.end())) {
-			if(!m_viInHandler > 0)
+	if((std::find(m_vSpecificListeners.begin(), m_vSpecificListeners.end(), pListener) == m_vSpecificListeners.end()) &&
+		 (std::find(m_vSpecificListenerQueue.begin(), m_vSpecificListenerQueue.end(), pListener) == m_vSpecificListenerQueue.end())) {
+			if(!m_iInHandler > 0)
 				for(ListenerMap::iterator it = m_vSpecificListeners.begin(); it != m_vSpecificListeners.end(); ++it) {
 					(*it).push_back(pListener);
 				}
 			else
-				for(std::vector<CDasherComponent*>>::iterator it = m_vSpecificListenerQueue.begin(); it != m_vSpecificListenerQueue.end(); ++it) {
+				for(ListenerMap::iterator it = m_vSpecificListenerQueue.begin(); it != m_vSpecificListenerQueue.end(); ++it) {
 					(*it).push_back(pListener);
 				}
 	}
@@ -67,10 +67,10 @@ void CEventHandler::RegisterListener(CDasherComponent *pListener) {
 }
 
 void CEventHandler::RegisterListener(CDasherComponent *pListener, int iEventType) {
-	if((std::find(m_vSpecificListeners.begin(), m_vSpecificListeneres.end(), pListener)  == m_vListeners.end()) &&
-	   (std::find(m_vSpecificListeners.begin(), m_vListenerQueue.end(), pListener) == m_vSpecificListenerQueue.end())) {	
-		if(!m_vInHandler > 0)
-			m_vSpecificListener[iEventType].push_back(pListener);
+	if((std::find(m_vSpecificListeners.begin(), m_vSpecificListeners.end(), pListener)  == m_vSpecificListeners.end()) &&
+	   (std::find(m_vSpecificListeners.begin(), m_vSpecificListenerQueue.end(), pListener) == m_vSpecificListenerQueue.end())) {	
+		if(!m_iInHandler > 0)
+			m_vSpecificListeners[iEventType].push_back(pListener);
 		else
 			m_vSpecificListenerQueue[iEventType].push_back(pListener);
 	}
