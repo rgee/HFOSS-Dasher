@@ -28,9 +28,13 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
 		case EV_TEXTDRAW:
 			{
 				CTextDrawEvent *evt = static_cast<CTextDrawEvent*>(pEvent);
-				if(!m_sTargetString.substr(m_stCurrentStringPos+1, 1).compare(evt->m_sDisplayText)
-				   && evt->m_iY < GetLongParameter(LP_OX)) { 
-					evt->m_pDasherView->Screen2Dasher(evt->m_iX, evt->m_iY, m_iTargetX, m_iTargetY);
+				if(!m_sTargetString.substr(m_stCurrentStringPos+1, 1).compare(evt->m_sDisplayText)) { 
+						
+					 //the x and y coordinates (in Dasher coords) of the target node
+					 myint xDasherCoord, yDasherCoord;
+					 evt->m_pDasherView->Screen2Dasher(evt->m_iX, evt->m_iY, xCoord, yCoord);
+
+					 if(xDasherCoord < GetLongParameter(LP_OX) && )
 				  }
 			}
 			break;
@@ -43,8 +47,9 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
 }
 
 bool CGameModule::DecorateView(CDasherView *pView) {
-   
-    //set up the points for the arrow through - starts at the crosshair, ends at the target letter	
+  
+    //set up the points for the arrow to pass through - 
+	//starts at the crosshair, ends at the target letter	
     myint x[2] = {GetLongParameter(LP_OX), m_iTargetX};
 	myint y[2] = {GetLongParameter(LP_OY), m_iTargetY};
 	

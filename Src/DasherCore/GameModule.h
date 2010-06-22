@@ -42,9 +42,6 @@ class CGameModule : public CDasherModule {
 	  m_sTargetString = "My name is julian.";
 
 	  m_stCurrentStringPos = 0;
-	  //m_iArrowColor = 135;	  
-	  //m_dArrowSizeFactor = 0.1;
-      //m_iArrowNumPoints = 2;
 
   }
 
@@ -73,12 +70,22 @@ class CGameModule : public CDasherModule {
   virtual void HandleEvent(Dasher::CEvent *pEvent); 
 
  private:
+
+  /**
+   * Get the distance of a given point (in Dasher Coordinates) from the origin.
+   *
+   * @param xCoord - the x coordinate of the point
+   * @param yCoord - the y coordinate of the point
+   * 
+   */
+  myint DistanceFromOrigin(myint xCoord, myint yCoord);
+
   /**
    * Searches for the dasher node under the current root that represents the desired string
    * @param text The string to search for
    * @return The node representing the string parameter
    */
- //Dasher::CDasherNode StringToNode(std::string sText); 
+   //Dasher::CDasherNode StringToNode(std::string sText); 
 
   /**
    * The last node the user typed.
