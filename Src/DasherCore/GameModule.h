@@ -29,11 +29,23 @@ class CGameModule : public CDasherModule {
  public:
   // I don't actually know what the type is supposed to be for this...it's not an input method or an input filter.
   // Maybe we should define a new one. I've labeled it 0 for now. - rgee
-  CGameModule(Dasher::CEventHandler *pEventHandler, CSettingsStore *pSettingsStore, CDasherInterfaceBase *pInterface, ModuleID_t iID, const char *szName)
-  : CDasherModule(pEventHandler, pSettingsStore, iID, 0, szName)
-  { 
-      g_pLogger->Log("Inside game module constructor");	  
-	  m_pInterface = pInterface; 
+  CGameModule(Dasher::CEventHandler *pEventHandler, CSettingsStore *pSettingsStore,  
+  CDasherInterfaceBase *pInterface, ModuleID_t iID, const char *szName) 
+  : m_iArrowColor(135),
+	m_dArrowSizeFactor(0.1),
+    m_iArrowNumPoints(2),
+    CDasherModule(pEventHandler, pSettingsStore, iID, 0, szName)
+  { 	  
+	  m_pInterface = pInterface;
+	  
+	  //TODO REMOVE THIS!!!
+	  m_sTargetString = "My name is julian.";
+
+	  m_stCurrentStringPos = 0;
+	  //m_iArrowColor = 135;	  
+	  //m_dArrowSizeFactor = 0.1;
+      //m_iArrowNumPoints = 2;
+
   }
 
   virtual ~CGameModule() {};
@@ -108,6 +120,22 @@ class CGameModule : public CDasherModule {
    * The target y coordinate for the arrow to point to.
    */
   myint m_iTargetY;
+  
+  /**
+   * The color (in Dasher colors) to make the guiding arrow.
+   */
+  const int m_iArrowColor;
+
+  /**
+   * The factor by which the size the hat on the guiding arrow
+   */
+  const double m_dArrowSizeFactor;
+
+  /**
+   * The number of points that the guiding arrow passes through
+   */
+  const int m_iArrowNumPoints;
+
 };
 } 
 

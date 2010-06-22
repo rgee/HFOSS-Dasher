@@ -52,7 +52,7 @@ namespace Dasher {
   class CDasherModel;
   class CEventHandler;
   class CEvent;
-  
+  class CGameModule;
   class CDasherInterfaceBase;
 }
 

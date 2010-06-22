@@ -145,8 +145,22 @@ public:
 
   void DasherPolyline(myint * x, myint * y, int n, int iWidth, int iColour);
 
-  /// Draw a polyarrow
 
+  /**
+   * Draw an arrow in Dasher space. The parameters x and y allow the client to specify
+   * points through which the arrow's main line should be drawn. For example, to draw an
+   * arrow through the Dasher coordinates (1000, 2000) and (3000, 4000), one would pass in:
+   *
+   * myint x[2] = {1000, 3000};
+   * myint y[2] = {2000, 4000};
+   *
+   * @param x - an array of x coordinates to draw the arrow through
+   * @param y - an array of y coordinates to draw the arrow through
+   * @param iWidth - the width to make the arrow lines - typically of the form
+   *				 GetLongParameter(LP_LINE_WIDTH)*CONSTANT
+   * @param iColour - the color to make the arrow (in Dasher color)
+   * @param dArrowSizeFactor - the factor by which to scale the "hat" on the arrow
+   */
   void DasherPolyarrow(myint * x, myint * y, int n, int iWidth, int iColour, double dArrowSizeFactor = 0.7071);
 
   ///
