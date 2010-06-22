@@ -24,6 +24,13 @@ public:
    * that subscribe to this event.
    */
   typedef std::vector<std::vector<CDasherComponent*> > ListenerMap;
+
+  /**
+   * @var typedef vector<pair<CDasherComponent*, int> > ListenerQueue
+   * @brief A queue whose elements represent 1 to 1 associations between
+   * Dasher Components and Dasher core event types
+   */
+  typedef std::vector<std::pair<CDasherComponent*, int> > ListenerQueue;
   
 
   CEventHandler(Dasher::CDasherInterfaceBase * pInterface):m_pInterface(pInterface) {
@@ -79,6 +86,7 @@ public:
   void UnregisterListener(Dasher::CDasherComponent * pListener);
 
 protected:
+
   /**
    * A 2-dimensional vector of listeners where each sub-vector represents
    * the listener for a specific event type (Defined in the event type enumeration
@@ -87,11 +95,21 @@ protected:
    */
   ListenerMap m_vSpecificListeners;
 
-	/**
-	 * A container identical in structure to m_vSpecificListeners that holds Dasher Components
-   * that have yet to be processed.
- 	 */
-  ListenerMap m_vSpecificListenerQueue;
+  /**
+   * The queue of listeners waiting to be registered with specific
+   * events while InsertEvent is still processing. Used to prevent
+   * m_vSpecificListeners from being modified while InsertEvent is
+   * iterating over it.
+  */
+  ListenerQueue m_vSpecificListenerQueue;
+
+  /**
+   * The queue of "old style" listeners waiting to be registered
+   * with all events while InsertEvent is still processing. Used
+   * to prevent m_vSpecificListeners from being modified while
+   * InsertEvent is iterating over it.
+   */
+  std::vector<CDasherComponent> m_vGeneralListenerQueue;
 
   int m_iInHandler;
 

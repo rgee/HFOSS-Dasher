@@ -22,6 +22,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 void CEventHandler::InsertEvent(CEvent *pEvent) {
+
 	++m_iInHandler;
 
 	for(std::vector<CDasherComponent*>::const_iterator it = m_vSpecificListeners[pEvent->m_iEventType].begin();
@@ -38,38 +39,42 @@ void CEventHandler::InsertEvent(CEvent *pEvent) {
 	--m_iInHandler;
 
 	if(m_iInHandler == 0) {
-		// Loop through each specific event vector in the queue and transfer its elements to
-    // the corresponding vector in the listener container
-		for(int i = 0; i < iNUM_EVENTS; i++) {
-			for(std::vector < CDasherComponent* >::const_iterator it = m_vSpecificListenerQueue[i].begin(); it != m_vSpecificListenerQueue[i].end(); ++it) {
-				m_vSpecificListeners[i].push_back(*it);
-			}
-			m_vSpecificListenerQueue[i].clear();
+	    
+		//loop through the queue of specific listeners waiting to be registered and register them
+		for(ListenerQueue::iterator it = m_vSpecificListenerQueue.begin(); it != m_vSpecificListenerQueue.end(); ++it) {
+			RegisterListener((*it).first, (*it).second); 
 		} 
 	}
 }
 
 void CEventHandler::RegisterListener(CDasherComponent *pListener) {
-	if((std::find(m_vSpecificListeners.begin(), m_vSpecificListeners.end(), pListener) == m_vSpecificListeners.end()) &&
-		 (std::find(m_vSpecificListenerQueue.begin(), m_vSpecificListenerQueue.end(), pListener) == m_vSpecificListenerQueue.end())) {
-			if(!m_iInHandler > 0)
-				for(ListenerMap::iterator it = m_vSpecificListeners.begin(); it != m_vSpecificListeners.end(); ++it) {
-					(*it).push_back(pListener);
-				}
-			else
-				for(ListenerMap::iterator it = m_vSpecificListenerQueue.begin(); it != m_vSpecificListenerQueue.end(); ++it) {
-					(*it).push_back(pListener);
-				}
+
+    if(std::find(m_vGeneralListenerQueue.begin(), m_vGeneralListenerQueue.end(), pListener)) {
+		return;
 	}
 	else {
-		// Can't add the same listener twice	
-	}
+
+		for(ListenerMap::iterator it = m_vSpecificListeners.begin() it != m_vSpecificListeners.end(); ++it) {
+
+			if((std::find((*it).begin(), (*it).end(), pListener) == (*it).end())) {
+					if(m_iInHandler == 0) {
+						(*it).push_back(pListener);
+					}
+					else {
+						m_vGeneralListenerQueue.push_back(pListener);
+					}
+			}
+			else {
+				// Can't add the same listener twice	
+			}
+		}
+   }
 }
 
 void CEventHandler::RegisterListener(CDasherComponent *pListener, int iEventType) {
-	if((std::find(m_vSpecificListeners.begin(), m_vSpecificListeners.end(), pListener)  == m_vSpecificListeners.end()) &&
-	   (std::find(m_vSpecificListeners.begin(), m_vSpecificListenerQueue.end(), pListener) == m_vSpecificListenerQueue.end())) {	
-		if(!m_iInHandler > 0)
+
+	if((std::find(m_vSpecificListeners[iEventType].begin(), m_vSpecificListeners[iEventType].end(), pListener)  == m_vSpecificListeners[iEventType].end())) {	
+		if(m_iInHandler == 0)
 			m_vSpecificListeners[iEventType].push_back(pListener);
 		else
 			m_vSpecificListenerQueue[iEventType].push_back(pListener);
