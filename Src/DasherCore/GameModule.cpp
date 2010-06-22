@@ -7,8 +7,7 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
 	switch(pEvent->m_iEventType)
 	{
 		case EV_EDIT:
-        {
-				g_pLogger->Log("Capturing an edit event");	  
+        {	  
 				CEditEvent* evt = static_cast<CEditEvent*>(pEvent);
 
 			switch(evt->m_iEditType)
@@ -29,8 +28,9 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
 		case EV_TEXTDRAW:
 			{
 				CTextDrawEvent *evt = static_cast<CTextDrawEvent*>(pEvent);
-				if(!m_sTargetString.substr(m_stCurrentStringPos+1, 1).compare(evt->m_sDisplayText)) {
-                     evt->m_pDasherView->Screen2Dasher(evt->m_iX, evt->m_iY, m_iTargetX, m_iTargetY);
+				if(!m_sTargetString.substr(m_stCurrentStringPos+1, 1).compare(evt->m_sDisplayText)
+				   && evt->m_iY < GetLongParameter(LP_OX)) { 
+					 evt->m_pDasherView->Screen2Dasher(evt->m_iX, evt->m_iY, m_iTargetX, m_iTargetY);
 				  }
 			}
 			break;
@@ -43,7 +43,13 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
 }
 
 bool CGameModule::DecorateView(CDasherView *pView) {
-    pView->DasherPolyarrow(&m_iTargetX, &m_iTargetY, 20, GetLongParameter(LP_LINE_WIDTH)*4, 135);
+   
+    //set up the points for the arrow through - starts at the crosshair, ends at the target letter	
+    myint x[2] = {GetLongParameter(LP_OX), m_iTargetX};
+	myint y[2] = {GetLongParameter(LP_OY), m_iTargetY};
+	
+	pView->DasherPolyarrow(x, y, m_iArrowNumPoints, GetLongParameter(LP_LINE_WIDTH)*4, m_iArrowColor, m_dArrowSizeFactor);
+	
     return true;
 }
 

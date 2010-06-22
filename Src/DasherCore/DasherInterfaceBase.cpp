@@ -878,7 +878,6 @@ void CDasherInterfaceBase::KeyUp(int iTime, int iId, bool bPos, int iX, int iY) 
 void CDasherInterfaceBase::InitGameModule() {
 
 	if(m_pGameModule == NULL) {
-		g_pLogger->Log("Initializing the game module.");
 		m_pGameModule = (CGameModule*) GetModuleByName("Game Mode");
 	}
 }

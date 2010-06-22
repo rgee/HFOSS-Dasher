@@ -2,20 +2,13 @@
 #define __eventhandler_h__
 
 #include <vector>
+#include <Event.h>
 
 namespace Dasher {
   class CEventHandler;
   class CDasherComponent;
   class CDasherInterfaceBase;
   class CEvent;
-
-	/**
-	 * @var typedef vector<vector<CDasherComponent*>> ListenerMap
-	 * @brief A 2d vector of Dasher Components where each sub-vector corresponds
-	 *			  to a specific event. The contents of the sub-vectors are the components
-	 *				that subscribe to this event.
-	 */
-	typedef std::vector<std::vector<CDasherComponent*>> ListenerMap;
 
 }
 
@@ -24,7 +17,21 @@ namespace Dasher {
 class Dasher::CEventHandler {
 public:
 
+  /**
+   * @var typedef vector<vector<CDasherComponent*>> ListenerMap
+   * @brief A 2d vector of Dasher Components where each sub-vector corresponds
+   * to a specific event. The contents of the sub-vectors are the components
+   * that subscribe to this event.
+   */
+  typedef std::vector<std::vector<CDasherComponent*> > ListenerMap;
 
+  /**
+   * @var typedef vector<pair<CDasherComponent*, int> > ListenerQueue
+   * @brief A queue whose elements represent 1 to 1 associations between
+   * Dasher Components and Dasher core event types
+   */
+  typedef std::vector<std::pair<CDasherComponent*, int> > ListenerQueue;
+  
 
   CEventHandler(Dasher::CDasherInterfaceBase * pInterface):m_pInterface(pInterface) {
     m_iInHandler = 0;
@@ -32,10 +39,10 @@ public:
 		// Initialize the event listener container (and queue) so we can add elements without
 		// checking if the sub-vectors actually exist or not.
 		for(int i = 0; i < iNUM_EVENTS; i++) {
-    	m_vSpecificListeners.push_back(new Vector<CDasherComponent*>());
+    	m_vSpecificListeners.push_back(std::vector<CDasherComponent*>());
 		}
-		for(int i = 0; it < iNUM_EVENTS; i++) {
-			m_vSpecificListenerQueue.push_back(new Vector<CDasherComponent*>());
+		for(int i = 0; i < iNUM_EVENTS; i++) {
+			m_vSpecificListenerQueue.push_back(std::vector<CDasherComponent*>());
 		}
   };
 
@@ -45,7 +52,7 @@ public:
 
   // Insert an event, which will be propagated to all listeners.
 
-  void InsertEvent(Dasher::CEvent * pEvent)
+  void InsertEvent(Dasher::CEvent * pEvent);
 
 
 
@@ -70,7 +77,7 @@ public:
    * @param iEventType An integer defined in the event type enumeration in Event.h
    *	      that represents the event to which you'd like to unsubscribe.
    */
-  void UnregisterListener(Dasher::CDashercomponent * pListener, int iEventType);
+  void UnregisterListener(Dasher::CDasherComponent * pListener, int iEventType);
 
 	/**
    * Unregister a listener from ALL events.
@@ -79,6 +86,7 @@ public:
   void UnregisterListener(Dasher::CDasherComponent * pListener);
 
 protected:
+
   /**
    * A 2-dimensional vector of listeners where each sub-vector represents
    * the listener for a specific event type (Defined in the event type enumeration
@@ -87,11 +95,21 @@ protected:
    */
   ListenerMap m_vSpecificListeners;
 
-	/**
-	 * A container identical in structure to m_vSpecificListeners that holds Dasher Components
-   * that have yet to be processed.
- 	 */
-  ListenerMap m_vSpecificListenerQueue;
+  /**
+   * The queue of listeners waiting to be registered with specific
+   * events while InsertEvent is still processing. Used to prevent
+   * m_vSpecificListeners from being modified while InsertEvent is
+   * iterating over it.
+  */
+  ListenerQueue m_vSpecificListenerQueue;
+
+  /**
+   * The queue of "old style" listeners waiting to be registered
+   * with all events while InsertEvent is still processing. Used
+   * to prevent m_vSpecificListeners from being modified while
+   * InsertEvent is iterating over it.
+   */
+  std::vector<CDasherComponent> m_vGeneralListenerQueue;
 
   int m_iInHandler;
 
