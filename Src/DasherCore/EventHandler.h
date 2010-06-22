@@ -8,19 +8,23 @@ namespace Dasher {
   class CDasherComponent;
   class CDasherInterfaceBase;
   class CEvent;
+
+	/**
+	 * @var typedef vector<vector<CDasherComponent*>> ListenerMap
+	 * @brief A 2d vector of Dasher Components where each sub-vector corresponds
+	 *			  to a specific event. The contents of the sub-vectors are the components
+	 *				that subscribe to this event.
+	 */
+	typedef std::vector<std::vector<CDasherComponent*>> ListenerMap;
+
 }
-/**
- * @var typedef vector<vector<CDasherComponent*>> ListenerMap
- * @brief A 2d vector of Dasher Components where each sub-vector corresponds
- *			  to a specific event. The contents of the sub-vectors are the components
- *				that subscribe to this event.
- */
-typedef std::vector<std::vector<CDasherComponent*>> ListenerMap;
 
 /// \ingroup Core
 /// @{
 class Dasher::CEventHandler {
 public:
+
+
 
   CEventHandler(Dasher::CDasherInterfaceBase * pInterface):m_pInterface(pInterface) {
     m_iInHandler = 0;
