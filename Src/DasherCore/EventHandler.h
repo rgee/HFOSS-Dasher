@@ -2,7 +2,7 @@
 #define __eventhandler_h__
 
 #include <vector>
-#include <Event.h>
+#include "Event.h"
 
 namespace Dasher {
   class CEventHandler;
@@ -33,16 +33,13 @@ public:
   typedef std::vector<std::pair<CDasherComponent*, int> > ListenerQueue;
   
 
-  CEventHandler(Dasher::CDasherInterfaceBase * pInterface):m_pInterface(pInterface) {
+  CEventHandler(Dasher::CDasherInterfaceBase * pInterface): m_iNUM_EVENTS(10), m_pInterface(pInterface) {
     m_iInHandler = 0;
 
 		// Initialize the event listener container (and queue) so we can add elements without
 		// checking if the sub-vectors actually exist or not.
-		for(int i = 0; i < iNUM_EVENTS; i++) {
-    	m_vSpecificListeners.push_back(std::vector<CDasherComponent*>());
-		}
-		for(int i = 0; i < iNUM_EVENTS; i++) {
-			m_vSpecificListenerQueue.push_back(std::vector<CDasherComponent*>());
+		for(int i = 0; i < m_iNUM_EVENTS; i++) {
+			m_vSpecificListeners.push_back(std::vector<CDasherComponent*>());
 		}
   };
 
@@ -109,11 +106,24 @@ protected:
    * to prevent m_vSpecificListeners from being modified while
    * InsertEvent is iterating over it.
    */
-  std::vector<CDasherComponent> m_vGeneralListenerQueue;
+  std::vector<CDasherComponent*> m_vGeneralListenerQueue;
 
   int m_iInHandler;
 
   Dasher::CDasherInterfaceBase * m_pInterface;
+
+
+private:
+
+  /**
+ * @var m_iNUM_EVENTS
+ * @brief The number of event types in the enumeration of Dasher events in Event.h. Had
+ * to put it here to stop the compiler from complaining about multiple definitions. Please
+ * keep this up to date with the number of items in the enumeration.
+ * TODO - figure out a better solution to the compiler problem - this one is kind of clumsy
+ */
+  const int m_iNUM_EVENTS;
+
 
 };
 /// @}
