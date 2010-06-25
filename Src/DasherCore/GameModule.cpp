@@ -9,7 +9,6 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
         case EV_EDIT:
         {     
                 CEditEvent* evt = static_cast<CEditEvent*>(pEvent);
-
             switch(evt->m_iEditType)
             {
                 // Added a new character (Stepped one node forward)

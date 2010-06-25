@@ -1,10 +1,9 @@
-
 #include "../Common/Common.h"
 
 #include "EventHandler.h"
 #include "DasherComponent.h"
 #include "DasherInterfaceBase.h"
-
+#include "Event.h"
 #include <algorithm>
 #include <iostream>
 
@@ -22,58 +21,92 @@ static char THIS_FILE[] = __FILE__;
 
 void CEventHandler::InsertEvent(CEvent *pEvent) {
 
-  // We may end up here recursively, so keep track of how far down we
-  // are, and only permit new handlers to be registered after all
-  // messages are processed.
+	++m_iInHandler;
 
-  // An alternative approach would be a message queue - this might actually be a bit more sensible
-  ++m_iInHandler;
+	for(std::vector<CDasherComponent*>::const_iterator it = m_vSpecificListeners[pEvent->m_iEventType].begin();
+			it != m_vSpecificListeners[pEvent->m_iEventType].end();
+		 ++it) 
+	{
+			(*it)->HandleEvent(pEvent);
+	}
 
-  // Loop through components and notify them of the event
-  for(std::vector < CDasherComponent * >::iterator iCurrent(m_vListeners.begin()); iCurrent != m_vListeners.end(); ++iCurrent) {
-    (*iCurrent)->HandleEvent(pEvent);
-  }
+	m_pInterface->InterfaceEventHandler(pEvent);
+	
+	m_pInterface->ExternalEventHandler(pEvent);
 
-  // Call external handler last, to make sure that internal components are fully up to date before external events happen
+	--m_iInHandler;
 
-  m_pInterface->InterfaceEventHandler(pEvent);
-
-  m_pInterface->ExternalEventHandler(pEvent);
-
-  --m_iInHandler;
-
-  if(m_iInHandler == 0) {
-    for(std::vector < CDasherComponent * >::iterator iCurrent(m_vListenerQueue.begin()); iCurrent != m_vListenerQueue.end(); ++iCurrent)
-      m_vListeners.push_back(*iCurrent); 
-    m_vListenerQueue.clear();
-  }
+	if(m_iInHandler == 0) {
+	    
+		//loop through the queue of specific listeners waiting to be registered and register them
+		for(ListenerQueue::iterator it = m_vSpecificListenerQueue.begin(); it != m_vSpecificListenerQueue.end(); ++it) {
+			RegisterListener((*it).first, (*it).second); 
+		} 
+	}
 }
 
 void CEventHandler::RegisterListener(CDasherComponent *pListener) {
 
-  if((std::find(m_vListeners.begin(), m_vListeners.end(), pListener) == m_vListeners.end()) &&
-     (std::find(m_vListenerQueue.begin(), m_vListenerQueue.end(), pListener) == m_vListenerQueue.end())) {
-    if(!m_iInHandler > 0)
-      m_vListeners.push_back(pListener);
-    else
-      m_vListenerQueue.push_back(pListener);
-  }
-  else {
-    // Can't add the same listener twice
-  }
+    if(std::find(m_vGeneralListenerQueue.begin(), m_vGeneralListenerQueue.end(), pListener) == m_vGeneralListenerQueue.end()) {
+		return;
+	}
+	else {
+
+		for(ListenerMap::iterator it = m_vSpecificListeners.begin(); it != m_vSpecificListeners.end(); ++it) {
+
+			if((std::find((*it).begin(), (*it).end(), pListener) == (*it).end())) {
+					if(m_iInHandler == 0) {
+						(*it).push_back(pListener);
+					}
+					else {
+						m_vGeneralListenerQueue.push_back(pListener);
+					}
+			}
+			else {
+				// Can't add the same listener twice	
+			}
+		}
+   }
+}
+
+void CEventHandler::RegisterListener(CDasherComponent *pListener, int iEventType) {
+
+	if((std::find(m_vSpecificListeners[iEventType].begin(), m_vSpecificListeners[iEventType].end(), pListener)  == m_vSpecificListeners[iEventType].end())) {	
+		if(m_iInHandler == 0)
+			m_vSpecificListeners[iEventType].push_back(pListener);
+		else
+			m_vSpecificListenerQueue.push_back(std::make_pair(pListener, iEventType));
+	}
+	else {
+		// Can't add the same listener twice 
+	}
+}
+
+void CEventHandler::UnregisterListener(CDasherComponent *pListener, int iEventType) {
+	for(std::vector<CDasherComponent*>::iterator it = m_vSpecificListeners[iEventType].begin(); it != m_vSpecificListeners[iEventType].end(); ++it) {
+		if( (*it) == pListener)
+			m_vSpecificListeners[iEventType].erase(it);
+	}
 }
 
 void CEventHandler::UnregisterListener(CDasherComponent *pListener) {
 
-  std::vector < CDasherComponent * >::iterator iFound;
+    std::vector < CDasherComponent * >::iterator mapFound;
 
-  iFound = std::find(m_vListeners.begin(), m_vListeners.end(), pListener);
+	for(ListenerMap::iterator it = m_vSpecificListeners.begin(); it != m_vSpecificListeners.end(); ++it) { 
+		mapFound = std::find((*it).begin(), (*it).end(), pListener);
+		if(mapFound != (*it).end())
+			(*it).erase(mapFound);
+	}
 
-  if(iFound != m_vListeners.end())
-    m_vListeners.erase(iFound);
+	std::vector < CDasherComponent * >::iterator queueFound = std::find(m_vGeneralListenerQueue.begin(), m_vGeneralListenerQueue.end(), pListener);
+	if(queueFound != m_vGeneralListenerQueue.end())
+			m_vGeneralListenerQueue.erase(queueFound);
 
-  iFound = std::find(m_vListenerQueue.begin(), m_vListenerQueue.end(), pListener);
-
-  if(iFound != m_vListenerQueue.end())
-    m_vListenerQueue.erase(iFound);
+	for(ListenerQueue::iterator it = m_vSpecificListenerQueue.begin(); it != m_vSpecificListenerQueue.end(); ++it) {
+		if((*it).first == pListener) {
+			it = m_vSpecificListenerQueue.erase(it);
+		}
+	}
+  
 }
