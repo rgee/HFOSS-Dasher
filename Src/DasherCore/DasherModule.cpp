@@ -33,6 +33,14 @@ CDasherModule::CDasherModule(Dasher::CEventHandler * pEventHandler, CSettingsSto
   m_szName = szName;
 }
 
+CDasherModule::CDasherModule(Dasher::CEventHandler * pEventHandler, CSettingsStore * pSettingsStore, ModuleID_t iID, int iType, const char *szName, std::vector<int> vEvents)
+  : CDasherComponent(pEventHandler, pSettingsStore, vEvents) {
+  m_iID = iID;
+  m_iType = iType;
+  m_szName = szName;
+}
+
+
 ModuleID_t CDasherModule::GetID() {
   return m_iID;
 }

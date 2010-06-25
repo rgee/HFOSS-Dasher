@@ -12,6 +12,14 @@ CDasherComponent::CDasherComponent(CEventHandler * pEventHandler, CSettingsStore
     m_pEventHandler->RegisterListener(this);
 
 };
+
+CDasherComponent::CDasherComponent(CEventHandler * pEventHandler, CSettingsStore * pSettingsStore, std::vector<int> vEvents)
+  :m_pEventHandler(pEventHandler), m_pSettingsStore(pSettingsStore) {
+    for(std::vector<int>::const_iterator it = vEvents.begin(); it != vEvents.end(); ++it) {
+      m_pEventHandler->RegisterListener(this, (*it));
+    }
+};
+
 CDasherComponent::~CDasherComponent() {
   if (m_pEventHandler != NULL)
     m_pEventHandler->UnregisterListener(this);

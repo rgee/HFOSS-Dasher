@@ -31,12 +31,12 @@ class CGameModule : public CDasherModule {
   // I don't actually know what the type is supposed to be for this...it's not an input method or an input filter.
   // Maybe we should define a new one. I've labeled it 0 for now. - rgee
   CGameModule(Dasher::CEventHandler *pEventHandler, CSettingsStore *pSettingsStore,  
-  CDasherInterfaceBase *pInterface, ModuleID_t iID, const char *szName) 
+  CDasherInterfaceBase *pInterface, ModuleID_t iID, const char *szName, std::vector<int> vEvents) 
   : m_iCrosshairColor(135),
     m_iCrosshairNumPoints(2),
     m_iCrosshairExtent(25),
     m_iCrosshairCrosslineLength(50),
-    CDasherModule(pEventHandler, pSettingsStore, iID, 0, szName)
+    CDasherModule(pEventHandler, pSettingsStore, iID, 0, szName, vEvents)
   {     
     m_pInterface = pInterface;
     

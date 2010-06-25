@@ -170,7 +170,7 @@ void CDasherInterfaceBase::Realize() {
 
   //if game mode is enabled , initialize the game module
  // if(GetBoolParameter(BP_GAME_MODE))
-	InitGameModule();
+  InitGameModule();
 
   // Set up real orientation to match selection
   if(GetLongParameter(LP_ORIENTATION) == Dasher::Opts::AlphabetDefault)
@@ -252,14 +252,14 @@ void CDasherInterfaceBase::PreSetNotify(int iParameter, const std::string &sNewV
     // Cycle the alphabet history
     if(GetStringParameter(SP_ALPHABET_ID) != sNewValue) {
       if(GetStringParameter(SP_ALPHABET_1) != sNewValue) {
-	if(GetStringParameter(SP_ALPHABET_2) != sNewValue) {
-	  if(GetStringParameter(SP_ALPHABET_3) != sNewValue)
-	    SetStringParameter(SP_ALPHABET_4, GetStringParameter(SP_ALPHABET_3));
+  if(GetStringParameter(SP_ALPHABET_2) != sNewValue) {
+    if(GetStringParameter(SP_ALPHABET_3) != sNewValue)
+      SetStringParameter(SP_ALPHABET_4, GetStringParameter(SP_ALPHABET_3));
 
-	  SetStringParameter(SP_ALPHABET_3, GetStringParameter(SP_ALPHABET_2));
-	}
+    SetStringParameter(SP_ALPHABET_3, GetStringParameter(SP_ALPHABET_2));
+  }
 
-	SetStringParameter(SP_ALPHABET_2, GetStringParameter(SP_ALPHABET_1));
+  SetStringParameter(SP_ALPHABET_2, GetStringParameter(SP_ALPHABET_1));
       }
 
       SetStringParameter(SP_ALPHABET_1, GetStringParameter(SP_ALPHABET_ID));
@@ -290,10 +290,10 @@ void CDasherInterfaceBase::InterfaceEventHandler(Dasher::CEvent *pEvent) {
       break;
     case LP_ORIENTATION:
       if(GetLongParameter(LP_ORIENTATION) == Dasher::Opts::AlphabetDefault)
-	// TODO: See comment in DasherModel.cpp about prefered values
-	SetLongParameter(LP_REAL_ORIENTATION, m_Alphabet->GetOrientation());
+  // TODO: See comment in DasherModel.cpp about prefered values
+  SetLongParameter(LP_REAL_ORIENTATION, m_Alphabet->GetOrientation());
       else
-	SetLongParameter(LP_REAL_ORIENTATION, GetLongParameter(LP_ORIENTATION));
+  SetLongParameter(LP_REAL_ORIENTATION, GetLongParameter(LP_ORIENTATION));
       ScheduleRedraw();
       break;
     case SP_ALPHABET_ID:
@@ -307,7 +307,7 @@ void CDasherInterfaceBase::InterfaceEventHandler(Dasher::CEvent *pEvent) {
     case SP_DEFAULT_COLOUR_ID: // Delibarate fallthrough
     case BP_PALETTE_CHANGE:
       if(GetBoolParameter(BP_PALETTE_CHANGE))
-	 SetStringParameter(SP_COLOUR_ID, GetStringParameter(SP_DEFAULT_COLOUR_ID));
+   SetStringParameter(SP_COLOUR_ID, GetStringParameter(SP_DEFAULT_COLOUR_ID));
       break;
     case LP_LANGUAGE_MODEL_ID:
       CreateNCManager();
@@ -346,14 +346,14 @@ void CDasherInterfaceBase::InterfaceEventHandler(Dasher::CEvent *pEvent) {
     if(pEditEvent->m_iEditType == 1) {
       strCurrentContext += pEditEvent->m_sText;
       if( strCurrentContext.size() > 20 )
-	strCurrentContext = strCurrentContext.substr( strCurrentContext.size() - 20 );
+  strCurrentContext = strCurrentContext.substr( strCurrentContext.size() - 20 );
       if(GetBoolParameter(BP_LM_ADAPTIVE))
-	 strTrainfileBuffer += pEditEvent->m_sText;
+   strTrainfileBuffer += pEditEvent->m_sText;
     }
     else if(pEditEvent->m_iEditType == 2) {
       strCurrentContext = strCurrentContext.substr( 0, strCurrentContext.size() - pEditEvent->m_sText.size());
       if(GetBoolParameter(BP_LM_ADAPTIVE))
-	 strTrainfileBuffer = strTrainfileBuffer.substr( 0, strTrainfileBuffer.size() - pEditEvent->m_sText.size());
+   strTrainfileBuffer = strTrainfileBuffer.substr( 0, strTrainfileBuffer.size() - pEditEvent->m_sText.size());
     }
   }
   else if(pEvent->m_iEventType == EV_CONTROL) {
@@ -517,28 +517,28 @@ void CDasherInterfaceBase::NewFrame(unsigned long iTime, bool bForceRedraw) {
   if(m_pDasherView != 0) {
     if(!GetBoolParameter(BP_TRAINING)) {
       if (m_pUserLog != NULL) {
-	//ACL note that as of 15/5/09, splitting UpdatePosition into two,
-	//DasherModel no longer guarantees to empty these two if it didn't do anything.
-	//So initialise appropriately...
-	Dasher::VECTOR_SYMBOL_PROB vAdded;
-	int iNumDeleted = 0;
+  //ACL note that as of 15/5/09, splitting UpdatePosition into two,
+  //DasherModel no longer guarantees to empty these two if it didn't do anything.
+  //So initialise appropriately...
+  Dasher::VECTOR_SYMBOL_PROB vAdded;
+  int iNumDeleted = 0;
 
-	if(m_pInputFilter) {
-	  bChanged = m_pInputFilter->Timer(iTime, m_pDasherView, m_pDasherModel, &vAdded, &iNumDeleted, &pol);
-	}
+  if(m_pInputFilter) {
+    bChanged = m_pInputFilter->Timer(iTime, m_pDasherView, m_pDasherModel, &vAdded, &iNumDeleted, &pol);
+  }
 
 #ifndef _WIN32_WCE
-	if (iNumDeleted > 0)
-	  m_pUserLog->DeleteSymbols(iNumDeleted);
-	if (vAdded.size() > 0)
-	  m_pUserLog->AddSymbols(&vAdded);
+  if (iNumDeleted > 0)
+    m_pUserLog->DeleteSymbols(iNumDeleted);
+  if (vAdded.size() > 0)
+    m_pUserLog->AddSymbols(&vAdded);
 #endif
 
       }
       else {
-	if(m_pInputFilter) {
-	  bChanged = m_pInputFilter->Timer(iTime, m_pDasherView, m_pDasherModel, 0, 0, &pol);
-	}
+  if(m_pInputFilter) {
+    bChanged = m_pInputFilter->Timer(iTime, m_pDasherView, m_pDasherModel, 0, 0, &pol);
+  }
       }
 
       m_pDasherModel->CheckForNewRoot(m_pDasherView);
@@ -585,7 +585,7 @@ void CDasherInterfaceBase::Redraw(bool bRedrawNodes, CExpansionPolicy &policy) {
   // Draw the nodes
   if(bRedrawNodes) {
     m_pDasherView->Screen()->SendMarker(0);
-	if (m_pDasherModel) m_bLastChanged |= m_pDasherModel->RenderToView(m_pDasherView,policy);
+  if (m_pDasherModel) m_bLastChanged |= m_pDasherModel->RenderToView(m_pDasherView,policy);
   }
 
   // Draw the decorations
@@ -668,8 +668,8 @@ void CDasherInterfaceBase::ChangeScreen(CDasherScreen *NewScreen) {
   PositionActionButtons();
   BudgettingPolicy pol(GetLongParameter(LP_NODE_BUDGET)); //maintain budget, but allow arbitrary amount of work.
   Redraw(true, pol); // (we're assuming resolution changes are occasional, i.e.
-	// we don't need to worry about maintaining the frame rate, so we can do
-	// as much work as necessary. However, it'd probably be better still to
+  // we don't need to worry about maintaining the frame rate, so we can do
+  // as much work as necessary. However, it'd probably be better still to
   // get a node queue from the input filter, as that might have a different
   // policy / budget.
 }
@@ -688,7 +688,7 @@ void CDasherInterfaceBase::ChangeView() {
 
     // Tell the Teacher which view we are using
     if(GameMode::CDasherGameMode* pTeacher = GameMode::CDasherGameMode::GetTeacher())
-	pTeacher->SetDasherView(m_pDasherView);
+  pTeacher->SetDasherView(m_pDasherView);
   }
 }
 
@@ -761,8 +761,8 @@ void CDasherInterfaceBase::ResetNats() {
 //        // TODO: Reimplement this
 //        //       if(m_pDasherModel->m_bContextSensitive || bForceStart) {
 //        {
-//  	m_pDasherModel->SetContext(strNewContext);
-//  	PauseAt(0,0);
+//    m_pDasherModel->SetContext(strNewContext);
+//    PauseAt(0,0);
 //        }
 //      }
 
@@ -877,9 +877,9 @@ void CDasherInterfaceBase::KeyUp(int iTime, int iId, bool bPos, int iX, int iY) 
 
 void CDasherInterfaceBase::InitGameModule() {
 
-	if(m_pGameModule == NULL) {
-		m_pGameModule = (CGameModule*) GetModuleByName("Game Mode");
-	}
+  if(m_pGameModule == NULL) {
+    m_pGameModule = (CGameModule*) GetModuleByName("Game Mode");
+  }
 }
 
 void CDasherInterfaceBase::CreateInputFilter()
@@ -957,8 +957,10 @@ void CDasherInterfaceBase::CreateModules() {
   // conditional?
   // TODO: I don't know what a sensible module ID should be
   // for this, so I chose an arbitrary value
-  // TODO: Put "Game Mode" in enumeration in Parameter.h	  
-  RegisterModule(new CGameModule(m_pEventHandler, m_pSettingsStore, this, 21, _("Game Mode")));
+  // TODO: Put "Game Mode" in enumeration in Parameter.h    
+  int GameEvents[] = {EV_EDIT, EV_TEXTDRAW};
+  RegisterModule(new CGameModule(m_pEventHandler, m_pSettingsStore, this, 21, _("Game Mode"),
+                                  std::vector<int>(GameEvents, GameEvents + sizeof(GameEvents) / sizeof(int))));
 }
 
 void CDasherInterfaceBase::GetPermittedValues(int iParameter, std::vector<std::string> &vList) {

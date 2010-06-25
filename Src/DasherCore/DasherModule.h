@@ -34,6 +34,7 @@ typedef std::vector<CDasherModule*>::size_type ModuleID_t;
 class CDasherModule : public Dasher::CDasherComponent {
  public:
   CDasherModule(Dasher::CEventHandler * pEventHandler, CSettingsStore * pSettingsStore, ModuleID_t iID, int iType, const char *szName);
+  CDasherModule(Dasher::CEventHandler * pEventHandler, CSettingsStore * pSettingsStore, ModuleID_t iID, int iType, const char *szName, std::vector<int> vEvents);
 
   virtual ModuleID_t GetID();
   virtual void SetID(ModuleID_t);
