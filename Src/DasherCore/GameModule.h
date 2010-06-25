@@ -9,6 +9,7 @@
 using namespace std;
 
 #include "DasherView.h"
+#include "DasherScreen.h"
 #include "DasherModel.h"
 #include "DasherModule.h"
 #include "DasherNode.h"
@@ -31,17 +32,18 @@ class CGameModule : public CDasherModule {
   // Maybe we should define a new one. I've labeled it 0 for now. - rgee
   CGameModule(Dasher::CEventHandler *pEventHandler, CSettingsStore *pSettingsStore,  
   CDasherInterfaceBase *pInterface, ModuleID_t iID, const char *szName) 
-  : m_iArrowColor(135),
-	m_dArrowSizeFactor(0.1),
-    m_iArrowNumPoints(2),
+  : m_iCrosshairColor(135),
+    m_iCrosshairNumPoints(2),
+    m_iCrosshairExtent(25),
+    m_iCrosshairCrosslineLength(50),
     CDasherModule(pEventHandler, pSettingsStore, iID, 0, szName)
-  { 	  
-	  m_pInterface = pInterface;
-	  
-	  //TODO REMOVE THIS!!!
-	  m_sTargetString = "My name is julian.";
+  {     
+    m_pInterface = pInterface;
+    
+    //TODO REMOVE THIS!!!
+    m_sTargetString = "My name is julian.";
 
-	  m_stCurrentStringPos = 0;
+    m_stCurrentStringPos = 0;
 
   }
 
@@ -59,9 +61,13 @@ class CGameModule : public CDasherModule {
    */
   std::string GetUntypedTarget();
 
-  bool DecorateView(CDasherView *pView);
 
-  void SetDasherModel(CDasherModel *pModel) { m_pModel = pModel; }
+  /**
+   * Draws Game Mode specific visuals to the screen.
+   * @param pView The Dasher View to be modified
+   * @return True if the view was modified, false otherwise.
+   */
+  bool DecorateView(CDasherView *pView);
 
   /**
    * Handle events from the event processing system
@@ -99,7 +105,7 @@ class CGameModule : public CDasherModule {
   
   /**
    * The target string the user must type.
-   */	
+   */ 
   std::string m_sTargetString;
 
   /**
@@ -109,39 +115,39 @@ class CGameModule : public CDasherModule {
   size_t m_stCurrentStringPos;
 
   /**
-   * The dasher model.
-   */
-  CDasherModel *m_pModel;
-
-  /**
    * The dasher interface.
    */
   CDasherInterfaceBase *m_pInterface;
   
   /**
-   * The target x coordinate for the arrow to point to. 
+   * The target x coordinate for the crosshair to point to. 
    */
   myint m_iTargetX;
 
   /**
-   * The target y coordinate for the arrow to point to.
+   * The target y coordinate for the crosshair to point to.
    */
   myint m_iTargetY;
   
   /**
-   * The color (in Dasher colors) to make the guiding arrow.
+   * The color (in Dasher colors) to make the crosshair.
    */
-  const int m_iArrowColor;
-
+  const int m_iCrosshairColor;
   /**
-   * The factor by which the size the hat on the guiding arrow
+   * The number of points that the crosshair's lines pass through.
    */
-  const double m_dArrowSizeFactor;
-
+  const int m_iCrosshairNumPoints;
+  
   /**
-   * The number of points that the guiding arrow passes through
+   * The side length (in pixels) of the crosshair's square portion.
    */
-  const int m_iArrowNumPoints;
+  const int m_iCrosshairExtent;
+  
+  /**
+   * The length of the lines comprising the crosshair's
+   * "cross".
+   */
+  const int m_iCrosshairCrosslineLength;
 
 };
 } 
