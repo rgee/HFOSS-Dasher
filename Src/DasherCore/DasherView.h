@@ -144,6 +144,15 @@ public:
   ///
 
   void DasherPolyline(myint * x, myint * y, int n, int iWidth, int iColour);
+  
+  /**
+   * Draw a line in screen coordinates. Needed for drawing without respect to
+   * the strange squishing and resizing that can happen when drawing in Dasher
+   * coordinates.
+   * 
+   * @see DasherPolyline
+   */
+  void ScreenPolyline(screenint * x, screenint * y, int n, int iWidth, int iColour);
 
 
   /**
@@ -157,7 +166,7 @@ public:
    * @param x - an array of x coordinates to draw the arrow through
    * @param y - an array of y coordinates to draw the arrow through
    * @param iWidth - the width to make the arrow lines - typically of the form
-   *				 GetLongParameter(LP_LINE_WIDTH)*CONSTANT
+   *         GetLongParameter(LP_LINE_WIDTH)*CONSTANT
    * @param iColour - the color to make the arrow (in Dasher color)
    * @param dArrowSizeFactor - the factor by which to scale the "hat" on the arrow
    */

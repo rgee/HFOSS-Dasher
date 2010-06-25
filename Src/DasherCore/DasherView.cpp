@@ -154,8 +154,8 @@ bool CDasherView::ClipLineToVisible(myint &x1, myint &y1, myint &x2, myint &y2) 
   }
   return true;
 }
-
 /// Draw a polyline specified in Dasher co-ordinates
+
 
 void CDasherView::DasherPolyline(myint *x, myint *y, int n, int iWidth, int iColour) {
 
@@ -171,6 +171,24 @@ void CDasherView::DasherPolyline(myint *x, myint *y, int n, int iWidth, int iCol
     Screen()->Polyline(ScreenPoints, n, iWidth,0);//no color given
   }
   delete[]ScreenPoints;
+}
+
+void CDasherView::ScreenPolyline(screenint *x, screenint *y, int n, int iWidth, int iColour) {
+  CDasherScreen::point * ScreenPoints = new CDasherScreen::point[n];
+  
+  for(int i(0); i < n; ++i)
+  {
+    ScreenPoints[i].x = x[i];
+    ScreenPoints[i].y = y[i];
+  }
+  
+  if(iColour != -1) {
+    Screen()->Polyline(ScreenPoints, n, iWidth, iColour);
+  }
+  else {
+    Screen()->Polyline(ScreenPoints, n, iWidth, 0);
+  }
+  delete[] ScreenPoints;
 }
 
 // Draw a polyline with an arrow on the end
