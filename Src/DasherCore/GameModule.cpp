@@ -12,12 +12,13 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
             switch(evt->m_iEditType)
             {
                 // Added a new character (Stepped one node forward)
-                case 0:
-                    m_stCurrentStringPos++;
-                    //pLastTypedNode = StringToNode(evt->m_sText); 
+                case 1:
+                    if(!evt->m_sText.compare(m_sTargetString.substr(m_stCurrentStringPos + 1, 1)))
+                      ++m_stCurrentStringPos;
                     break;
                 // Removed a character (Stepped one node back)
-                case 1:
+                case 0:
+                    g_pLogger->Log("Removed a character: " + evt->m_sText);
                     break;
                 default:
                     break;
