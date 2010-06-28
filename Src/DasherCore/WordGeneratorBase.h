@@ -1,3 +1,6 @@
+#ifndef __WordGeneratorBase_h__
+#define __WordGeneratorBase_h__
+
 #include <string>
 using namespace std;
 
@@ -13,40 +16,42 @@ namespace Dasher {
  */ 
 class CWordGeneratorBase {
 public:
-	CWordGeneratorBase(int regen) : m_iRegenTime(regen), m_bWordsReady(false) {}
+  CWordGeneratorBase(int regen) : m_iRegenTime(regen), m_bWordsReady(false) {}
 
-	virtual ~CWordGeneratorBase() { } 
+  virtual ~CWordGeneratorBase() { } 
 
 
-    /**
-     * Gets a single word based on the generation rules.
-	 * @pre { Generate must have been called at least once. }
-     * @return The next string from this generator
-     */
-	virtual std::string	GetNextWord() = 0;
+  /**
+   * Gets a single word based on the generation rules.
+   * @pre { Generate must have been called at least once. }
+   * @return The next string from this generator
+   */
+  virtual std::string GetNextWord() = 0;
 
-	/**
-     * Gets the previous word in the generated string based on generation rules.
-	 * @pre { Generate must have been called at least once. }
-	 * @return The previous string from this generator
-     */
-	//virtual std::string GetPrevWord() = 0;
+  /**
+   * Gets the previous word in the generated string based on generation rules.
+   * @pre { Generate must have been called at least once. }
+   * @return The previous string from this generator
+   */
+  //virtual std::string GetPrevWord() = 0;
 
-    /**
-     * Generate the words based on the generation rules
-	 * @return True if the generation succeeded, false if not.
-	 * @warning The return value of this function should always be checked in case it's using files.
-     */
-	virtual bool Generate() = 0;
+  /**
+   * Generate the words based on the generation rules
+   * @return True if the generation succeeded, false if not.
+   * @warning The return value of this function should always be checked in case it's using files
+   *          or other solutions that can fail.
+   */
+  virtual bool Generate() = 0;
 protected:
-	/**
-     * The time in seconds after which a generator should regenerate.
-     */
-	int m_iRegenTime;
+  /**
+   * The time in seconds after which a generator should regenerate.
+   */
+  int m_iRegenTime;
 
-    /** 
-     * A boolean representing whether the words have been generated yet.
-     */
-	bool m_bWordsReady;
+  /** 
+   * A boolean representing whether the words have been generated yet.
+   */
+  bool m_bWordsReady;
 };
 }
+#endif

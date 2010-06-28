@@ -8,13 +8,20 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
     {
         case EV_EDIT:
         {     
-                CEditEvent* evt = static_cast<CEditEvent*>(pEvent);
+            CEditEvent* evt = static_cast<CEditEvent*>(pEvent);
             switch(evt->m_iEditType)
             {
                 // Added a new character (Stepped one node forward)
                 case 1:
-                    if(!evt->m_sText.compare(m_sTargetString.substr(m_stCurrentStringPos + 1, 1)))
-                      ++m_stCurrentStringPos;
+                    // Check if the typed character is correct
+                    if(!evt->m_sText.compare(m_sTargetString.substr(m_stCurrentStringPos + 1, 1))) {
+                      // Check if we've reached the end of a chunk
+                      if((m_stCurrentStringPos + 1) == m_sTargetString.length()) {
+                        GenerateChunk();
+                      } else {
+                        ++m_stCurrentStringPos;
+                      }
+                    }
                     break;
                 // Removed a character (Stepped one node back)
                 case 0:
@@ -26,17 +33,18 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
             break;
         }
         case EV_TEXTDRAW:
-            {
-                CTextDrawEvent *evt = static_cast<CTextDrawEvent*>(pEvent);
-                if(!m_sTargetString.substr(m_stCurrentStringPos+1, 1).compare(evt->m_sDisplayText)) { 
-                        
-                     //the x and y coordinates (in Dasher coords) of the target node
-                     evt->m_pDasherView->Screen2Dasher(evt->m_iX, evt->m_iY, m_iTargetX, m_iTargetY);
-                  }
+        {
+          CTextDrawEvent *evt = static_cast<CTextDrawEvent*>(pEvent);
+          // Check whether the text that was drawn is the current target character.
+          if(!m_sTargetString.substr(m_stCurrentStringPos + 1, 1).compare(evt->m_sDisplayText)) { 
+                  
+               //the x and y coordinates (in Dasher coords) of the target node
+               evt->m_pDasherView->Screen2Dasher(evt->m_iX, evt->m_iY, m_iTargetX, m_iTargetY);
             }
-            break;
-        default:
+        }
         break;
+        default:
+          break;
 
     }
     return;
@@ -98,3 +106,10 @@ std::string CGameModule::GetUntypedTarget() {
     return m_sTargetString.substr(m_stCurrentStringPos);
 }
 
+void CGameModule::GenerateChunk() {
+  m_stCurrentStringPos = 0;
+  m_sTargetString.clear();
+  for(int i = 0; i < m_iTargetChunkSize; i++) {
+    m_sTargetString += m_pWordGenerator->GetNextWord();
+  }
+}
