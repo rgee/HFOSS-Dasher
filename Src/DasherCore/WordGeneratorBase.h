@@ -35,6 +35,7 @@ public:
    */
   //virtual std::string GetPrevWord() = 0;
 
+protected:
   /**
    * Generate the words based on the generation rules
    * @return True if the generation succeeded, false if not.
@@ -42,7 +43,7 @@ public:
    *          or other solutions that can fail.
    */
   virtual bool Generate() = 0;
-protected:
+
   /**
    * The time in seconds after which a generator should regenerate.
    */
