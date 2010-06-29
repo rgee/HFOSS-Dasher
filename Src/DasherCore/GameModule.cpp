@@ -16,7 +16,7 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
                     // Check if the typed character is correct
                     if(!evt->m_sText.compare(m_sTargetString.substr(m_stCurrentStringPos + 1, 1))) {
                       // Check if we've reached the end of a chunk
-                      if((m_stCurrentStringPos + 1) == m_sTargetString.length()) {
+                      if((m_stCurrentStringPos) == m_sTargetString.length()) {
                         GenerateChunk();
                       } else {
                         ++m_stCurrentStringPos;
@@ -111,5 +111,6 @@ void CGameModule::GenerateChunk() {
   m_sTargetString.clear();
   for(int i = 0; i < m_iTargetChunkSize; i++) {
     m_sTargetString += m_pWordGenerator->GetNextWord();
+    m_sTargetString += " ";
   }
 }

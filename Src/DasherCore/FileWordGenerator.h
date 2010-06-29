@@ -16,13 +16,21 @@ public:
       // This path is set manually for now debug/dev purposes. -rgee
     : m_sPath("~/Desktop/test_text.txt"),
       CWordGeneratorBase(regen) 
-      {}
+      {Generate();}
   CFileWordGenerator(std::string path)
     : m_sPath("~/Desktop/test_text.txt"),
       CWordGeneratorBase(0)
       {Generate();}
+      
+  virtual ~CFileWordGenerator() {
+    m_sFileHandle.close();
+  }
+  
+  
   /**
    * The generator function. In this implementation, it reads from a file to produce strings.
+   * In this implementation, failure means file io has failed for some
+   * reason.
    * @see CWordGeneratorBase::Generate
    */
   virtual bool Generate();
@@ -47,12 +55,6 @@ public:
    */
   std::string GetFilename();
   
-  /**
-   * Sets the source file this generator reads from.
-   * @warning This method regenerates the word generator model and gets rid of the old data.
-   * @param newPath The path to the file to load from.
-   */
-  void SetSource(std::string newPath);
   
   /**
    * Checks if there are any words left to produce.
@@ -79,6 +81,11 @@ private:
    * Flag for whether there are words left in this model.
    */
   bool m_bWordsLeft;
+  
+  /**
+   * The input stream that acts as the handle to the underlying file.
+   */
+  ifstream m_sFileHandle;
 };
 }
 
