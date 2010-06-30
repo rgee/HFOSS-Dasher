@@ -51,19 +51,15 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
 }
 
 bool CGameModule::CharacterFound(CEditEvent* pEvent) {
-  if(m_stCurrentStringPos == 0) {
-    return (!pEvent->m_sText.compare(m_sTargetString.substr(m_stCurrentStringPos, 1)));
-  } else {
-    return (!pEvent->m_sText.compare(m_sTargetString.substr(m_stCurrentStringPos + 1, 1)));
-  }
+  return( (m_stCurrentStringPos == 0) ?
+            !pEvent->m_sText.compare(m_sTargetString.substr(m_stCurrentStringPos, 1)) :
+            !pEvent->m_sText.compare(m_sTargetString.substr(m_stCurrentStringPos + 1, 1)));
 }
 
 bool CGameModule::CharacterFound(CTextDrawEvent* pEvent) {
-  if(m_stCurrentStringPos == 0) {
-    return (!pEvent->m_sDisplayText.compare(m_sTargetString.substr(m_stCurrentStringPos, 1)));
-  } else {
-    return (!pEvent->m_sDisplayText.compare(m_sTargetString.substr(m_stCurrentStringPos + 1, 1)));
-  }
+  return( (m_stCurrentStringPos == 0) ?
+            !pEvent->m_sDisplayText.compare(m_sTargetString.substr(m_stCurrentStringPos, 1)) :
+            !pEvent->m_sDisplayText.compare(m_sTargetString.substr(m_stCurrentStringPos + 1, 1)));
 }
 
 bool CGameModule::DecorateView(CDasherView *pView) {
@@ -106,6 +102,14 @@ bool CGameModule::DecorateView(CDasherView *pView) {
     y = {screenTargetY, screenTargetY};
     pView->ScreenPolyline(x, y, m_iCrosshairNumPoints, GetLongParameter(LP_LINE_WIDTH)*4, m_iCrosshairColor);
     
+    
+    
+    
+    // Draw the target strings. One color for the completed portion
+    // and another for the uncompleted portion.
+    //pView->DrawText(GetTypedTarget(), 20, 20, 200, m_iCrosshairColor);
+    pView->DrawText(GetUntypedTarget(), 400, 20, 200, m_iCrosshairColor);
+    
     return true;
 }
 
@@ -114,11 +118,14 @@ bool CGameModule::DecorateView(CDasherView *pView) {
 //}
 
 std::string CGameModule::GetTypedTarget() {
-    return m_sTargetString.substr(0, m_stCurrentStringPos - 1);
+    return ((m_stCurrentStringPos == 0) ?
+            "" : m_sTargetString.substr(0, m_stCurrentStringPos - 1));
 }
 
 std::string CGameModule::GetUntypedTarget() {
-    return m_sTargetString.substr(m_stCurrentStringPos);
+    return ((m_stCurrentStringPos == 0) ?
+            m_sTargetString.substr(m_stCurrentStringPos) :
+             m_sTargetString.substr(m_stCurrentStringPos + 1));
 }
 
 void CGameModule::GenerateChunk() {
