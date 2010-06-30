@@ -10,6 +10,22 @@ using namespace std;
 #include "DasherInterfaceBase.h"
 
 namespace Dasher {
+  
+  
+/**
+ * This class implements the Word Generator interface. This means
+ * that after construction, your primary method of retrieving words
+ * will be calling GetNextWord(). For specifics on Word Generators,
+ * see CWordGeneratorBase.
+ * 
+ * This class specifically reads words from a given file. Files ARE
+ * kept open for the lifetime of this object and the size of the file
+ * should not pose an issue. 
+ * 
+ * However, if you read in a file that has unreasonably long lines,
+ * the behavior is undefined as you may cause the file to be read in all
+ * at once. 
+ */
 class CFileWordGenerator : public CWordGeneratorBase {
 public:
   CFileWordGenerator(std::string path, int regen) 

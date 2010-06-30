@@ -13,10 +13,22 @@ namespace Dasher {
  * written that selects words based on a function of the current value
  * of the Sri Lankan rupee and the amount of twitter feeds regarding
  * the winter olympics, for example.
+ * 
+ * 
+ * A typical use case for any class deriving from CWordGeneratorBase
+ * would be the following:
+ *    1) Construct the object (providing any implementation-specific params)
+ *       - The words will be generated on construction.
+ * 
+ *    2) To retrieve a word, simply call GetNextWord. This will continue
+ *       until the specific implementation determines that there are no
+ *       more words for any reason. When there are no more, GetNextWord
+ *       returns the empty string.
  */ 
 class CWordGeneratorBase {
 public:
-  CWordGeneratorBase(int regen) : m_iRegenTime(regen), m_bWordsReady(false) {}
+  CWordGeneratorBase(int regen) : m_iRegenTime(regen), m_bWordsReady(false) 
+  {}
 
   virtual ~CWordGeneratorBase() { } 
 
