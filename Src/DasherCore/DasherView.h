@@ -187,6 +187,19 @@ public:
   void DasherDrawCentredRectangle(myint iDasherX, myint iDasherY, screenint iSize, const int Color, Opts::ColorSchemes ColorScheme, bool bDrawOutline);
 
   void DrawText(const std::string & str, myint x, myint y, int Size, int iColor);
+  
+  /**
+   * Draw a string to the screen. Defined in screen coordinates because
+   * the original implementation will conver them anyway. They're also
+   * easier to reason about for drawing overlays.
+   * @param str The actual string to be drawn
+   * @param x The x coordinate in screen coordinates.
+   * @param y The y coordinate in screen coordinates.
+   * @param iSize The size of the text.
+   * @param iColor The color of the text.
+   */
+  void DrawText(const std::string & str, screenint x, screenint y, int iSize, int iColor);
+  
   /// Request the Screen to copy its buffer to the Display
   /// \todo Shouldn't be public?
   void Display();

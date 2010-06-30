@@ -41,6 +41,7 @@ class CGameModule : public CDasherModule {
     m_iCrosshairExtent(25),
     m_iCrosshairCrosslineLength(50),
     m_iTargetChunkSize(3),
+    m_iFontSize(36),
     m_pWordGenerator(pWordGenerator),
     CDasherModule(pEventHandler, pSettingsStore, iID, 0, szName, vEvents)
   {     
@@ -194,7 +195,7 @@ class CGameModule : public CDasherModule {
   const int m_iCrosshairExtent;
   
   /**
-   * The length of the lines comprising the crosshair's
+   * The length of the lines comprising the crosshair's.
    * "cross".
    */
   const int m_iCrosshairCrosslineLength;
@@ -204,6 +205,11 @@ class CGameModule : public CDasherModule {
    * to type.
    */
   const int m_iTargetChunkSize;
+  
+  /**
+   * The font size used to draw the target string.
+   */
+  const int m_iFontSize;
 
 };
 } 
