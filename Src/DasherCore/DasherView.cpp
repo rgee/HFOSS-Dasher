@@ -243,6 +243,11 @@ void CDasherView::DasherDrawCentredRectangle(myint iDasherX, myint iDasherY, scr
   Screen()->DrawRectangle(iScreenX - iSize, iScreenY - iSize, iScreenX + iSize, iScreenY + iSize, Color, -1, ColorScheme, bDrawOutline ? 1 : 0);
 }
 
+
+void DrawText(const std::string & str, screenint x, screenint y, int iSize, int iColor) {
+  Screen()->DrawString(str, x, y, iSize, iColor);
+}
+
 void CDasherView::DrawText(const std::string & str, myint x, myint y, int Size, int iColor) {
   screenint X, Y;
   Dasher2Screen(x, y, X, Y);
