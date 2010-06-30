@@ -12,6 +12,7 @@ bool CFileWordGenerator::Generate() {
   m_sGeneratedString.clear();
   if(m_sFileHandle.good()) {
     std::getline(m_sFileHandle, m_sGeneratedString);
+    FindNextWord();
     return true;
   } else {
     return false;
@@ -26,6 +27,13 @@ std::string CFileWordGenerator::GetFilename() {
 }
 
 std::string CFileWordGenerator::GetNextWord() {
+  std::string result = m_sCurrentWord;
+  FindNextWord();
+  
+  return result;
+}
+
+void CFileWordGenerator::FindNextWord() {
   std::string result;
   
   // We are at the end of the buffer.
@@ -35,7 +43,7 @@ std::string CFileWordGenerator::GetNextWord() {
     {
       // If file IO fails, return empty.
       result = "";
-      return result;
+      m_sCurrentWord =  result;
     }
   } 
   
@@ -50,6 +58,10 @@ std::string CFileWordGenerator::GetNextWord() {
   } else {
     result = m_sGeneratedString.substr(m_uiPos);
   }
-  
-  return result;
+  m_sCurrentWord = result;
+}
+
+CWordGeneratorBase& CFileWordGenerator::operator++() {
+  GetNextWord();
+  return *this;
 }

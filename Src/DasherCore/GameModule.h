@@ -85,6 +85,26 @@ class CGameModule : public CDasherModule {
   virtual void HandleEvent(Dasher::CEvent *pEvent); 
 
  private:
+/* ---------------------------------------------------------------------
+ * Private Methods
+ * ---------------------------------------------------------------------
+ */
+
+  /**
+   * Checks whether the character associated with the given event
+   * is the character we're currently targetting. A convenience method
+   * that encapsulates + localizes some of the string manipulation logic.
+   *
+   * @param pEvent An edit event.
+   * @return True if the character associated with the given event
+   *          is equal to the character we're looking for. False otherwise.
+   */
+  bool CharacterFound(CEditEvent* pEvent);
+  
+  /**
+   * @see CharacterFound
+   */
+  bool CharacterFound(CTextDrawEvent* pEvent);
 
   /**
    * Helper function for generating (Or regenerating) a new chunk.
@@ -102,12 +122,12 @@ class CGameModule : public CDasherModule {
    */
   myint DistanceFromOrigin(myint xCoord, myint yCoord);
 
-  /**
-   * Searches for the dasher node under the current root that represents the desired string
-   * @param text The string to search for
-   * @return The node representing the string parameter
-   */
-   //Dasher::CDasherNode StringToNode(std::string sText); 
+  
+/* ---------------------------------------------------------------------
+ * Member Variables
+ * ---------------------------------------------------------------------
+ */
+   
    
   /**
    * Pointer to the object that encapsulates the word generation
@@ -150,6 +170,9 @@ class CGameModule : public CDasherModule {
    * The target y coordinate for the crosshair to point to.
    */
   myint m_iTargetY;
+  
+  
+  
   
 /* ---------------------------------------------------------------------
  * Constants

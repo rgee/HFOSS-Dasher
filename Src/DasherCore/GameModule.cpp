@@ -14,9 +14,9 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
                 // Added a new character (Stepped one node forward)
                 case 1:
                     // Check if the typed character is correct
-                    if(!evt->m_sText.compare(m_sTargetString.substr(m_stCurrentStringPos + 1, 1))) {
+                    if(CharacterFound(evt)) {
                       // Check if we've reached the end of a chunk
-                      if((m_stCurrentStringPos) == m_sTargetString.length()) {
+                      if((m_stCurrentStringPos)  == m_sTargetString.length() - 2) {
                         GenerateChunk();
                       } else {
                         ++m_stCurrentStringPos;
@@ -36,8 +36,7 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
         {
           CTextDrawEvent *evt = static_cast<CTextDrawEvent*>(pEvent);
           // Check whether the text that was drawn is the current target character.
-          if(!m_sTargetString.substr(m_stCurrentStringPos + 1, 1).compare(evt->m_sDisplayText)) { 
-                  
+          if(CharacterFound(evt)) { 
                //the x and y coordinates (in Dasher coords) of the target node
                evt->m_pDasherView->Screen2Dasher(evt->m_iX, evt->m_iY, m_iTargetX, m_iTargetY);
             }
@@ -49,6 +48,22 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
     }
     return;
 
+}
+
+bool CGameModule::CharacterFound(CEditEvent* pEvent) {
+  if(m_stCurrentStringPos == 0) {
+    return (!pEvent->m_sText.compare(m_sTargetString.substr(m_stCurrentStringPos, 1)));
+  } else {
+    return (!pEvent->m_sText.compare(m_sTargetString.substr(m_stCurrentStringPos + 1, 1)));
+  }
+}
+
+bool CGameModule::CharacterFound(CTextDrawEvent* pEvent) {
+  if(m_stCurrentStringPos == 0) {
+    return (!pEvent->m_sDisplayText.compare(m_sTargetString.substr(m_stCurrentStringPos, 1)));
+  } else {
+    return (!pEvent->m_sDisplayText.compare(m_sTargetString.substr(m_stCurrentStringPos + 1, 1)));
+  }
 }
 
 bool CGameModule::DecorateView(CDasherView *pView) {

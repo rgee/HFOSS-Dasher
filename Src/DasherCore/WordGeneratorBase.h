@@ -24,6 +24,14 @@ namespace Dasher {
  *       until the specific implementation determines that there are no
  *       more words for any reason. When there are no more, GetNextWord
  *       returns the empty string.
+ * 
+ * After construcing the object, you also have the option of a secondary
+ * usage method:
+ *    1) Construc the object as normal
+ * 
+ *    2) Use the PREFIX increment operator to ready up the next word
+ * 
+ *    3) Call GetNextWord.
  */ 
 class CWordGeneratorBase {
 public:
@@ -41,18 +49,24 @@ public:
   virtual std::string GetNextWord() = 0;
 
   /**
+   * -- NOT YET IMPLEMENTED --
    * Gets the previous word in the generated string based on generation rules.
    * @pre { Generate must have been called at least once. }
    * @return The previous string from this generator
    */
-  //virtual std::string GetPrevWord() = 0;
+  //virtual std::string GetPreviousWord() = 0;
+  
+  /**
+   * All word generators must provide the prefix increment operator.
+   */
+  virtual CWordGeneratorBase& operator++() = 0;
 
 protected:
   /**
    * Generate the words based on the generation rules
    * @return True if the generation succeeded, false if not.
-   * @warning The return value of this function should always be checked in case it's using files
-   *          or other solutions that can fail.
+   * @warning The return value of this function should always be checked
+   *          in case it's using files or other solutions that can fail.
    */
   virtual bool Generate() = 0;
 

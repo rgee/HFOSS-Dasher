@@ -28,13 +28,14 @@ namespace Dasher {
  */
 class CFileWordGenerator : public CWordGeneratorBase {
 public:
-  CFileWordGenerator(std::string path, int regen) 
-      // This path is set manually for now debug/dev purposes. -rgee
-    : m_sPath("~/Desktop/test_text.txt"),
-      CWordGeneratorBase(regen) 
+  CFileWordGenerator(std::string sPath, int iRegen) 
+    : m_sPath(sPath),
+      m_sCurrentWord(""),
+      CWordGeneratorBase(iRegen)
       {Generate();}
-  CFileWordGenerator(std::string path)
-    : m_sPath("~/Desktop/test_text.txt"),
+  CFileWordGenerator(std::string sPath)
+    : m_sPath(sPath),
+      m_sCurrentWord(""),
       CWordGeneratorBase(0)
       {Generate();}
       
@@ -44,9 +45,9 @@ public:
   
   
   /**
-   * The generator function. In this implementation, it reads from a file to produce strings.
-   * In this implementation, failure means file io has failed for some
-   * reason.
+   * The generator function. In this implementation, it reads from a 
+   * file to produce strings.In this implementation, failure means file 
+   * io has failed for some reason.
    * @see CWordGeneratorBase::Generate
    */
   virtual bool Generate();
@@ -71,13 +72,43 @@ public:
    */
   std::string GetFilename();
   
-  
   /**
-   * Checks if there are any words left to produce.
-   * @return true if there are words left, false otherwise
+   * Prefix increment operator.
+   * 
+   * Moves the generator one word ahead.
    */
-  bool WordsLeft() { return m_bWordsLeft; }
+  virtual CWordGeneratorBase& operator++();
+  
+
 private:
+/* ---------------------------------------------------------------------
+ * Private Methods
+ * ---------------------------------------------------------------------
+ */
+
+  /**
+   * Find the next word in the generated string buffer.
+   * This does NOT return that string, which is why this is not a public
+   * facing method. It only updates the current string to be presented.
+   * 
+   * @warning Ensure that this is called whenever m_sGeneratedString is
+   *          remade or whenever the current word is actually presented
+   *          to a client.
+   */
+  void FindNextWord();
+
+
+/* ---------------------------------------------------------------------
+ * Member Variables
+ * ---------------------------------------------------------------------
+ */
+
+  /**
+   * The current word we're looking at. This is the next word that
+   * will be returned when GetNextWord is called.
+   */
+  std::string m_sCurrentWord;
+
   /**
    * The string that has been generated.
    */
