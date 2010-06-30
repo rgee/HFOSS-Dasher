@@ -14,7 +14,7 @@
 
 # Points to the root of Google Test, relative to where this file is.
 # Remember to tweak this if you move this file.
-GTEST_DIR = ../gtest-1.5.0
+GTEST_DIR = ../gtest
 
 # Where to find user code.
 USER_DIR = .
