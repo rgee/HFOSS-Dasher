@@ -79,6 +79,10 @@ public:
    */
   virtual CWordGeneratorBase& operator++();
   
+  
+  std::ifstream GetFileHandle() { return m_sFileHandle; }
+  std::string GetWholeBuffer() { return m_sGeneratedString; }
+  size_t GetStringPosition() { return m_uiPos; }
 
 private:
 /* ---------------------------------------------------------------------

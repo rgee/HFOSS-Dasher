@@ -13,4 +13,5 @@ protected:
 
 
 TEST_F(FileWordGenTest, OpensFileCorrectly) {
+  ASSERT_TRUE(gen->GetFileHandle().is_open());
 }
