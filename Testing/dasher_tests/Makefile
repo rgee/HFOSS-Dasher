@@ -19,15 +19,19 @@ GTEST_DIR = ../gtest
 # Where to find user code.
 USER_DIR = .
 
+# Where to find dasher source code and object files
+DASHER_DIR = ../../dasher-sandbox/Src
+
 # Flags passed to the preprocessor.
-CPPFLAGS += -I$(GTEST_DIR)/include
+CPPFLAGS += -I$(GTEST_DIR)/include -I$(DASHER_DIR)/DasherCore
 
 # Flags passed to the C++ compiler.
 CXXFLAGS += -g -Wall -Wextra
 
 # All tests produced by this Makefile.  Remember to add new tests you
 # created to the list.
-TESTS = EventTest
+TESTS = EventTest \
+				FileWordGenTest
 
 # All Google Test headers.  Usually you shouldn't change this
 # definition.
@@ -78,10 +82,19 @@ gtest_main.a : gtest-all.o gtest_main.o
 
 #sample1_unittest : sample1.o sample1_unittest.o gtest_main.a
 #	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
-	
-EventTest : EventTest.o gtest_main.a
+
+FileWordGenTest : FileWordGenTest.o gtest_main.a
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
+	
+FileWordGenTest.o : $(USER_DIR)/FileWordGenTest.cpp
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/FileWordGenTest.cpp	
+
+EventTest : EventTest.o gtest_main.a
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(DASHER_DIR)/DasherCore/FileWordGenerator.o -lpthread $^ -o $@
 
 EventTest.o : $(USER_DIR)/EventTest.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/EventTest.cpp
+
+
+
 
