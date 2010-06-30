@@ -19,8 +19,10 @@ GTEST_DIR = ../gtest
 # Where to find user code.
 USER_DIR = .
 
-# Where to find dasher source code and object files
-DASHER_DIR = ../../dasher-sandbox/Src
+# Where to find dasher object files
+DASHER_SANDBOX_DIR = ../../dasher-sandbox/Src
+
+DASHER_DIR = ../../Src
 
 # Flags passed to the preprocessor.
 CPPFLAGS += -I$(GTEST_DIR)/include -I$(DASHER_DIR)/DasherCore
@@ -90,7 +92,7 @@ FileWordGenTest.o : $(USER_DIR)/FileWordGenTest.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/FileWordGenTest.cpp	
 
 EventTest : EventTest.o gtest_main.a
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(DASHER_DIR)/DasherCore/FileWordGenerator.o -lpthread $^ -o $@
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(DASHER_SANDBOX_DIR)/DasherCore/FileWordGenerator.o -lpthread $^ -o $@
 
 EventTest.o : $(USER_DIR)/EventTest.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/EventTest.cpp
