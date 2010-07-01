@@ -137,16 +137,6 @@ class CGameModule : public CDasherModule {
   CWordGeneratorBase* m_pWordGenerator;
   
   /**
-   * The last node the user typed.
-   */
-  CDasherNode *pLastTypedNode;
-
-  /**
-   * The next node (character) the user must type.
-   */
-  CDasherNode *pNextTargetNode;
-  
-  /**
    * The target string the user must type.
    */ 
   std::string m_sTargetString;
