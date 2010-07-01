@@ -81,6 +81,9 @@ bool CGameModule::DecorateView(CDasherView *pView) {
     x[1] = screenTargetX - m_iCrosshairExtent;
     y[0] = screenTargetY - m_iCrosshairExtent;
     y[1] = screenTargetY - m_iCrosshairExtent;
+    
+    //screenint x[2] = {screenTargetX + m_iCrosshairExtent, screenTargetX - m_iCrosshairExtent};
+    //screenint y[2] = {screenTargetY - m_iCrosshairExtent, screenTargetY - m_iCrosshairExtent};
     pView->ScreenPolyline(x, y, m_iCrosshairNumPoints, GetLongParameter(LP_LINE_WIDTH)*4, m_iCrosshairColor);
     
     
@@ -89,6 +92,9 @@ bool CGameModule::DecorateView(CDasherView *pView) {
     x[1] = screenTargetX - m_iCrosshairExtent;
     y[0] = screenTargetY - m_iCrosshairExtent;
     y[1] = screenTargetY + m_iCrosshairExtent;
+    
+    //x = {screenTargetX - m_iCrosshairExtent, screenTargetX - m_iCrosshairExtent};
+    //y = {screenTargetY - m_iCrosshairExtent, screenTargetY + m_iCrosshairExtent};
     pView->ScreenPolyline(x, y, m_iCrosshairNumPoints, GetLongParameter(LP_LINE_WIDTH)*4, m_iCrosshairColor);
     
     
@@ -97,6 +103,10 @@ bool CGameModule::DecorateView(CDasherView *pView) {
     x[1] = screenTargetX + m_iCrosshairExtent;
     y[0] = screenTargetY - m_iCrosshairExtent;
     y[1] = screenTargetY + m_iCrosshairExtent;
+    
+    
+    //x = {screenTargetX + m_iCrosshairExtent, screenTargetX + m_iCrosshairExtent};
+    //y = {screenTargetY - m_iCrosshairExtent, screenTargetY + m_iCrosshairExtent};
     pView->ScreenPolyline(x, y, m_iCrosshairNumPoints, GetLongParameter(LP_LINE_WIDTH)*4, m_iCrosshairColor);
 
 
@@ -105,6 +115,10 @@ bool CGameModule::DecorateView(CDasherView *pView) {
     x[1] = screenTargetX - m_iCrosshairExtent;
     y[0] = screenTargetY + m_iCrosshairExtent;
     y[1] = screenTargetY + m_iCrosshairExtent;
+    
+    
+    //x = {screenTargetX + m_iCrosshairExtent, screenTargetX - m_iCrosshairExtent};
+    //y = {screenTargetY + m_iCrosshairExtent, screenTargetY + m_iCrosshairExtent};
     pView->ScreenPolyline(x, y, m_iCrosshairNumPoints, GetLongParameter(LP_LINE_WIDTH)*4, m_iCrosshairColor);
     
     
@@ -113,6 +127,9 @@ bool CGameModule::DecorateView(CDasherView *pView) {
     x[1] = screenTargetX;
     y[0] = screenTargetY + m_iCrosshairCrosslineLength;
     y[1] = screenTargetY - m_iCrosshairCrosslineLength;
+    
+    //x = {screenTargetX, screenTargetX};
+    //y = {screenTargetY + m_iCrosshairCrosslineLength, screenTargetY - m_iCrosshairCrosslineLength};
     pView->ScreenPolyline(x, y, m_iCrosshairNumPoints, GetLongParameter(LP_LINE_WIDTH)*4, m_iCrosshairColor);
 
 
@@ -121,6 +138,10 @@ bool CGameModule::DecorateView(CDasherView *pView) {
     x[1] = screenTargetX - m_iCrosshairCrosslineLength;
     y[0] = screenTargetY;
     y[1] = screenTargetY;
+    
+    
+    //x = {screenTargetX + m_iCrosshairCrosslineLength, screenTargetX - m_iCrosshairCrosslineLength};
+    //y = {screenTargetY, screenTargetY};
     pView->ScreenPolyline(x, y, m_iCrosshairNumPoints, GetLongParameter(LP_LINE_WIDTH)*4, m_iCrosshairColor);
     
     
