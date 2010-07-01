@@ -57,7 +57,10 @@ class CGameModule : public CDasherModule {
     
   }
 
-  virtual ~CGameModule() {};
+  virtual ~CGameModule() {
+    delete m_pWordGenerator;
+    delete m_pInterface;
+  };
 
   /**
    * Gets the typed portion of the target string
