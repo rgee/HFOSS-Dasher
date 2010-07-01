@@ -58,8 +58,6 @@ class CGameModule : public CDasherModule {
   }
 
   virtual ~CGameModule() {
-    delete m_pWordGenerator;
-    delete m_pInterface;
   };
 
   /**

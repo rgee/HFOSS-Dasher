@@ -53,20 +53,10 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
 
 bool CGameModule::CharacterFound(CEditEvent* pEvent) {
   return !pEvent->m_sText.compare(m_sTargetString.substr(m_iCurrentStringPos + 1, 1));
-  /*
-  return( (m_iCurrentStringPos == 0) ?
-            !pEvent->m_sText.compare(m_sTargetString.substr(m_iCurrentStringPos, 1)) :
-            !pEvent->m_sText.compare(m_sTargetString.substr(m_iCurrentStringPos + 1, 1)));
-  */
 }
 
 bool CGameModule::CharacterFound(CTextDrawEvent* pEvent) {
   return !pEvent->m_sDisplayText.compare(m_sTargetString.substr(m_iCurrentStringPos + 1, 1));
-  /*
-  return( (m_iCurrentStringPos == 0) ?
-            !pEvent->m_sDisplayText.compare(m_sTargetString.substr(m_iCurrentStringPos, 1)) :
-            !pEvent->m_sDisplayText.compare(m_sTargetString.substr(m_iCurrentStringPos + 1, 1)));
-  */
 }
 
 bool CGameModule::DecorateView(CDasherView *pView) {
@@ -81,9 +71,6 @@ bool CGameModule::DecorateView(CDasherView *pView) {
     x[1] = screenTargetX - m_iCrosshairExtent;
     y[0] = screenTargetY - m_iCrosshairExtent;
     y[1] = screenTargetY - m_iCrosshairExtent;
-    
-    //screenint x[2] = {screenTargetX + m_iCrosshairExtent, screenTargetX - m_iCrosshairExtent};
-    //screenint y[2] = {screenTargetY - m_iCrosshairExtent, screenTargetY - m_iCrosshairExtent};
     pView->ScreenPolyline(x, y, m_iCrosshairNumPoints, GetLongParameter(LP_LINE_WIDTH)*4, m_iCrosshairColor);
     
     
@@ -92,9 +79,6 @@ bool CGameModule::DecorateView(CDasherView *pView) {
     x[1] = screenTargetX - m_iCrosshairExtent;
     y[0] = screenTargetY - m_iCrosshairExtent;
     y[1] = screenTargetY + m_iCrosshairExtent;
-    
-    //x = {screenTargetX - m_iCrosshairExtent, screenTargetX - m_iCrosshairExtent};
-    //y = {screenTargetY - m_iCrosshairExtent, screenTargetY + m_iCrosshairExtent};
     pView->ScreenPolyline(x, y, m_iCrosshairNumPoints, GetLongParameter(LP_LINE_WIDTH)*4, m_iCrosshairColor);
     
     
@@ -103,10 +87,6 @@ bool CGameModule::DecorateView(CDasherView *pView) {
     x[1] = screenTargetX + m_iCrosshairExtent;
     y[0] = screenTargetY - m_iCrosshairExtent;
     y[1] = screenTargetY + m_iCrosshairExtent;
-    
-    
-    //x = {screenTargetX + m_iCrosshairExtent, screenTargetX + m_iCrosshairExtent};
-    //y = {screenTargetY - m_iCrosshairExtent, screenTargetY + m_iCrosshairExtent};
     pView->ScreenPolyline(x, y, m_iCrosshairNumPoints, GetLongParameter(LP_LINE_WIDTH)*4, m_iCrosshairColor);
 
 
@@ -115,10 +95,6 @@ bool CGameModule::DecorateView(CDasherView *pView) {
     x[1] = screenTargetX - m_iCrosshairExtent;
     y[0] = screenTargetY + m_iCrosshairExtent;
     y[1] = screenTargetY + m_iCrosshairExtent;
-    
-    
-    //x = {screenTargetX + m_iCrosshairExtent, screenTargetX - m_iCrosshairExtent};
-    //y = {screenTargetY + m_iCrosshairExtent, screenTargetY + m_iCrosshairExtent};
     pView->ScreenPolyline(x, y, m_iCrosshairNumPoints, GetLongParameter(LP_LINE_WIDTH)*4, m_iCrosshairColor);
     
     
@@ -127,9 +103,6 @@ bool CGameModule::DecorateView(CDasherView *pView) {
     x[1] = screenTargetX;
     y[0] = screenTargetY + m_iCrosshairCrosslineLength;
     y[1] = screenTargetY - m_iCrosshairCrosslineLength;
-    
-    //x = {screenTargetX, screenTargetX};
-    //y = {screenTargetY + m_iCrosshairCrosslineLength, screenTargetY - m_iCrosshairCrosslineLength};
     pView->ScreenPolyline(x, y, m_iCrosshairNumPoints, GetLongParameter(LP_LINE_WIDTH)*4, m_iCrosshairColor);
 
 
@@ -138,10 +111,6 @@ bool CGameModule::DecorateView(CDasherView *pView) {
     x[1] = screenTargetX - m_iCrosshairCrosslineLength;
     y[0] = screenTargetY;
     y[1] = screenTargetY;
-    
-    
-    //x = {screenTargetX + m_iCrosshairCrosslineLength, screenTargetX - m_iCrosshairCrosslineLength};
-    //y = {screenTargetY, screenTargetY};
     pView->ScreenPolyline(x, y, m_iCrosshairNumPoints, GetLongParameter(LP_LINE_WIDTH)*4, m_iCrosshairColor);
     
     
@@ -150,9 +119,6 @@ bool CGameModule::DecorateView(CDasherView *pView) {
     return true;
 }
 
-//CDasherNode CGameModule::StringToNode(std::string sText) {
-//  
-//}
 
 std::string CGameModule::GetTypedTarget() {
     return ((m_iCurrentStringPos == -1) ?
@@ -161,11 +127,6 @@ std::string CGameModule::GetTypedTarget() {
 
 std::string CGameModule::GetUntypedTarget() {
   return m_sTargetString.substr(m_iCurrentStringPos + 1);
-  /*
-    return ((m_iCurrentStringPos == -1) ?
-            m_sTargetString.substr(m_iCurrentStringPos + 1) :
-             m_sTargetString.substr(m_iCurrentStringPos + 1));
-   */
 }
 
 void CGameModule::GenerateChunk() {
