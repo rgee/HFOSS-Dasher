@@ -53,7 +53,7 @@ class CGameModule : public CDasherModule {
     GenerateChunk();
     if(m_sTargetString == "")
       m_sTargetString = "My name is julian.";
-    m_stCurrentStringPos = 0;
+    m_iCurrentStringPos = -1;
     
   }
 
@@ -155,7 +155,7 @@ class CGameModule : public CDasherModule {
    * The current position in the string. 
    * Stored as a size_t to easily use substrings to determine what's been typed and what hasn't.
    */
-  size_t m_stCurrentStringPos;
+  int m_iCurrentStringPos;
 
   /**
    * The dasher interface.
