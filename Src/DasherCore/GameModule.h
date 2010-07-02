@@ -53,7 +53,7 @@ class CGameModule : public CDasherModule {
       
     GenerateChunk();
     if(m_sTargetString == "")
-      g_pLogger->LogCritica("Word generation FAILED");
+      g_pLogger->LogCritical("Word generation FAILED");
     
   }
 
