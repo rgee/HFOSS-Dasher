@@ -42,18 +42,18 @@ class CGameModule : public CDasherModule {
     m_iCrosshairCrosslineLength(50),
     m_iTargetChunkSize(3),
     m_iFontSize(36),
+    m_iCurrentStringPos(-1),
     m_pWordGenerator(pWordGenerator),
     CDasherModule(pEventHandler, pSettingsStore, iID, 0, szName, vEvents)
   {     
     m_pInterface = pInterface;
     
-    //TODO REMOVE THIS!!!
     if(m_pWordGenerator == NULL)
-      g_pLogger->Log("Word generator creation FAILED");
+      g_pLogger->LogCritical("Word generator creation FAILED");
+      
     GenerateChunk();
     if(m_sTargetString == "")
-      m_sTargetString = "My name is julian.";
-    m_iCurrentStringPos = -1;
+      g_pLogger->LogCritica("Word generation FAILED");
     
   }
 
