@@ -113,16 +113,15 @@ bool CGameModule::DecorateView(CDasherView *pView) {
     y[1] = screenTargetY;
     pView->ScreenPolyline(x, y, m_iCrosshairNumPoints, GetLongParameter(LP_LINE_WIDTH)*4, m_iCrosshairColor);
     
-    
-    pView->DrawText(GetUntypedTarget(), 400, 20, 200, m_iCrosshairColor);
-    
+    pView->DrawText(m_sTargetString, 400, 17, m_iFontSize, m_iCrosshairColor);
+    pView->DrawText(GetTypedTarget(), 400, 20, m_iFontSize, m_iCrosshairColor - 20);
     return true;
 }
 
 
 std::string CGameModule::GetTypedTarget() {
     return ((m_iCurrentStringPos == -1) ?
-            "" : m_sTargetString.substr(0, m_iCurrentStringPos));
+            "" : m_sTargetString.substr(0, m_iCurrentStringPos + 1));
 }
 
 std::string CGameModule::GetUntypedTarget() {
