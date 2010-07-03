@@ -14,7 +14,12 @@
 
 # Points to the root of Google Test, relative to where this file is.
 # Remember to tweak this if you move this file.
-GTEST_DIR = ../gtest-1.5.0
+GTEST_DIR = ../gtest
+
+#Points to the root of Dasher's source code
+DASHER_CORE_DIR = ../../Src/DasherCore
+
+TEST_PLATFORM_DIR = ../../Src/TestPlatform
 
 # Where to find user code.
 USER_DIR = .
@@ -64,24 +69,10 @@ gtest.a : gtest-all.o
 
 gtest_main.a : gtest-all.o gtest_main.o
 	$(AR) $(ARFLAGS) $@ $^
-
-# Builds a sample test.  A test should link with either gtest.a or
-# gtest_main.a, depending on whether it defines its own main()
-# function.
-
-#sample1.o : $(USER_DIR)/sample1.cc $(USER_DIR)/sample1.h $(GTEST_HEADERS)
-#	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/sample1.cc
-
-#sample1_unittest.o : $(USER_DIR)/sample1_unittest.cc \
-#                    $(USER_DIR)/sample1.h $(GTEST_HEADERS)
-#	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/sample1_unittest.cc
-
-#sample1_unittest : sample1.o sample1_unittest.o gtest_main.a
-#	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
 	
 EventTest : EventTest.o gtest_main.a
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
 
 EventTest.o : $(USER_DIR)/EventTest.cpp
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/EventTest.cpp
+	$(CXX) $(CPPFLAGS) -I$(DASHER_CORE_DIR) -I$(TEST_PLATFORM_DIR) $(CXXFLAGS) -c $(USER_DIR)/EventTest.cpp
 
