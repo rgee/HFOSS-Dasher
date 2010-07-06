@@ -134,4 +134,6 @@ void CGameModule::GenerateChunk() {
     m_sTargetString += m_pWordGenerator->GetNextWord();
     m_sTargetString += " ";
   }
+  // This causes all sorts of strange errors about abiguous references.
+  //m_pEventHandler->InsertEvent(new CGameTargetChangedEvent(m_sTargetString));
 }

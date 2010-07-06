@@ -136,6 +136,7 @@ CAlphabetManager::CAlphNode *CAlphabetManager::GetRoot(CDasherNode *pParent, uns
   }
 
   pNewNode->iContext = iContext;
+
   return pNewNode;
 }
 

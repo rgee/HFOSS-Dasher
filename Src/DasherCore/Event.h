@@ -16,13 +16,14 @@ namespace Dasher {
   class CStopEvent;
   class CControlEvent;
   class CLockEvent;
+  class CGameTargetChangedEvent;
   class CMessageEvent;
   class CCommandEvent;
   class CDasherView;
 }
 
 enum {
-  EV_PARAM_NOTIFY = 1, EV_EDIT, EV_EDIT_CONTEXT, EV_START, EV_STOP, EV_CONTROL, EV_LOCK, EV_MESSAGE, EV_COMMAND, EV_TEXTDRAW
+  EV_PARAM_NOTIFY = 1, EV_EDIT, EV_EDIT_CONTEXT, EV_START, EV_STOP, EV_CONTROL, EV_LOCK, EV_MESSAGE, EV_COMMAND, EV_TEXTDRAW, EV_GAME_TARGET_CHANGED
 };
 
 /// \ingroup Core
@@ -33,6 +34,17 @@ enum {
 class Dasher::CEvent {
 public:
   int m_iEventType;
+};
+
+
+class Dasher::CGameTargetChangedEvent : public Dasher::CEvent {
+public:
+  CGameTargetChangedEvent(std::string strTargetText)
+    : m_strTargetText(strTargetText) {
+      m_iEventType = EV_GAME_TARGET_CHANGED;
+  };
+  
+  std::string m_strTargetText;
 };
 
 class Dasher::CParameterNotificationEvent:public Dasher::CEvent {
@@ -78,14 +90,14 @@ public:
 class Dasher::CTextDrawEvent : public Dasher::CEvent {
 public:
   CTextDrawEvent(std::string sDisplayText, CDasherView *pView, screenint iX, screenint iY, int iSize)
-	:m_sDisplayText(sDisplayText),
-	 m_pDasherView(pView),
-	 m_iX(iX),
-	 m_iY(iY),
-	 m_iSize(iSize) 
-	{
-		m_iEventType = EV_TEXTDRAW;
-	};
+  :m_sDisplayText(sDisplayText),
+   m_pDasherView(pView),
+   m_iX(iX),
+   m_iY(iY),
+   m_iSize(iSize) 
+  {
+    m_iEventType = EV_TEXTDRAW;
+  };
   /**
    * The text that has been drawn.
    */

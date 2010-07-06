@@ -33,14 +33,14 @@ public:
   typedef std::vector<std::pair<CDasherComponent*, int> > ListenerQueue;
   
 
-  CEventHandler(Dasher::CDasherInterfaceBase * pInterface): m_iNUM_EVENTS(10), m_pInterface(pInterface) {
+  CEventHandler(Dasher::CDasherInterfaceBase * pInterface): m_iNUM_EVENTS(11), m_pInterface(pInterface) {
     m_iInHandler = 0;
 
-		// Initialize the event listener container (and queue) so we can add elements without
-		// checking if the sub-vectors actually exist or not.
-		for(int i = 0; i < m_iNUM_EVENTS; i++) {
-			m_vSpecificListeners.push_back(std::vector<CDasherComponent*>());
-		}
+    // Initialize the event listener container (and queue) so we can add elements without
+    // checking if the sub-vectors actually exist or not.
+    for(int i = 0; i < m_iNUM_EVENTS; i++) {
+      m_vSpecificListeners.push_back(std::vector<CDasherComponent*>());
+    }
   };
 
   ~CEventHandler() {
@@ -53,7 +53,7 @@ public:
 
 
 
-	/**
+  /**
    * Register a listener for ALL events. To specify one, pass it
    * as a second parameter.
    * @param pListener The Dasher Component to be registered for all events.
@@ -64,7 +64,7 @@ public:
    * Register a listener to listen for specific events.
    * @param pListener A pointer to the dasher component that will listen for events
    * @param iEventType An integer defined in the event type enumeration in Event.h
-	 *        that represents the event to which you'd like to subscribe.
+   *        that represents the event to which you'd like to subscribe.
    */
   void RegisterListener(Dasher::CDasherComponent * pListener, int iEventType);
 
@@ -72,11 +72,11 @@ public:
    * Unregister a listener from a specific event.
    * @param pListener A pointer tot he dasher component to be unregistered
    * @param iEventType An integer defined in the event type enumeration in Event.h
-   *	      that represents the event to which you'd like to unsubscribe.
+   *        that represents the event to which you'd like to unsubscribe.
    */
   void UnregisterListener(Dasher::CDasherComponent * pListener, int iEventType);
 
-	/**
+  /**
    * Unregister a listener from ALL events.
    * @param pListener The Dasher Component to unregister from all events.
    */

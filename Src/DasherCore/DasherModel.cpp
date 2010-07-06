@@ -51,10 +51,10 @@ static char THIS_FILE[] = __FILE__;
 // CDasherModel
 
 CDasherModel::CDasherModel(CEventHandler *pEventHandler,
-			   CSettingsStore *pSettingsStore,
-			   CNodeCreationManager *pNCManager,
-			   CDasherInterfaceBase *pDasherInterface,
-			   CDasherView *pView, int iOffset)
+         CSettingsStore *pSettingsStore,
+         CNodeCreationManager *pNCManager,
+         CDasherInterfaceBase *pDasherInterface,
+         CDasherView *pView, int iOffset)
   : CFrameRate(pEventHandler, pSettingsStore) {
   m_pNodeCreationManager = pNCManager;
   m_pDasherInterface = pDasherInterface;
@@ -122,7 +122,7 @@ void CDasherModel::HandleEvent(Dasher::CEvent *pEvent) {
       break;
     case BP_DASHER_PAUSED:
       if(GetBoolParameter(BP_SLOW_START))
-	TriggerSlowdown();
+  TriggerSlowdown();
       //else, leave m_iStartTime as is - will result in no slow start
       break;
     case BP_GAME_MODE:
@@ -143,6 +143,11 @@ void CDasherModel::HandleEvent(Dasher::CEvent *pEvent) {
     else if(pEditEvent->m_iEditType == 2) {
       m_iOffset -= pEditEvent->m_sText.size();
     }
+  }
+  else if(pEvent->m_iEventType == EV_GAME_TARGET_CHANGED) {
+    CGameTargetChangedEvent *pTargetChangedEvent(static_cast< CGameTargetChangedEvent * >(pEvent));
+    
+    m_strGameTarget = pTargetChangedEvent->m_strTargetText;
   }
 }
 
@@ -292,7 +297,7 @@ void CDasherModel::InitialiseAtOffset(int iOffset, CDasherView *pView) {
   
   // Create children of the root...
   ExpandNode(m_Root);
-	
+  
   // Set the root coordinates so that the root node is an appropriate
   // size and we're not in any of the children
 
@@ -314,7 +319,7 @@ void CDasherModel::InitialiseAtOffset(int iOffset, CDasherView *pView) {
       CDasherNode *pOldRoot = m_Root;
       Reparent_root();
       if(m_Root == pOldRoot)
-	break;
+  break;
     }
   }
 
@@ -599,8 +604,8 @@ void CDasherModel::ExpandNode(CDasherNode *pNode) {
       
     // Check if this is the last node in the sentence...
     if(strTargetUtf8Char == "GameEnd")
-	    pNode->SetFlag(NF_END_GAME, true);
-	  else if (!pNode->GameSearchChildren(strTargetUtf8Char)) {
+      pNode->SetFlag(NF_END_GAME, true);
+    else if (!pNode->GameSearchChildren(strTargetUtf8Char)) {
       // Target character not found - not in our current alphabet?!?!
       // Let's give up!
       pNode->SetFlag(NF_END_GAME, true); 
