@@ -173,22 +173,13 @@ void CDasherView::DasherPolyline(myint *x, myint *y, int n, int iWidth, int iCol
   delete[]ScreenPoints;
 }
 
-void CDasherView::ScreenPolyline(screenint *x, screenint *y, int n, int iWidth, int iColour) {
-  CDasherScreen::point * ScreenPoints = new CDasherScreen::point[n];
-  
-  for(int i(0); i < n; ++i)
-  {
-    ScreenPoints[i].x = x[i];
-    ScreenPoints[i].y = y[i];
-  }
-  
+void CDasherView::ScreenPolyline(CDasherScreen::point points[], int n, int iWidth, int iColour) {
   if(iColour != -1) {
-    Screen()->Polyline(ScreenPoints, n, iWidth, iColour);
+    Screen()->Polyline(points, n, iWidth, iColour);
   }
   else {
-    Screen()->Polyline(ScreenPoints, n, iWidth, 0);
+    Screen()->Polyline(points, n, iWidth, 0);
   }
-  delete[] ScreenPoints;
 }
 
 // Draw a polyline with an arrow on the end

@@ -152,7 +152,7 @@ public:
    * 
    * @see DasherPolyline
    */
-  void ScreenPolyline(screenint * x, screenint * y, int n, int iWidth, int iColour);
+  void ScreenPolyline(CDasherScreen::point points[], int n, int iWidth, int iColour);
 
 
   /**

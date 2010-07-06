@@ -62,56 +62,55 @@ bool CGameModule::CharacterFound(CTextDrawEvent* pEvent) {
 bool CGameModule::DecorateView(CDasherView *pView) {
     screenint screenTargetX, screenTargetY;
     pView->Dasher2Screen(m_iTargetX, m_iTargetY, screenTargetX, screenTargetY);
-    
-    screenint x[2];
-    screenint y[2];
-    
+
+    CDasherScreen::point points[2];
+
     // Top Line
-    x[0] = screenTargetX + m_iCrosshairExtent;
-    x[1] = screenTargetX - m_iCrosshairExtent;
-    y[0] = screenTargetY - m_iCrosshairExtent;
-    y[1] = screenTargetY - m_iCrosshairExtent;
-    pView->ScreenPolyline(x, y, m_iCrosshairNumPoints, GetLongParameter(LP_LINE_WIDTH)*4, m_iCrosshairColor);
+    points[0].x = screenTargetX + m_iCrosshairExtent;
+    points[1].x = screenTargetX - m_iCrosshairExtent;
+    points[0].y = screenTargetY - m_iCrosshairExtent;
+    points[1].y = screenTargetY - m_iCrosshairExtent;
+    pView->ScreenPolyline(points, 2, GetLongParameter(LP_LINE_WIDTH)*4, m_iCrosshairColor);
     
     
     // Right Line
-    x[0] = screenTargetX - m_iCrosshairExtent;
-    x[1] = screenTargetX - m_iCrosshairExtent;
-    y[0] = screenTargetY - m_iCrosshairExtent;
-    y[1] = screenTargetY + m_iCrosshairExtent;
-    pView->ScreenPolyline(x, y, m_iCrosshairNumPoints, GetLongParameter(LP_LINE_WIDTH)*4, m_iCrosshairColor);
+    points[0].x = screenTargetX - m_iCrosshairExtent;
+    points[1].x = screenTargetX - m_iCrosshairExtent;
+    points[0].y = screenTargetY - m_iCrosshairExtent;
+    points[1].y = screenTargetY + m_iCrosshairExtent;
+    pView->ScreenPolyline(points, 2, GetLongParameter(LP_LINE_WIDTH)*4, m_iCrosshairColor);
     
     
     // Left Line
-    x[0] = screenTargetX + m_iCrosshairExtent;
-    x[1] = screenTargetX + m_iCrosshairExtent;
-    y[0] = screenTargetY - m_iCrosshairExtent;
-    y[1] = screenTargetY + m_iCrosshairExtent;
-    pView->ScreenPolyline(x, y, m_iCrosshairNumPoints, GetLongParameter(LP_LINE_WIDTH)*4, m_iCrosshairColor);
+    points[0].x = screenTargetX + m_iCrosshairExtent;
+    points[1].x = screenTargetX + m_iCrosshairExtent;
+    points[0].y = screenTargetY - m_iCrosshairExtent;
+    points[1].y = screenTargetY + m_iCrosshairExtent;
+    pView->ScreenPolyline(points, 2, GetLongParameter(LP_LINE_WIDTH)*4, m_iCrosshairColor);
 
 
     // Bottom Line
-    x[0] = screenTargetX + m_iCrosshairExtent;
-    x[1] = screenTargetX - m_iCrosshairExtent;
-    y[0] = screenTargetY + m_iCrosshairExtent;
-    y[1] = screenTargetY + m_iCrosshairExtent;
-    pView->ScreenPolyline(x, y, m_iCrosshairNumPoints, GetLongParameter(LP_LINE_WIDTH)*4, m_iCrosshairColor);
+    points[0].x = screenTargetX + m_iCrosshairExtent;
+    points[1].x = screenTargetX - m_iCrosshairExtent;
+    points[0].y = screenTargetY + m_iCrosshairExtent;
+    points[1].y = screenTargetY + m_iCrosshairExtent;
+    pView->ScreenPolyline(points, 2, GetLongParameter(LP_LINE_WIDTH)*4, m_iCrosshairColor);
     
     
     // Vertical Crosshair Line
-    x[0] = screenTargetX;
-    x[1] = screenTargetX;
-    y[0] = screenTargetY + m_iCrosshairCrosslineLength;
-    y[1] = screenTargetY - m_iCrosshairCrosslineLength;
-    pView->ScreenPolyline(x, y, m_iCrosshairNumPoints, GetLongParameter(LP_LINE_WIDTH)*4, m_iCrosshairColor);
+    points[0].x = screenTargetX;
+    points[1].x = screenTargetX;
+    points[0].y = screenTargetY + m_iCrosshairCrosslineLength;
+    points[1].y = screenTargetY - m_iCrosshairCrosslineLength;
+    pView->ScreenPolyline(points, 2, GetLongParameter(LP_LINE_WIDTH)*4, m_iCrosshairColor);
 
 
     // Horizontal Crosshair Line
-    x[0] = screenTargetX + m_iCrosshairCrosslineLength;
-    x[1] = screenTargetX - m_iCrosshairCrosslineLength;
-    y[0] = screenTargetY;
-    y[1] = screenTargetY;
-    pView->ScreenPolyline(x, y, m_iCrosshairNumPoints, GetLongParameter(LP_LINE_WIDTH)*4, m_iCrosshairColor);
+    points[0].x = screenTargetX + m_iCrosshairCrosslineLength;
+    points[1].x = screenTargetX - m_iCrosshairCrosslineLength;
+    points[0].y = screenTargetY;
+    points[1].y = screenTargetY;
+    pView->ScreenPolyline(points, 2, GetLongParameter(LP_LINE_WIDTH)*4, m_iCrosshairColor);
     
     pView->DrawText(m_sTargetString, 400, 17, m_iFontSize, m_iCrosshairColor);
     pView->DrawText(GetTypedTarget(), 400, 20, m_iFontSize, m_iCrosshairColor - 20);
