@@ -16,6 +16,12 @@
 # Remember to tweak this if you move this file.
 GTEST_DIR = ../gtest
 
+#Points to the root of Dasher's source code
+DASHER_CORE_DIR = ../../Src/DasherCore
+
+TEST_PLATFORM_DIR = ../../Src/TestPlatform
+
+
 # Where to find user code.
 USER_DIR = .
 
@@ -28,7 +34,7 @@ DASHER_DIR = ../../Src
 CPPFLAGS += -I$(GTEST_DIR)/include -I$(DASHER_DIR)/DasherCore
 
 # Flags passed to the C++ compiler.
-CXXFLAGS += -g -Wall -Wextra
+CXXFLAGS += -g
 
 # All tests produced by this Makefile.  Remember to add new tests you
 # created to the list.
@@ -70,6 +76,7 @@ gtest.a : gtest-all.o
 
 gtest_main.a : gtest-all.o gtest_main.o
 	$(AR) $(ARFLAGS) $@ $^
+<<<<<<< HEAD
 
 # Builds a sample test.  A test should link with either gtest.a or
 # gtest_main.a, depending on whether it defines its own main()
@@ -100,3 +107,15 @@ EventTest.o : $(USER_DIR)/EventTest.cpp
 
 
 
+=======
+	
+EventTest.o : $(USER_DIR)/EventTest.cpp
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/EventTest.cpp
+
+EventTest : EventTest.o \
+			gtest_main.a $(DASHER_CORE_DIR)/libdashercore.a \
+			$(DASHER_CORE_DIR)/libdasherprefs.a \
+			$(DASHER_CORE_DIR)/LanguageModelling/libdasherlm.a
+	$(CXX) $(CPPFLAGS) -lexpat $(CXXFLAGS) -lpthread $^ -o $@
+	
+>>>>>>> 89bbcb570f5762f48ae0abc1daab863d49cd9b33
