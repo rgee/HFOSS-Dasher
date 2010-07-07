@@ -23,63 +23,72 @@ static char THIS_FILE[] = __FILE__;
 
 void CEventHandler::InsertEvent(CEvent *pEvent) {
 
-  ++m_iInHandler;
-
-  for(std::vector<CDasherComponent*>::const_iterator it = m_vSpecificListeners[pEvent->m_iEventType - 1].begin();
-      it != m_vSpecificListeners[pEvent->m_iEventType - 1].end();
-     ++it) 
-  {
-      (*it)->HandleEvent(pEvent);
-  }
-
-  m_pInterface->InterfaceEventHandler(pEvent);
+  //put the event at the end of the queue
+  EnqueueEvent(pEvent);
   
-  m_pInterface->ExternalEventHandler(pEvent);
+  //if we are already dispatching events, don't do it again
+  //this is necessary to keep recursive calls from removing
+  //events from the queue while we iterate over it
+  if(m_bIsDispatching)
+	return;
+  
+  //iterate over the event queue until it's empty
+  while(!m_qEventQueue.empty()) {
 
-  --m_iInHandler;
+	  CEvent *currEvent = m_qEventQueue.front();
+	  m_qEventQueue.pop();
+	  
+	  m_pInterface->InterfaceEventHandler(currEvent);
+  
+      m_pInterface->ExternalEventHandler(currEvent);
+	  
+	  //entering the dispatching loop - no longer safe to modify m_vSpecificListeners
+	  m_bIsDispatching = true;
+	  
+	  //dispatch the event at the front of the queue to all registered listeners
+	  for(std::vector<CDasherComponent*>::const_iterator it = m_vSpecificListeners[currEvent->m_iEventType - 1].begin();
+      it != m_vSpecificListeners[currEvent->m_iEventType - 1].end();
+     ++it)
+      {
+		(*it)->HandleEvent(currEvent);
+	  }
+	  
+	  //done dispatching this event - safe to modify m_vSpecificListeners
+	  m_bIsDispatching = false;
+	  
+	  //register all listeners that have been waiting to be added
+	  for(EvtListenerCollection::iterator it = m_vPendingSpecificReg.begin(); it != m_vPendingSpecificReg.end(); ++it)
+		RegisterListener((*it).first, (*it).second);
+		
+	  //unregister all that have been waiting to be removed
+	  for(EvtListenerCollection::iterator it = m_vPendingSpecificUnreg.begin(); it != m_vPendingSpecificUnreg.end(); ++it)
+		UnregisterListener((*it).first, (*it).second);
+  }      
+}
 
-  if(m_iInHandler == 0) {
-      
-    //loop through the queue of specific listeners waiting to be registered and register them
-    for(ListenerQueue::iterator it = m_vSpecificListenerQueue.begin(); it != m_vSpecificListenerQueue.end(); ++it) {
-      RegisterListener((*it).first, (*it).second); 
-    } 
-  }
+void CEventHandler::EnqueueEvent(CEvent *pEvent) {
+	m_qEventQueue.push(pEvent);
 }
 
 void CEventHandler::RegisterListener(CDasherComponent *pListener) {
-  // If the listener is in the queue waiting to be added, don't add it again
-  if((std::find(m_vGeneralListenerQueue.begin(), m_vGeneralListenerQueue.end(), pListener) != m_vGeneralListenerQueue.end())) {
-    return;
-  }
-  else {
-    // For each event listener list, either add it or queue it...
-    for(ListenerMap::iterator it = m_vSpecificListeners.begin(); it != m_vSpecificListeners.end(); ++it) {
-      //...but only if it doesn't already exist
-      if((std::find((*it).begin(), (*it).end(), pListener) == (*it).end())) {
-        
-          if(m_iInHandler == 0) {
-            (*it).push_back(pListener);
-          }
-          else {
-            m_vGeneralListenerQueue.push_back(pListener);
-          }
-      }
-      else {
-        // Can't add the same listener twice  
-      }
-    }
-   }
+	 
+	 for(int curEvtType = 1; curEvtType <= m_iNUM_EVENTS; curEvtType++) {
+		RegisterListener(pListener, curEvtType);
+	 }
 }
 
 void CEventHandler::RegisterListener(CDasherComponent *pListener, int iEventType) {
+	
   // Only try to add a new listener if it doesn't already exist in the Listener map
   if((std::find(m_vSpecificListeners[iEventType - 1].begin(), m_vSpecificListeners[iEventType - 1].end(), pListener)  == m_vSpecificListeners[iEventType - 1].end())) { 
-    if(m_iInHandler == 0)
+    
+    if(!m_bIsDispatching) {
       m_vSpecificListeners[iEventType - 1].push_back(pListener);
-    else
-      // Add the listener to the queue if events are being processed
-      m_vSpecificListenerQueue.push_back(std::make_pair(pListener, iEventType));
+    }
+    else {
+      // Add the listener to the pending set if events are being dispatched
+      m_vPendingSpecificReg.push_back(std::make_pair(pListener, iEventType));
+    }
   }
   else {
     // Can't add the same listener twice 
@@ -87,30 +96,23 @@ void CEventHandler::RegisterListener(CDasherComponent *pListener, int iEventType
 }
 
 void CEventHandler::UnregisterListener(CDasherComponent *pListener, int iEventType) {
-  for(std::vector<CDasherComponent*>::iterator it = m_vSpecificListeners[iEventType].begin(); it != m_vSpecificListeners[iEventType].end(); ++it) {
-    if( (*it) == pListener)
-      m_vSpecificListeners[iEventType].erase(it);
+	
+  if(!m_bIsDispatching) {
+	  
+	  for(std::vector<CDasherComponent*>::iterator it = m_vSpecificListeners[iEventType - 1].begin(); it != m_vSpecificListeners[iEventType - 1].end(); ++it) {
+		if((*it) == pListener)
+			m_vSpecificListeners[iEventType - 1].erase(it);
+			break;
+	  }
+  }
+  else {
+	  m_vPendingSpecificUnreg.push_back(std::make_pair(pListener, iEventType));
   }
 }
 
-void CEventHandler::UnregisterListener(CDasherComponent *pListener) {
-
-  std::vector < CDasherComponent * >::iterator mapFound;
-
-  for(ListenerMap::iterator it = m_vSpecificListeners.begin(); it != m_vSpecificListeners.end(); ++it) { 
-    mapFound = std::find((*it).begin(), (*it).end(), pListener);
-    if(mapFound != (*it).end())
-      (*it).erase(mapFound);
-  }
-
-  std::vector < CDasherComponent * >::iterator queueFound = std::find(m_vGeneralListenerQueue.begin(), m_vGeneralListenerQueue.end(), pListener);
-  if(queueFound != m_vGeneralListenerQueue.end())
-      m_vGeneralListenerQueue.erase(queueFound);
-
-  for(ListenerQueue::iterator it = m_vSpecificListenerQueue.begin(); it != m_vSpecificListenerQueue.end(); ++it) {
-    if((*it).first == pListener) {
-      it = m_vSpecificListenerQueue.erase(it);
-    }
-  }
-  
+void CEventHandler::UnregisterListener(CDasherComponent *pListener) {    
+	
+	for(int curEvtType = 1; curEvtType <= m_iNUM_EVENTS; curEvtType++) {
+		UnregisterListener(pListener, curEvtType);
+	 }
 }

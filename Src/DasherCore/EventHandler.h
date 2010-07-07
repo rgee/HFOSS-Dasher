@@ -2,6 +2,7 @@
 #define __eventhandler_h__
 
 #include <vector>
+#include <queue>
 #include "Event.h"
 
 namespace Dasher {
@@ -15,31 +16,32 @@ namespace Dasher {
 /// \ingroup Core
 /// @{
 class Dasher::CEventHandler {
+	
 public:
 
   /**
-   * @var typedef vector<vector<CDasherComponent*>> ListenerMap
+   * @var typedef vector<vector<CDasherComponent*>> EvtListenerTable
    * @brief A 2d vector of Dasher Components where each sub-vector corresponds
    * to a specific event. The contents of the sub-vectors are the components
    * that subscribe to this event.
    */
-  typedef std::vector<std::vector<CDasherComponent*> > ListenerMap;
+  typedef std::vector<std::vector<Dasher::CDasherComponent*> > EvtListenerTable;
 
   /**
-   * @var typedef vector<pair<CDasherComponent*, int> > ListenerQueue
-   * @brief A queue whose elements represent 1 to 1 associations between
+   * @var typedef vector<pair<CDasherComponent*, int> > EvtListenerCollection
+   * @brief A collection whose elements represent 1 to 1 associations between
    * Dasher Components and Dasher core event types
    */
-  typedef std::vector<std::pair<CDasherComponent*, int> > ListenerQueue;
+  typedef std::vector<std::pair<Dasher::CDasherComponent*, int> > EvtListenerCollection;
   
-
   CEventHandler(Dasher::CDasherInterfaceBase * pInterface): m_iNUM_EVENTS(10), m_pInterface(pInterface) {
-    m_iInHandler = 0;
 
+		m_bIsDispatching = false;
+		
 		// Initialize the event listener container (and queue) so we can add elements without
 		// checking if the sub-vectors actually exist or not.
 		for(int i = 0; i < m_iNUM_EVENTS; i++) {
-			m_vSpecificListeners.push_back(std::vector<CDasherComponent*>());
+			m_vSpecificListeners.push_back(std::vector<Dasher::CDasherComponent*>());
 		}
   };
 
@@ -47,11 +49,21 @@ public:
 
   };
 
-  // Insert an event, which will be propagated to all listeners.
-
+ 
+  /**
+   * TODO - when we refactor, rename this to DispatchEvent
+   * Insert an event into the queue, then flush the queue
+   * such that all event listeners are notified of the
+   * events they subscribed to.
+   */ 
   void InsertEvent(Dasher::CEvent * pEvent);
 
 
+  /**
+   * Add an event to the event queue.
+   * @param pEvent the event to add to the queue
+   */
+  void EnqueueEvent(Dasher::CEvent * pEvent);
 
 	/**
    * Register a listener for ALL events. To specify one, pass it
@@ -82,38 +94,42 @@ public:
    */
   void UnregisterListener(Dasher::CDasherComponent * pListener);
 
-protected:
+private:
+
+  /**
+   * The queue of events waiting to be dispatched. 
+   */
+  std::queue<Dasher::CEvent*> m_qEventQueue;
 
   /**
    * A 2-dimensional vector of listeners where each sub-vector represents
    * the listener for a specific event type (Defined in the event type enumeration
-   * in Event.h. To access a vector for a specific event type, index into the top-level
+   * in Event.h). To access a vector for a specific event type, index into the top-level
    * vector using the event type as an index.
    */
-  ListenerMap m_vSpecificListeners;
+  EvtListenerTable m_vSpecificListeners;
 
   /**
-   * The queue of listeners waiting to be registered with specific
-   * events while InsertEvent is still processing. Used to prevent
-   * m_vSpecificListeners from being modified while InsertEvent is
-   * iterating over it.
+   * The set of specific listeners waiting to be registered
+   * while m_vSpecificListeners is being iterated over.
   */
-  ListenerQueue m_vSpecificListenerQueue;
-
+  EvtListenerCollection m_vPendingSpecificReg;
+  
   /**
-   * The queue of "old style" listeners waiting to be registered
-   * with all events while InsertEvent is still processing. Used
-   * to prevent m_vSpecificListeners from being modified while
-   * InsertEvent is iterating over it.
-   */
-  std::vector<CDasherComponent*> m_vGeneralListenerQueue;
+   * The set of specific listeners waiting to be unregistered
+   * while m_vSpecificListeners is being iterated over.
+  */
+  EvtListenerCollection m_vPendingSpecificUnreg;
 
-  int m_iInHandler;
 
   Dasher::CDasherInterfaceBase * m_pInterface;
 
-
-private:
+  /**
+   * Boolean flag - true if we are in the middle of flushing
+   * the event queue, false if not. Used to determine whether it
+   * is safe to modify m_vSpecificListeners
+   */ 
+  bool m_bIsDispatching;
 
   /**
  * @var m_iNUM_EVENTS
