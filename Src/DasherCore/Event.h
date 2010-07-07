@@ -6,6 +6,7 @@
 #include <string>
 #include "DasherTypes.h"
 
+
 namespace Dasher {
   class CEvent;
   class CTextDrawEvent;
@@ -17,13 +18,16 @@ namespace Dasher {
   class CControlEvent;
   class CLockEvent;
   class CGameTargetChangedEvent;
+  class CGameNodeDrawEvent;
   class CMessageEvent;
   class CCommandEvent;
   class CDasherView;
+  class CDasherNode;
 }
 
 enum {
-  EV_PARAM_NOTIFY = 1, EV_EDIT, EV_EDIT_CONTEXT, EV_START, EV_STOP, EV_CONTROL, EV_LOCK, EV_MESSAGE, EV_COMMAND, EV_TEXTDRAW, EV_GAME_TARGET_CHANGED
+  EV_PARAM_NOTIFY = 1, EV_EDIT, EV_EDIT_CONTEXT, EV_START, EV_STOP, EV_CONTROL, EV_LOCK, EV_GAME_TARGET_CHANGED, EV_MESSAGE, EV_COMMAND, EV_TEXTDRAW, 
+  EV_GAME_NODE_DRAWN
 };
 
 /// \ingroup Core
@@ -36,6 +40,20 @@ public:
   int m_iEventType;
 };
 
+class Dasher::CGameNodeDrawEvent : public Dasher::CEvent {
+public:
+  CGameNodeDrawEvent(CDasherNode* pNode, CDasherView* pView, screenint iX, screenint iY)
+    : m_pNode(pNode),
+      m_pView(pView),
+      m_iX(iX),
+      m_iY(iY) {
+      m_iEventType = EV_GAME_NODE_DRAWN;
+  };
+  
+  CDasherNode* m_pNode;
+  screenint m_iX, m_iY;
+  CDasherView* m_pView;
+};
 
 class Dasher::CGameTargetChangedEvent : public Dasher::CEvent {
 public:

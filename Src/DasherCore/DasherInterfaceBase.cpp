@@ -959,7 +959,7 @@ void CDasherInterfaceBase::CreateModules() {
   // TODO: I don't know what a sensible module ID should be
   // for this, so I chose an arbitrary value
   // TODO: Put "Game Mode" in enumeration in Parameter.h    
-  int GameEvents[] = {EV_EDIT, EV_TEXTDRAW};
+  int GameEvents[] = {EV_EDIT, EV_TEXTDRAW, EV_GAME_NODE_DRAWN};
   RegisterModule(new CGameModule(m_pEventHandler, m_pSettingsStore, this, 21, _("Game Mode"),
                                   std::vector<int>(GameEvents, GameEvents + sizeof(GameEvents) / sizeof(int)), new CFileWordGenerator("")));
 }

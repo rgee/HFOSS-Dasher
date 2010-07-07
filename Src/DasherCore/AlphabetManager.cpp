@@ -147,12 +147,13 @@ bool CAlphabetManager::CSymbolNode::GameSearchNode(string strTargetUtf8Char) {
   }
   return false;
 }
+
 bool CAlphabetManager::CGroupNode::GameSearchNode(string strTargetUtf8Char) {
   if (GameSearchChildren(strTargetUtf8Char)) {
     SetFlag(NF_GAME, true);
     return true;
   }
-return false;
+  return false;
 }
 
 CLanguageModel::Context CAlphabetManager::CAlphNode::CloneAlphContext(CLanguageModel *pLanguageModel) {

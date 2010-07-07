@@ -105,6 +105,11 @@ CDasherModel::~CDasherModel() {
 }
 
 void CDasherModel::HandleEvent(Dasher::CEvent *pEvent) {
+  if(pEvent->m_iEventType == EV_GAME_TARGET_CHANGED) {
+    CGameTargetChangedEvent *pTargetChangedEvent(static_cast< CGameTargetChangedEvent * >(pEvent));
+    
+    m_strGameTarget = pTargetChangedEvent->m_strTargetText;
+  }
   CFrameRate::HandleEvent(pEvent);
 
   if(pEvent->m_iEventType == EV_PARAM_NOTIFY) {
@@ -294,6 +299,7 @@ void CDasherModel::InitialiseAtOffset(int iOffset, CDasherView *pView) {
 
   m_Root = m_pNodeCreationManager->GetAlphRoot(NULL, 0,GetLongParameter(LP_NORMALIZATION), iOffset!=0, iOffset);
   m_pLastOutput = (m_Root->GetFlag(NF_SEEN)) ? m_Root : NULL;
+  m_Root->SetFlag(NF_GAME, true);
   
   // Create children of the root...
   ExpandNode(m_Root);
@@ -597,10 +603,11 @@ void CDasherModel::ExpandNode(CDasherNode *pNode) {
   // If we are in GameMode, then we do a bit of cooperation with the teacher object when we create
   // new children.
 
-  GameMode::CDasherGameMode* pTeacher = GameMode::CDasherGameMode::GetTeacher();
-  if(m_bGameMode && pNode->GetFlag(NF_GAME) && pTeacher )
+  //GameMode::CDasherGameMode* pTeacher = GameMode::CDasherGameMode::GetTeacher();
+  //if(m_bGameMode && pNode->GetFlag(NF_GAME) && pTeacher )
+  if(pNode->GetFlag(NF_GAME))
   {
-    std::string strTargetUtf8Char(pTeacher->GetSymbolAtOffset(pNode->offset() + 1));
+    /*std::string strTargetUtf8Char(pTeacher->GetSymbolAtOffset(pNode->offset() + 1));
       
     // Check if this is the last node in the sentence...
     if(strTargetUtf8Char == "GameEnd")
@@ -609,7 +616,9 @@ void CDasherModel::ExpandNode(CDasherNode *pNode) {
       // Target character not found - not in our current alphabet?!?!
       // Let's give up!
       pNode->SetFlag(NF_END_GAME, true); 
-    }
+    }*/
+    
+    pNode->GameSearchChildren(m_strGameTarget);
   }
   ////////////////////////////
   

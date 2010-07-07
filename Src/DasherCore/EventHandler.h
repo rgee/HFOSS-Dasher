@@ -33,7 +33,7 @@ public:
   typedef std::vector<std::pair<CDasherComponent*, int> > ListenerQueue;
   
 
-  CEventHandler(Dasher::CDasherInterfaceBase * pInterface): m_iNUM_EVENTS(11), m_pInterface(pInterface) {
+  CEventHandler(Dasher::CDasherInterfaceBase * pInterface): m_iNUM_EVENTS(12), m_pInterface(pInterface) {
     m_iInHandler = 0;
 
     // Initialize the event listener container (and queue) so we can add elements without

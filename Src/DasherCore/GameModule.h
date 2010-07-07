@@ -16,6 +16,7 @@ using namespace std;
 #include "DasherTypes.h"
 #include "DasherInterfaceBase.h"
 #include "WordGeneratorBase.h"
+#include "EventHandler.h"
 
 
 
@@ -56,6 +57,8 @@ class CGameModule : public CDasherModule {
     GenerateChunk();
     if(m_sTargetString == "")
       g_pLogger->LogCritical("Word generation FAILED");
+      
+    
     
   }
 
