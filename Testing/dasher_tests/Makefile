@@ -28,7 +28,7 @@ USER_DIR = .
 CPPFLAGS += -I$(GTEST_DIR)/include
 
 # Flags passed to the C++ compiler.
-CXXFLAGS += -g -Wall -Wextra
+CXXFLAGS += -g
 
 # All tests produced by this Makefile.  Remember to add new tests you
 # created to the list.
@@ -70,9 +70,12 @@ gtest.a : gtest-all.o
 gtest_main.a : gtest-all.o gtest_main.o
 	$(AR) $(ARFLAGS) $@ $^
 	
-EventTest : EventTest.o gtest_main.a
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
-
 EventTest.o : $(USER_DIR)/EventTest.cpp
-	$(CXX) $(CPPFLAGS) -I$(DASHER_CORE_DIR) -I$(TEST_PLATFORM_DIR) $(CXXFLAGS) -c $(USER_DIR)/EventTest.cpp
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/EventTest.cpp
 
+EventTest : EventTest.o \
+			gtest_main.a $(DASHER_CORE_DIR)/libdashercore.a \
+			$(DASHER_CORE_DIR)/libdasherprefs.a \
+			$(DASHER_CORE_DIR)/LanguageModelling/libdasherlm.a
+	$(CXX) $(CPPFLAGS) -lexpat $(CXXFLAGS) -lpthread $^ -o $@
+	
