@@ -35,7 +35,7 @@ public:
   typedef std::vector<std::pair<Dasher::CDasherComponent*, int> > EvtListenerCollection;
   
 
-  CEventHandler(Dasher::CDasherInterfaceBase * pInterface): m_iNUM_EVENTS(10), m_pInterface(pInterface) {
+  CEventHandler(Dasher::CDasherInterfaceBase * pInterface): m_iNUM_EVENTS(12), m_pInterface(pInterface) {
 
     m_bIsDispatching = false;
     
