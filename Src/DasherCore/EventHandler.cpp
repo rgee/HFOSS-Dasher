@@ -47,8 +47,7 @@ void CEventHandler::InsertEvent(CEvent *pEvent) {
 	  
 	  //dispatch the event at the front of the queue to all registered listeners
 	  for(std::vector<CDasherComponent*>::const_iterator it = m_vSpecificListeners[currEvent->m_iEventType - 1].begin();
-      it != m_vSpecificListeners[currEvent->m_iEventType - 1].end();
-     ++it)
+	      it != m_vSpecificListeners[currEvent->m_iEventType - 1].end(); ++it)
       {
 		(*it)->HandleEvent(currEvent);
 	  }
