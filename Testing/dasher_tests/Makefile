@@ -38,8 +38,7 @@ CXXFLAGS += -g
 
 # All tests produced by this Makefile.  Remember to add new tests you
 # created to the list.
-TESTS = EventTest \
-				FileWordGenTest
+TESTS = EventTest
 
 # All Google Test headers.  Usually you shouldn't change this
 # definition.
@@ -77,6 +76,7 @@ gtest.a : gtest-all.o
 gtest_main.a : gtest-all.o gtest_main.o
 	$(AR) $(ARFLAGS) $@ $^
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 # Builds a sample test.  A test should link with either gtest.a or
 # gtest_main.a, depending on whether it defines its own main()
@@ -108,6 +108,8 @@ EventTest.o : $(USER_DIR)/EventTest.cpp
 
 
 =======
+=======
+>>>>>>> 5433c1428344783d48b65e951bfa1c364c0ca865
 	
 EventTest.o : $(USER_DIR)/EventTest.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/EventTest.cpp
@@ -117,5 +119,8 @@ EventTest : EventTest.o \
 			$(DASHER_CORE_DIR)/libdasherprefs.a \
 			$(DASHER_CORE_DIR)/LanguageModelling/libdasherlm.a
 	$(CXX) $(CPPFLAGS) -lexpat $(CXXFLAGS) -lpthread $^ -o $@
+<<<<<<< HEAD
 	
 >>>>>>> 89bbcb570f5762f48ae0abc1daab863d49cd9b33
+=======
+>>>>>>> 5433c1428344783d48b65e951bfa1c364c0ca865
