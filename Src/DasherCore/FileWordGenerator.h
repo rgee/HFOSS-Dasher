@@ -67,17 +67,11 @@ public:
   std::string GetPath();
 
   /**
-   * File name getter
+   * File name getter. Returns the file name and extension, without
+   * any slashes.
    * @return The actual name of the file being read from
    */
   std::string GetFilename();
-  
-  /**
-   * Prefix increment operator.
-   * 
-   * Moves the generator one word ahead.
-   */
-  virtual CWordGeneratorBase& operator++();
   
   
   std::ifstream& GetFileHandle() { return m_sFileHandle; }
