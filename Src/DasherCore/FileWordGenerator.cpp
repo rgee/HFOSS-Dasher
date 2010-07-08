@@ -5,7 +5,7 @@ using namespace Dasher;
 
 bool CFileWordGenerator::Generate() { 
   if(!m_sFileHandle.is_open())
-    m_sFileHandle.open("test_text.txt");
+    m_sFileHandle.open(m_sPath.c_str());
   
    
   m_uiPos = 0;

@@ -91,12 +91,14 @@ gtest_main.a : gtest-all.o gtest_main.o
 #sample1_unittest : sample1.o sample1_unittest.o gtest_main.a
 #	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
 
-FileWordGenTest : FileWordGenTest.o gtest_main.a
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
-	
-FileWordGenTest.o : $(USER_DIR)/FileWordGenTest.cpp
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/FileWordGenTest.cpp	
+WordGenTest.o : $(USER_DIR)/WordGenTest.cpp
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/WordGenTest.cpp	
 
+WordGenTest : WordGenTest.o \
+			gtest_main.a $(DASHER_CORE_DIR)/libdashercore.a \
+			$(DASHER_CORE_DIR)/libdasherprefs.a \
+			$(DASHER_CORE_DIR)/LanguageModelling/libdasherlm.a
+	$(CXX) $(CPPFLAGS) -lexpat $(CXXFLAGS) -lpthread $^ -o $@
 	
 EventTest.o : $(USER_DIR)/EventTest.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/EventTest.cpp
