@@ -961,7 +961,7 @@ void CDasherInterfaceBase::CreateModules() {
   // TODO: Put "Game Mode" in enumeration in Parameter.h    
   int GameEvents[] = {EV_EDIT, EV_TEXTDRAW};
   RegisterModule(new CGameModule(m_pEventHandler, m_pSettingsStore, this, 21, _("Game Mode"),
-                                  std::vector<int>(GameEvents, GameEvents + sizeof(GameEvents) / sizeof(int)), new CFileWordGenerator("")));
+                                  std::vector<int>(GameEvents, GameEvents + sizeof(GameEvents) / sizeof(int)), new CFileWordGenerator("test_text.txt")));
 }
 
 void CDasherInterfaceBase::GetPermittedValues(int iParameter, std::vector<std::string> &vList) {
