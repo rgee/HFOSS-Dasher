@@ -85,19 +85,19 @@ TEST_F(EventTest, StressTest) {
   
   std::vector<DummyComponent*> components;
   
-  for(int c = 0; c < 10000; c++) {
+  for(int c = 0; c < 1000; c++) {
     
     DummyComponent *newComponent = new DummyComponent(evtHandler, settingsStore);
     components.push_back(newComponent);
     evtHandler->RegisterListener(newComponent, EV_PARAM_NOTIFY);
   }
   
-  for(int c = 0; c < 10000; c++) {
+  for(int c = 0; c < 1000; c++) {
     evtHandler->InsertEvent(new CParameterNotificationEvent(0));
   }
   
   for(std::vector<DummyComponent*>::iterator iter = components.begin(); iter != components.end(); ++iter) {
-    EXPECT_EQ((*iter)->evtCount, 10000);
+    EXPECT_EQ((*iter)->evtCount, 1000);
   }
 }
 
