@@ -97,6 +97,14 @@ public:
 private:
 
   /**
+   * Dispatch all the events in the event queue, and take
+   * care of all the pending additions/deletions to m_vSpecificListeners
+   * in between events. Empties m_qEventQueue, m_vPendingSpecificReg, and
+   * m_vPendSpecificUnreg
+   */ 
+  void ProcessEventQueue();
+
+  /**
    * The queue of events waiting to be dispatched. 
    */
   std::queue<Dasher::CEvent*> m_qEventQueue;
