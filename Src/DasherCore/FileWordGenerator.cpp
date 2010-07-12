@@ -5,12 +5,15 @@ using namespace Dasher;
 
 bool CFileWordGenerator::Generate() { 
   if(!m_sFileHandle.is_open())
-    m_sFileHandle.open("test_text.txt");
+    m_sFileHandle.open(m_sPath.c_str());
   
    
   m_uiPos = 0;
   m_sGeneratedString.clear();
-  if(m_sFileHandle.good()) {
+  if(m_sFileHandle.eof()) {
+    m_sCurrentWord = "";
+    return false;
+  } else if(m_sFileHandle.good()) {
     std::getline(m_sFileHandle, m_sGeneratedString);
     FindNextWord();
     return true;
@@ -23,7 +26,7 @@ std::string CFileWordGenerator::GetPath() {
   return m_sPath; 
 }
 std::string CFileWordGenerator::GetFilename() {
-  return m_sPath.substr(m_sPath.rfind("/"));
+  return m_sPath.substr(m_sPath.rfind("/")+1);
 }
 
 std::string CFileWordGenerator::GetNextWord() {
@@ -41,9 +44,10 @@ void CFileWordGenerator::FindNextWord() {
     // Attempt to reload the buffer.
     if(!Generate())
     {
-      // If file IO fails, return empty.
+      // If file IO fails, set the current word to empty.
       result = "";
       m_sCurrentWord =  result;
+      return;
     }
   } 
   
@@ -61,7 +65,3 @@ void CFileWordGenerator::FindNextWord() {
   m_sCurrentWord = result;
 }
 
-CWordGeneratorBase& CFileWordGenerator::operator++() {
-  GetNextWord();
-  return *this;
-}
