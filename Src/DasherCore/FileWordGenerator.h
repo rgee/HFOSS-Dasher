@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <stdexcept>
 using namespace std;
 
 #include "WordGeneratorBase.h"
@@ -30,27 +31,22 @@ class CFileWordGenerator : public CWordGeneratorBase {
 public:
   CFileWordGenerator(std::string sPath, int iRegen) 
     : m_sPath(sPath),
-      m_sCurrentWord(""),
-      CWordGeneratorBase(iRegen)
-      {Generate();}
+      CWordGeneratorBase(iRegen) {
+    Generate();
+  }
+    
   CFileWordGenerator(std::string sPath)
     : m_sPath(sPath),
-      m_sCurrentWord(""),
-      CWordGeneratorBase(0)
-      {Generate();}
+      CWordGeneratorBase() {
+    Generate();
+  }
       
   virtual ~CFileWordGenerator() {
     m_sFileHandle.close();
   }
   
   
-  /**
-   * The generator function. In this implementation, it reads from a 
-   * file to produce strings.In this implementation, failure means file 
-   * io has failed for some reason.
-   * @see CWordGeneratorBase::Generate
-   */
-  virtual bool Generate();
+
 
   /**
    * Returns the next word that was read
@@ -72,11 +68,6 @@ public:
    * @return The actual name of the file being read from
    */
   std::string GetFilename();
-  
-  
-  std::ifstream& GetFileHandle() { return m_sFileHandle; }
-  std::string GetWholeBuffer() { return m_sGeneratedString; }
-  size_t GetStringPosition() { return m_uiPos; }
 
 private:
 /* ---------------------------------------------------------------------
@@ -94,6 +85,13 @@ private:
    *          to a client.
    */
   void FindNextWord();
+  
+    /**
+   * The generator function. In this implementation, it reads from a 
+   * io has failed for some reason.
+   * file to produce strings.In this implementation, failure means file 
+   */
+   bool Generate();
 
 
 /* ---------------------------------------------------------------------

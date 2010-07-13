@@ -4,10 +4,13 @@ using namespace Dasher;
 
 
 bool CFileWordGenerator::Generate() { 
-  if(!m_sFileHandle.is_open())
+  if(!m_sFileHandle.is_open()) {
     m_sFileHandle.open(m_sPath.c_str());
+  }
+  if(m_sFileHandle.fail()) {
+    throw std::runtime_error(m_sPath + " does not exist");
+  }
   
-   
   m_uiPos = 0;
   m_sGeneratedString.clear();
   if(m_sFileHandle.eof()) {

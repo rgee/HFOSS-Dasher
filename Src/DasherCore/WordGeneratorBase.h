@@ -8,10 +8,9 @@ namespace Dasher {
 /**
  * The base class for all word generators. Word generators encapsulate
  * logic for simply generating words based on implementation-specific
- * conditions. Currently, this is being used to wrap GameMode's simple
- * text-file reading mechanism, but another generator can easily be
- * written that selects words based on a function of the current value
- * of the Sri Lankan rupee and the amount of twitter feeds regarding
+ * conditions. The benefit of this is that a generator can
+ * easily be written that selects words based on a function of the current
+ * value of the Sri Lankan rupee and the amount of twitter feeds regarding
  * the winter olympics, for example.
  * 
  * 
@@ -28,6 +27,9 @@ namespace Dasher {
 class CWordGeneratorBase {
 public:
   CWordGeneratorBase(int regen) : m_iRegenTime(regen), m_bWordsReady(false) 
+  {}
+  
+  CWordGeneratorBase() : m_iRegenTime(0), m_bWordsReady(false)
   {}
 
   virtual ~CWordGeneratorBase() { } 
@@ -49,13 +51,6 @@ public:
   //virtual std::string GetPreviousWord() = 0;
   
 protected:
-  /**
-   * Generate the words based on the generation rules
-   * @return True if the generation succeeded, false if not.
-   * @warning The return value of this function should always be checked
-   *          in case it's using files or other solutions that can fail.
-   */
-  virtual bool Generate() = 0;
 
   /**
    * The time in seconds after which a generator should regenerate.
