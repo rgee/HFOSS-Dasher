@@ -105,11 +105,6 @@ CDasherModel::~CDasherModel() {
 }
 
 void CDasherModel::HandleEvent(Dasher::CEvent *pEvent) {
-  if(pEvent->m_iEventType == EV_GAME_TARGET_CHANGED) {
-    CGameTargetChangedEvent *pTargetChangedEvent(static_cast< CGameTargetChangedEvent * >(pEvent));
-    
-    m_strGameTarget = pTargetChangedEvent->m_strTargetText;
-  }
   CFrameRate::HandleEvent(pEvent);
 
   if(pEvent->m_iEventType == EV_PARAM_NOTIFY) {
@@ -150,9 +145,14 @@ void CDasherModel::HandleEvent(Dasher::CEvent *pEvent) {
     }
   }
   else if(pEvent->m_iEventType == EV_GAME_TARGET_CHANGED) {
+    
+    
     CGameTargetChangedEvent *pTargetChangedEvent(static_cast< CGameTargetChangedEvent * >(pEvent));
     
     m_strGameTarget = pTargetChangedEvent->m_strTargetText;
+   
+    // Search from the current root.
+    m_Root->GameSearchChildren(m_strGameTarget);
   }
 }
 
@@ -617,7 +617,6 @@ void CDasherModel::ExpandNode(CDasherNode *pNode) {
       // Let's give up!
       pNode->SetFlag(NF_END_GAME, true); 
     }*/
-    
     pNode->GameSearchChildren(m_strGameTarget);
   }
   ////////////////////////////

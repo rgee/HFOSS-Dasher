@@ -21,6 +21,9 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
 
                       } else {
                           ++m_iCurrentStringPos;
+                            m_pEventHandler->InsertEvent(
+                              new CGameTargetChangedEvent(m_sTargetString.substr(m_iCurrentStringPos + 1, 1))
+                            );
                       }
                     }
                     break;
@@ -143,6 +146,6 @@ void CGameModule::GenerateChunk() {
     m_sTargetString += " ";
   }
   m_pEventHandler->InsertEvent(
-    new CGameTargetChangedEvent(m_sTargetString.substr(m_iCurrentStringPos + 1, 1))
+    new CGameTargetChangedEvent(m_sTargetString.substr(0, 1))
   );
 }
