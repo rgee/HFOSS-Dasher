@@ -8,17 +8,16 @@ bool CFileWordGenerator::Generate() {
     m_sFileHandle.open(m_sPath.c_str());
   }
   if(m_sFileHandle.fail()) {
-    throw std::runtime_error(m_sPath + " does not exist");
+    throw std::runtime_error("File: " + m_sPath + " cannot be read.");
   }
   
   m_uiPos = 0;
   m_sGeneratedString.clear();
+  
   if(m_sFileHandle.eof()) {
-    m_sCurrentWord = "";
     return false;
   } else if(m_sFileHandle.good()) {
     std::getline(m_sFileHandle, m_sGeneratedString);
-    FindNextWord();
     return true;
   } else {
     return false;
@@ -33,30 +32,15 @@ std::string CFileWordGenerator::GetFilename() {
 }
 
 std::string CFileWordGenerator::GetNextWord() {
-  std::string result = m_sCurrentWord;
-  FindNextWord();
-  
-  return result;
-}
-
-void CFileWordGenerator::FindNextWord() {
-  std::string result;
-  
-  // We are at the end of the buffer.
   if(m_uiPos >= m_sGeneratedString.length()) { 
     // Attempt to reload the buffer.
-    if(!Generate())
-    {
-      // If file IO fails, set the current word to empty.
-      result = "";
-      m_sCurrentWord =  result;
-      return;
-    }
+    if(!Generate()) return "";
   } 
   
   size_t found = m_sGeneratedString.substr(m_uiPos).find(" ");
+  std::string result;
   
-  // If there are no space characters.
+    // If there are no space characters.
   if(found != string::npos) 
   {
     result = m_sGeneratedString.substr(m_uiPos, found);
@@ -64,7 +48,9 @@ void CFileWordGenerator::FindNextWord() {
     m_uiPos += (found + 1);
   } else {
     result = m_sGeneratedString.substr(m_uiPos);
-  }
-  m_sCurrentWord = result;
+  };
+  
+  return result;
 }
+
 

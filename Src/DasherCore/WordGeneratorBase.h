@@ -17,12 +17,18 @@ namespace Dasher {
  * A typical use case for any class deriving from CWordGeneratorBase
  * would be the following:
  *    1) Construct the object (providing any implementation-specific params)
- *       - The words will be generated on construction.
- * 
+ *  * 
  *    2) To retrieve a word, simply call GetNextWord. This will continue
  *       until the specific implementation determines that there are no
  *       more words for any reason. When there are no more, GetNextWord
  *       returns the empty string.
+ * 
+ * Usage Example:
+ *    CWordGeneratorBase gen = CWordGeneratorBase(params...);
+ *    std::string word;
+ *    while ((word = gen.GetNextWord()) != "") {
+ *         Operate on the word
+ *    }
  */ 
 class CWordGeneratorBase {
 public:

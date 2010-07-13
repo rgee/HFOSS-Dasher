@@ -44,14 +44,13 @@ public:
   virtual ~CFileWordGenerator() {
     m_sFileHandle.close();
   }
-  
-  
-
 
   /**
    * Returns the next word that was read
    * @return The next word in the word generator model if there is one.
-   *          Otherwise, returns an empty string.
+   *          Otherwise, returns an empty string if there are no more
+   *          words.
+   * @throw  Throws an exception if the file cannot be read.
    */
   virtual std::string GetNextWord();
 
@@ -68,42 +67,27 @@ public:
    * @return The actual name of the file being read from
    */
   std::string GetFilename();
+  
 
 private:
 /* ---------------------------------------------------------------------
  * Private Methods
  * ---------------------------------------------------------------------
  */
-
-  /**
-   * Find the next word in the generated string buffer.
-   * This does NOT return that string, which is why this is not a public
-   * facing method. It only updates the current string to be presented.
-   * 
-   * @warning Ensure that this is called whenever m_sGeneratedString is
-   *          remade or whenever the current word is actually presented
-   *          to a client.
-   */
-  void FindNextWord();
   
-    /**
-   * The generator function. In this implementation, it reads from a 
-   * io has failed for some reason.
-   * file to produce strings.In this implementation, failure means file 
-   */
-   bool Generate();
+  /**
+   * The generator function. Reads words from the specified file.
+   * @return True if generating the new buffer was successful,
+   *          false if we've reached the end of the file.
+   * @throw Throws an exception if the file cannot be read.
+   */ 
+  bool Generate();
 
 
 /* ---------------------------------------------------------------------
  * Member Variables
  * ---------------------------------------------------------------------
  */
-
-  /**
-   * The current word we're looking at. This is the next word that
-   * will be returned when GetNextWord is called.
-   */
-  std::string m_sCurrentWord;
 
   /**
    * The string that has been generated.
@@ -119,11 +103,6 @@ private:
    * The position we're currently reading from in the string.
    */
   size_t m_uiPos;
-  
-  /**
-   * Flag for whether there are words left in this model.
-   */
-  bool m_bWordsLeft;
   
   /**
    * The input stream that acts as the handle to the underlying file.
