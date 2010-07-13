@@ -1,16 +1,14 @@
-#ifndef __FileWordGenerator_h__
-#define __FileWordGenerator_h__
+#ifndef __MockFileWordGenerator_h__
+#define __MockFileWordGenerator_h__
 
+#include "../DasherCore/WordGeneratorBase.h"
 #include <string>
 #include <iostream>
 #include <fstream>
 #include <stdexcept>
 using namespace std;
 
-#include "WordGeneratorBase.h"
-
-namespace Dasher {
-  
+// MOCK OBJECT FOR TESTING
   
 /**
  * This class implements the Word Generator interface. This means
@@ -26,21 +24,21 @@ namespace Dasher {
  * the behavior is undefined as you may cause the file to be read in all
  * at once. 
  */
-class CFileWordGenerator : public CWordGeneratorBase {
+class MockFileWordGenerator : public CWordGeneratorBase {
 public:
-  CFileWordGenerator(std::string sPath, int iRegen) 
+  MockFileWordGenerator(std::string sPath, int iRegen) 
     : m_sPath(sPath),
       CWordGeneratorBase(iRegen) {
     Generate();
   }
     
-  CFileWordGenerator(std::string sPath)
+  MockFileWordGenerator(std::string sPath)
     : m_sPath(sPath),
       CWordGeneratorBase() {
     Generate();
   }
       
-  virtual ~CFileWordGenerator() {
+  virtual ~MockFileWordGenerator() {
     m_sFileHandle.close();
   }
 
@@ -66,6 +64,11 @@ public:
    * @return The actual name of the file being read from
    */
   std::string GetFilename();
+  
+  
+  std::string GetWholeBuffer() { return m_sGeneratedString; }
+  std::ifstream& GetFileHandle() { return m_sFileHandle; }
+  size_t GetStringPosition() { return m_uiPos; }
   
 
 private:
@@ -108,6 +111,6 @@ private:
    */
   ifstream m_sFileHandle;
 };
-}
+
 
 #endif
