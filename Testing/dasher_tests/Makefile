@@ -49,6 +49,10 @@ GTEST_HEADERS = $(GTEST_DIR)/include/gtest/*.h \
 
 all : $(TESTS)
 
+install :
+
+uninstall :
+
 clean :
 	rm -f $(TESTS) gtest.a gtest_main.a *.o
 
@@ -108,4 +112,5 @@ EventTest : EventTest.o \
 			$(DASHER_CORE_DIR)/libdasherprefs.a \
 			$(DASHER_CORE_DIR)/LanguageModelling/libdasherlm.a
 	$(CXX) $(CPPFLAGS) -lexpat $(CXXFLAGS) -lpthread $^ -o $@
+		
 
