@@ -15,6 +15,17 @@ namespace Dasher {
 
 /// \ingroup Core
 /// @{
+/**
+ * This class handles the dispatch and management of events throughout Dasher.
+ * Any class that derives from CDasherComponent can subscribe to events. These
+ * events are enumerated in Event.h. All CDasherComponents are automatically
+ * registered for their selected events on construction.
+ * 
+ * Components SHOULD specify exactly which events they're interested in
+ * instead of omitting this information. This allows the event management
+ * system to make optimal use of time in dispatching events. (i.e. cuts
+ * down on unused event dispatching)
+ */
 class Dasher::CEventHandler {
   
 public: 

@@ -12,10 +12,16 @@ namespace Dasher {
 /// @{
 class Dasher::CDasherComponent {
  public:
+ 
+  /**
+   * Constructor that registers this component for ALL Dasher events
+   * @param pEventHandler A pointer to the event handler
+   * @param pSettingsStore A pointer to the settings store
+   */
   CDasherComponent(Dasher::CEventHandler* pEventHandler, CSettingsStore* pSettingsStore);
   
   /**
-   * Constructor to register for specific events.
+   * Constructor that allows for subscription to specific Dasher events.
    * @param pEventHandler A pointer to the event handler
    * @param pSettingsStore A pointer to the settings store
    * @param vEvents A vector of integers where each integer is an event type

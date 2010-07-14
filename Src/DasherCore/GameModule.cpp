@@ -2,6 +2,12 @@
 
 using namespace Dasher;
 
+/**
+ * Static members of non-integral type must be initialized outside of
+ * class definitions.
+ */
+const int Dasher::CGameModule::vEvents[2] = {EV_EDIT, EV_TEXTDRAW}; 
+
 void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
 
     switch(pEvent->m_iEventType)
