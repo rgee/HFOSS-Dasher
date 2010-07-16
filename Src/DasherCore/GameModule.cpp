@@ -6,7 +6,7 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
 
     switch(pEvent->m_iEventType)
     {
-        case EV_EDIT:
+		case EV_EDIT:
         {     
             CEditEvent* evt = static_cast<CEditEvent*>(pEvent);
             switch(evt->m_iEditType)
