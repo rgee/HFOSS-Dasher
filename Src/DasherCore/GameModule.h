@@ -60,9 +60,6 @@ class CGameModule : public CDasherModule {
                   std::vector<int>(vEvents, vEvents + sizeof(vEvents) / sizeof(int)))
   {     
     m_pInterface = pInterface;
-    
-    if(m_pWordGenerator == NULL)
-      g_pLogger->LogCritical("Word generator creation FAILED");
       
     GenerateChunk();
     if(m_sTargetString == "")
