@@ -9,7 +9,6 @@
 
 namespace Dasher {
   class CEvent;
-  class CTextDrawEvent;
   class CParameterNotificationEvent;
   class CEditEvent;
   class CEditContextEvent;
@@ -26,8 +25,7 @@ namespace Dasher {
 }
 
 enum {
-  EV_PARAM_NOTIFY = 1, EV_EDIT, EV_EDIT_CONTEXT, EV_START, EV_STOP, EV_CONTROL, EV_LOCK, EV_GAME_TARGET_CHANGED, EV_MESSAGE, EV_COMMAND, EV_TEXTDRAW, 
-  EV_GAME_NODE_DRAWN
+  EV_PARAM_NOTIFY = 1, EV_EDIT, EV_EDIT_CONTEXT, EV_START, EV_STOP, EV_CONTROL, EV_LOCK, EV_GAME_TARGET_CHANGED, EV_MESSAGE, EV_COMMAND, EV_GAME_NODE_DRAWN
 };
 
 /// \ingroup Core
@@ -99,47 +97,6 @@ public:
 
   int m_iOffset;
   int m_iLength;
-};
-
-/**
- * An event that signals text has been drawn. Useful for determining its location
- * because that information is only available at draw time.
- */
-class Dasher::CTextDrawEvent : public Dasher::CEvent {
-public:
-  CTextDrawEvent(std::string sDisplayText, CDasherView *pView, screenint iX, screenint iY, int iSize)
-  :m_sDisplayText(sDisplayText),
-   m_pDasherView(pView),
-   m_iX(iX),
-   m_iY(iY),
-   m_iSize(iSize) 
-  {
-    m_iEventType = EV_TEXTDRAW;
-  };
-  /**
-   * The text that has been drawn.
-   */
-  std::string m_sDisplayText;
-
-  /**
-   * The dasher view that emitted this event.
-   */
-  CDasherView* m_pDasherView;
-
-  /**
-   * The X position (in screen coordinates) of the center of the box surrounding the text.
-   */
-  screenint m_iX;
-
-  /**
-   * The Y position (in screen coordinates) of the center of the box surrounding the text.
-   */
-  screenint m_iY;
-
-  /**
-   * The size of the text. Useful for determining the boundaries of the text "box"
-   */
-  int m_iSize; 
 };
 
 class Dasher::CStartEvent:public Dasher::CEvent {

@@ -6,7 +6,7 @@ using namespace Dasher;
  * Static members of non-integral type must be initialized outside of
  * class definitions.
  */
-const int Dasher::CGameModule::vEvents[3] = {EV_EDIT, EV_TEXTDRAW, EV_GAME_NODE_DRAWN}; 
+const int Dasher::CGameModule::vEvents[2] = {EV_EDIT, EV_GAME_NODE_DRAWN}; 
 
 void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
 
@@ -47,19 +47,6 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
           evt->m_pView->Screen2Dasher(evt->m_iX, evt->m_iY, m_iTargetX, m_iTargetY);
         }
         break;
-        /*
-        case EV_TEXTDRAW:
-        {
-          CTextDrawEvent* evt = static_cast<CTextDrawEvent*>(pEvent);
-          // Check whether the text that was drawn is the current target character.
-          if(CharacterFound(evt)) { 
-               //the x and y coordinates (in Dasher coords) of the target node
-               evt->m_pDasherView->Screen2Dasher(evt->m_iX, evt->m_iY, m_iTargetX, m_iTargetY);
-               
-            }
-        }
-        break;
-        */
         default:
           break;
 
@@ -70,10 +57,6 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
 
 bool CGameModule::CharacterFound(CEditEvent* pEvent) {
   return !pEvent->m_sText.compare(m_sTargetString.substr(m_iCurrentStringPos + 1, 1));
-}
-
-bool CGameModule::CharacterFound(CTextDrawEvent* pEvent) {
-  return !pEvent->m_sDisplayText.compare(m_sTargetString.substr(m_iCurrentStringPos + 1, 1));
 }
 
 bool CGameModule::DecorateView(CDasherView *pView) {

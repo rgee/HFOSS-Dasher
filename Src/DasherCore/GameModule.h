@@ -116,10 +116,6 @@ class CGameModule : public CDasherModule {
    */
   bool CharacterFound(CEditEvent* pEvent);
   
-  /**
-   * @see CharacterFound
-   */
-  bool CharacterFound(CTextDrawEvent* pEvent);
 
   /**
    * Helper function for generating (Or regenerating) a new chunk.
@@ -217,7 +213,7 @@ class CGameModule : public CDasherModule {
   /**
    * The events this class listens for
    */
-  static const int vEvents[3];
+  static const int vEvents[2];
 
 };
 
