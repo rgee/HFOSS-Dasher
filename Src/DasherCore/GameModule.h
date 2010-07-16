@@ -16,6 +16,9 @@ using namespace std;
 #include "DasherTypes.h"
 #include "DasherInterfaceBase.h"
 #include "WordGeneratorBase.h"
+#include "EventHandler.h"
+
+
 
 namespace Dasher {
 
@@ -27,15 +30,24 @@ namespace Dasher {
  * The way target strings will be displayed and reasoned about in code is in terms
  * of chunks. Chunks represent the collection of strings that is displayed at once
  * on the screen. After typing all the words in a given chunk, a new chunk of size
- * m_iTargetChunkSize is gotten from the word generator and displayed.
+ * m_iTargetChunkSize is retrieved from the word generator and displayed.
  *
  * This class handles logic and drawing code with respect to the above.
  */
 class CGameModule : public CDasherModule {
  public:
+  /**
+   * Constructor
+   * @param pEventHandler A pointer to the event handler
+   * @param pSettingsStore A pointer to the settings store
+   * @param pInterface A pointer to a Dasher interface
+   * @param iID The ID of this module.
+   * @param szName The name of this module
+   * @param pWordGenerator A pointer to the word generator
+   */
   CGameModule(Dasher::CEventHandler *pEventHandler, CSettingsStore *pSettingsStore,  
                 CDasherInterfaceBase *pInterface, ModuleID_t iID, const char *szName,
-                std::vector<int> vEvents, CWordGeneratorBase* pWordGenerator) 
+                CWordGeneratorBase* pWordGenerator) 
   : m_iCrosshairColor(135),
     m_iCrosshairNumPoints(2),
     m_iCrosshairExtent(25),
@@ -44,7 +56,8 @@ class CGameModule : public CDasherModule {
     m_iFontSize(36),
     m_iCurrentStringPos(-1),
     m_pWordGenerator(pWordGenerator),
-    CDasherModule(pEventHandler, pSettingsStore, iID, 0, szName, vEvents)
+    CDasherModule(pEventHandler, pSettingsStore, iID, 0, szName,
+                  std::vector<int>(vEvents, vEvents + sizeof(vEvents) / sizeof(int)))
   {     
     m_pInterface = pInterface;
     
@@ -58,7 +71,7 @@ class CGameModule : public CDasherModule {
   }
 
   virtual ~CGameModule() {
-  };
+  }
 
   /**
    * Gets the typed portion of the target string
@@ -103,10 +116,6 @@ class CGameModule : public CDasherModule {
    */
   bool CharacterFound(CEditEvent* pEvent);
   
-  /**
-   * @see CharacterFound
-   */
-  bool CharacterFound(CTextDrawEvent* pEvent);
 
   /**
    * Helper function for generating (Or regenerating) a new chunk.
@@ -200,9 +209,17 @@ class CGameModule : public CDasherModule {
    * The font size used to draw the target string.
    */
   const int m_iFontSize;
+  
+  /**
+   * The events this class listens for
+   */
+  static const int vEvents[2];
 
 };
-} 
+
+}
+
+
 
 
 #endif

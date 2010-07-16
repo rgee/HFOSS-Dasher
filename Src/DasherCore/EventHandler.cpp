@@ -48,7 +48,7 @@ void CEventHandler::ProcessEventQueue() {
     
     m_pInterface->InterfaceEventHandler(currEvent);
   
-      m_pInterface->ExternalEventHandler(currEvent);
+    m_pInterface->ExternalEventHandler(currEvent);
     
     //entering the dispatching loop - no longer safe to modify m_vSpecificListeners
     m_bIsDispatching = true;
@@ -82,20 +82,12 @@ void CEventHandler::EnqueueEvent(CEvent *pEvent) {
 }
 
 void CEventHandler::RegisterListener(CDasherComponent *pListener, int iEventType) {
-  
-  // Only try to add a new listener if it doesn't already exist in the Listener map
-  if((std::find(m_vSpecificListeners[iEventType - 1].begin(), m_vSpecificListeners[iEventType - 1].end(), pListener) == m_vSpecificListeners[iEventType - 1].end())) { 
-    
-    if(!m_bIsDispatching) {
-      m_vSpecificListeners[iEventType - 1].push_back(pListener);
-    }
-    else {
-      // Add the listener to the pending set if events are being dispatched
-      m_vPendingSpecificReg.push_back(std::make_pair(pListener, iEventType));
-    }
-  }
-  else {
-    // Can't add the same listener twice 
+  if(m_bIsDispatching) {
+    // Add the listener to the pending set if events are being dispatched
+    m_vPendingSpecificReg.push_back(std::make_pair(pListener, iEventType));
+  } // Only try to add a new listener if it doesn't already exist in the Listener map
+  else if((std::find(m_vSpecificListeners[iEventType - 1].begin(), m_vSpecificListeners[iEventType - 1].end(), pListener) == m_vSpecificListeners[iEventType - 1].end())) { 
+    m_vSpecificListeners[iEventType - 1].push_back(pListener);
   }
 }
 

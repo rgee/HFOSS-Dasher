@@ -1,3 +1,6 @@
+#ifndef __MockSettingsStore_h__
+#define __MockSettingsStore_h__
+
 #include "../DasherCore/SettingsStore.h"
 
 using namespace Dasher;
@@ -9,17 +12,19 @@ using namespace Dasher;
  */
 class CMockSettingsStore : public CSettingsStore {
 
-	public:
-	
-		CMockSettingsStore(Dasher::CEventHandler * pEventHandler) : CSettingsStore(pEventHandler) {}
-		
-		bool LoadSetting(const std::string & Key, bool * Value) { return true; }
-		
-		bool LoadSetting(const std::string & Key, long * Value) { return true; }
-		
-		void SaveSetting(const std::string & Key, bool Value) {}
-		
-		void SaveSetting(const std::string & Key, long Value) {}
-		
-		void SaveSetting(const std::string & Key, const std::string & Value) {}
+  public:
+  
+    CMockSettingsStore(Dasher::CEventHandler * pEventHandler) : CSettingsStore(pEventHandler) {}
+    
+    bool LoadSetting(const std::string & Key, bool * Value) { return true; }
+    
+    bool LoadSetting(const std::string & Key, long * Value) { return true; }
+    
+    void SaveSetting(const std::string & Key, bool Value) {}
+    
+    void SaveSetting(const std::string & Key, long Value) {}
+    
+    void SaveSetting(const std::string & Key, const std::string & Value) {}
 };
+
+#endif

@@ -99,7 +99,8 @@ void CDasherViewSquare::HandleEvent(Dasher::CEvent *pEvent) {
 /// specified as two co-ordinates, intended to the be the corners of
 /// the leading edge of the containing box.
 
-void CDasherViewSquare::DasherDrawText(myint iAnchorX1, myint iAnchorY1, myint iAnchorX2, myint iAnchorY2, const std::string &sDisplayText, int &mostleft, bool bShove) {
+void CDasherViewSquare::DasherDrawText(myint iAnchorX1, myint iAnchorY1, myint iAnchorX2, myint iAnchorY2, const std::string &sDisplayText, int &mostleft, bool bShove, CDasherNode* pNode) {
+  
   
   // Don't draw text which will overlap with text in an ancestor.
   
@@ -210,10 +211,9 @@ void CDasherViewSquare::DasherDrawText(myint iAnchorX1, myint iAnchorY1, myint i
     mostleft = std::min(iDasherNewRight, iDasherNewLeft);
   }
    
-
-  // Tell other listeners that text has been drawn and provide some information
-  // about the draw call.
-  m_pEventHandler->InsertEvent(new CTextDrawEvent(sDisplayText,this, newleft2, newtop2, Size));
+  if((pNode != NULL) && (pNode->GetFlag(NF_GAME) == true)) {
+    m_pEventHandler->InsertEvent(new CGameNodeDrawEvent(pNode, this, newleft2, newtop2));
+  }
 
   // Actually draw the text. We use DelayDrawText as the text should
   // be overlayed once all of the boxes have been drawn.
@@ -222,7 +222,7 @@ void CDasherViewSquare::DasherDrawText(myint iAnchorX1, myint iAnchorY1, myint i
 }
 
 void CDasherViewSquare::RenderNodes(CDasherNode *pRoot, myint iRootMin, myint iRootMax,
-				    CExpansionPolicy &policy) {
+            CExpansionPolicy &policy) {
   DASHER_ASSERT(pRoot != 0);
   myint iDasherMinX;
   myint iDasherMinY;
@@ -268,8 +268,8 @@ void CDasherViewSquare::RenderNodes(CDasherNode *pRoot, myint iRootMin, myint iR
 
   DasherDrawRectangle(0, iDasherMinY, iDasherMinX, iDasherMaxY, 0, -1, Nodes1, 0);
   //  Screen()->DrawRectangle(iScreenRight, std::max(0, (int)iScreenTop),
-  //		  Screen()->GetWidth(), std::min(Screen()->GetHeight(), (int)iScreenBottom), 
-  //		  0, -1, Nodes1, false, true, 1);
+  //      Screen()->GetWidth(), std::min(Screen()->GetHeight(), (int)iScreenBottom), 
+  //      0, -1, Nodes1, false, true, 1);
 
   // Render the root node (and children)
   RecursiveRender(pRoot, iRootMin, iRootMax, iDasherMaxX, policy, std::numeric_limits<double>::infinity(), iDasherMaxX,0,0);
@@ -287,8 +287,8 @@ void CDasherViewSquare::RenderNodes(CDasherNode *pRoot, myint iRootMin, myint iR
 #define MIN_SIZE 2
 
 bool CDasherViewSquare::CheckRender(CDasherNode *pRender, myint y1, myint y2,
-									int mostleft, CExpansionPolicy &policy, double dMaxCost,
-									myint parent_width, int parent_color, int iDepth)
+                  int mostleft, CExpansionPolicy &policy, double dMaxCost,
+                  myint parent_width, int parent_color, int iDepth)
 {
   if (y2-y1 >= QUICK_REJECT)
   {
@@ -297,27 +297,27 @@ bool CDasherViewSquare::CheckRender(CDasherNode *pRender, myint y1, myint y2,
     myint iDasherMaxX;
     myint iDasherMaxY;
     VisibleRegion(iDasherMinX, iDasherMinY, iDasherMaxX, iDasherMaxY);
-	
+  
     if (y1 <= iDasherMaxY && y2 >= iDasherMinY)
-	{
+  {
       screenint iScreenX1;
       screenint iScreenY1;
       screenint iScreenX2;
       screenint iScreenY2;
-	
+  
       Dasher2Screen(0, std::max(y1, iDasherMinY), iScreenX1, iScreenY1);
       Dasher2Screen(0, std::min(y2, iDasherMaxY), iScreenX2, iScreenY2);
-	
+  
       Cint32 iHeight = std::max(myint(iScreenY2 - iScreenY1),myint( 0));
   
       if (iHeight >= MIN_SIZE)
-	  {
-		  //node should be rendered!
-		  
-		  RecursiveRender(pRender, y1, y2, mostleft, policy, dMaxCost, parent_width, parent_color, iDepth);
-		  return true;
-	  }
-	}
+    {
+      //node should be rendered!
+      
+      RecursiveRender(pRender, y1, y2, mostleft, policy, dMaxCost, parent_width, parent_color, iDepth);
+      return true;
+    }
+  }
   }
   // We get here if the node is too small to render or is off-screen.
   // So, collapse it immediately.
@@ -333,10 +333,14 @@ bool CDasherViewSquare::CheckRender(CDasherNode *pRender, myint y1, myint y2,
 }
 
 void CDasherViewSquare::RecursiveRender(CDasherNode *pRender, myint y1, myint y2,
-					int mostleft, CExpansionPolicy &policy, double dMaxCost,
-					myint parent_width,int parent_color, int iDepth)
+          int mostleft, CExpansionPolicy &policy, double dMaxCost,
+          myint parent_width,int parent_color, int iDepth)
 {
   DASHER_ASSERT_VALIDPTR_RW(pRender);
+
+
+
+
 
 //   if(iDepth == 2)
 //     std::cout << pRender->GetDisplayInfo()->strDisplayText << std::endl;
@@ -373,18 +377,23 @@ void CDasherViewSquare::RecursiveRender(CDasherNode *pRender, myint y1, myint y2
   
   const std::string &sDisplayText(pRender->getDisplayText());
   if( sDisplayText.size() > 0 )
-  {  
-    DasherDrawText(y2-y1, y1, y2-y1, y2, sDisplayText, mostleft, pRender->bShove());
+  { 
+    if(pRender->GetFlag(NF_GAME)) {
+      DasherDrawText(y2-y1, y1, y2-y1, y2, sDisplayText, mostleft, pRender->bShove(), pRender);
+    } else {
+      DasherDrawText(y2-y1, y1, y2-y1, y2, sDisplayText, mostleft, pRender->bShove());
+
+    }
   }
-	
+  
   pRender->SetFlag(NF_SUPER, !IsSpaceAroundNode(y1,y2));
 
   // If there are no children then we still need to render the parent
   if(pRender->ChildCount() == 0) {
     DasherDrawRectangle(std::min(y2-y1,iDasherMaxX), std::min(y2,iDasherMaxY),0, std::max(y1,iDasherMinY), pRender->getColour(), -1, Nodes1, 0);
-	  //also allow it to be expanded, it's big enough.
-	  policy.pushNode(pRender, y1, y2, true, dMaxCost);
-	  return;
+    //also allow it to be expanded, it's big enough.
+    policy.pushNode(pRender, y1, y2, true, dMaxCost);
+    return;
   }
 
   //Node has children. It can therefore be collapsed...however,
@@ -393,7 +402,7 @@ void CDasherViewSquare::RecursiveRender(CDasherNode *pRender, myint y1, myint y2
   // at worst, all kinds of crashes trying to do text output!)
   if (!pRender->GetFlag(NF_GAME) && !pRender->GetFlag(NF_SEEN))
     dMaxCost = policy.pushNode(pRender, y1, y2, false, dMaxCost);
-	
+  
   // Render children  
   int norm = (myint)GetLongParameter(LP_NORMALIZATION);
 
@@ -418,23 +427,23 @@ void CDasherViewSquare::RecursiveRender(CDasherNode *pRender, myint y1, myint y2
       
       //don't inc iDepth, meaningless when covers the screen
       RecursiveRender(pChild, newy1, newy2, mostleft, 
-						policy, dMaxCost,
-						temp_parentwidth, temp_parentcolor, iDepth);
+            policy, dMaxCost,
+            temp_parentwidth, temp_parentcolor, iDepth);
       //leave pRender->onlyChildRendered set, so remaining children are skipped
     }
     else
       pRender->onlyChildRendered = NULL;
   }
-	
+  
   if (!pRender->onlyChildRendered)
   { //render all children...
-	  for(CDasherNode::ChildMap::const_iterator i = pRender->GetChildren().begin();
-		  i != pRender->GetChildren().end(); i++) {
-		id++;
-		CDasherNode *pChild = *i;
-		
-		myint newy1 = y1 + (Range * (myint)pChild->Lbnd()) / (myint)norm;/// norm and lbnd are simple ints
-		myint newy2 = y1 + (Range * (myint)pChild->Hbnd()) / (myint)norm;
+    for(CDasherNode::ChildMap::const_iterator i = pRender->GetChildren().begin();
+      i != pRender->GetChildren().end(); i++) {
+    id++;
+    CDasherNode *pChild = *i;
+    
+    myint newy1 = y1 + (Range * (myint)pChild->Lbnd()) / (myint)norm;/// norm and lbnd are simple ints
+    myint newy2 = y1 + (Range * (myint)pChild->Hbnd()) / (myint)norm;
     if (newy1 < iDasherMinY && newy2 > iDasherMaxY) {
       DASHER_ASSERT(dMaxCost == std::numeric_limits<double>::infinity());
       pRender->onlyChildRendered = pChild;
@@ -443,42 +452,42 @@ void CDasherViewSquare::RecursiveRender(CDasherNode *pRender, myint y1, myint y2
       lasty=newy2;
       break; //no need to render any more children!
     }
-		if (CheckRender(pChild, newy1, newy2, mostleft, policy, dMaxCost,
-						temp_parentwidth, temp_parentcolor, iDepth+1))
-		{
-		
+    if (CheckRender(pChild, newy1, newy2, mostleft, policy, dMaxCost,
+            temp_parentwidth, temp_parentcolor, iDepth+1))
+    {
+    
           if (lasty<newy1) {
-			//if child has been drawn then the interval between him and the
-			//last drawn child should be drawn too.
-			//std::cout << "Fill in: " << lasty << " " << newy1 << std::endl;
-		  
-			RenderNodePartFast(temp_parentcolor, lasty, newy1, mostleft, 
-					 pRender->getDisplayText(),
-					 pRender->bShove(),
-					 temp_parentwidth);
+      //if child has been drawn then the interval between him and the
+      //last drawn child should be drawn too.
+      //std::cout << "Fill in: " << lasty << " " << newy1 << std::endl;
+      
+      RenderNodePartFast(temp_parentcolor, lasty, newy1, mostleft, 
+           pRender->getDisplayText(),
+           pRender->bShove(),
+           temp_parentwidth);
           }
-		
-		  lasty = newy2;
-		}
-	  }
+    
+      lasty = newy2;
+    }
+    }
   
-	  // Finish off the drawing process
+    // Finish off the drawing process
 
-	  //  if(iDepth == 1) {
-		// Theres a chance that we haven't yet filled the entire parent, so finish things off if necessary.
-		if(lasty<y2) {
-		  RenderNodePartFast(temp_parentcolor, lasty, y2, mostleft, 
-				 pRender->getDisplayText(),
-				 pRender->bShove(),
-				 temp_parentwidth);
-		}
+    //  if(iDepth == 1) {
+    // Theres a chance that we haven't yet filled the entire parent, so finish things off if necessary.
+    if(lasty<y2) {
+      RenderNodePartFast(temp_parentcolor, lasty, y2, mostleft, 
+         pRender->getDisplayText(),
+         pRender->bShove(),
+         temp_parentwidth);
+    }
   }  
     // Draw the outline
     if(pRender->getColour() != -1) {//-1 = invisible
       RenderNodeOutlineFast(pRender->getColour(),
-			    y1, y2, mostleft, 
-			    pRender->getDisplayText(), 
-			    pRender->bShove());
+          y1, y2, mostleft, 
+          pRender->getDisplayText(), 
+          pRender->bShove());
     }
     //  }
 }
@@ -757,38 +766,38 @@ void CDasherViewSquare::Dasher2Screen(myint iDasherX, myint iDasherY, screenint 
   switch( eOrientation ) {
   case Dasher::Opts::LeftToRight:
     iScreenX = screenint(iScreenWidth / 2 - 
-			 CustomIDiv((( iDasherX - iCenterX ) * iScaleFactorX), m_iScalingFactor));
+       CustomIDiv((( iDasherX - iCenterX ) * iScaleFactorX), m_iScalingFactor));
     iScreenY = screenint(iScreenHeight / 2 +
-			 CustomIDiv(( iDasherY - iDasherHeight / 2 ) * iScaleFactorY, m_iScalingFactor));
+       CustomIDiv(( iDasherY - iDasherHeight / 2 ) * iScaleFactorY, m_iScalingFactor));
     break;
   case Dasher::Opts::RightToLeft:
     iScreenX = screenint(iScreenWidth / 2 + 
-			 CustomIDiv(( iDasherX - iCenterX ) * iScaleFactorX, m_iScalingFactor));
+       CustomIDiv(( iDasherX - iCenterX ) * iScaleFactorX, m_iScalingFactor));
     iScreenY = screenint(iScreenHeight / 2 + 
-			 CustomIDiv(( iDasherY - iDasherHeight / 2 ) * iScaleFactorY, m_iScalingFactor));
+       CustomIDiv(( iDasherY - iDasherHeight / 2 ) * iScaleFactorY, m_iScalingFactor));
     break;
   case Dasher::Opts::TopToBottom:
     iScreenX = screenint(iScreenWidth / 2 + 
-			 CustomIDiv(( iDasherY - iDasherHeight / 2 ) * iScaleFactorX, m_iScalingFactor));
+       CustomIDiv(( iDasherY - iDasherHeight / 2 ) * iScaleFactorX, m_iScalingFactor));
     iScreenY = screenint(iScreenHeight / 2 - 
-			 CustomIDiv(( iDasherX - iCenterX ) * iScaleFactorY, m_iScalingFactor));
+       CustomIDiv(( iDasherX - iCenterX ) * iScaleFactorY, m_iScalingFactor));
     break;
   case Dasher::Opts::BottomToTop:
     iScreenX = screenint(iScreenWidth / 2 + 
-			 CustomIDiv(( iDasherY - iDasherHeight / 2 ) * iScaleFactorX, m_iScalingFactor));
+       CustomIDiv(( iDasherY - iDasherHeight / 2 ) * iScaleFactorX, m_iScalingFactor));
     iScreenY = screenint(iScreenHeight / 2 + 
-			 CustomIDiv(( iDasherX - iCenterX ) * iScaleFactorY, m_iScalingFactor));
+       CustomIDiv(( iDasherX - iCenterX ) * iScaleFactorY, m_iScalingFactor));
     break;
   }
 }
 
 void CDasherViewSquare::Dasher2Polar(myint iDasherX, myint iDasherY, double &r, double &theta) {
-	iDasherX = xmap(iDasherX);
+  iDasherX = xmap(iDasherX);
     iDasherY = ymap(iDasherY);
-	
+  
   myint iDasherOX = xmap(GetLongParameter(LP_OX));
     myint iDasherOY = ymap(GetLongParameter(LP_OY));
-	
+  
     double x = -(iDasherX - iDasherOX) / double(iDasherOX); //Use normalised coords so min r works 
     double y = -(iDasherY - iDasherOY) / double(iDasherOY); 
     theta = atan2(y, x);

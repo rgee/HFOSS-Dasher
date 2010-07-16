@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "../../Src/DasherCore/FileWordGenerator.h"
+#include "../../Src/TestPlatform/MockFileWordGenerator.h"
 using namespace Dasher;
 
 /*
@@ -8,13 +8,13 @@ using namespace Dasher;
 class WordGenTest : public ::testing::Test {
   public:
     WordGenTest() {
-      fullGen = new CFileWordGenerator("test_data/word_gen_full_data.txt");
-      singleLineGen = new CFileWordGenerator("test_data/word_gen_single_line.txt");
+      fullGen = new MockFileWordGenerator("test_data/word_gen_full_data.txt");
+      singleLineGen = new MockFileWordGenerator("test_data/word_gen_single_line.txt");
     }
   
   protected:
-    CFileWordGenerator* fullGen;
-    CFileWordGenerator* singleLineGen;
+    MockFileWordGenerator* fullGen;
+    MockFileWordGenerator* singleLineGen;
 };
 
 /*

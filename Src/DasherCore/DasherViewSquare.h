@@ -7,6 +7,7 @@
 #include "DasherView.h"
 #include "DelayedDraw.h"
 #include "DasherScreen.h"
+#include "DasherNode.h"
 #include <deque>
 #include "Alphabet/GroupInfo.h"
 
@@ -83,8 +84,8 @@ public:
   ///
   /// Convert Dasher co-ordinates to polar co-ordinates (r,theta), with 0<r<1, 0<theta<2*pi
   ///
-  virtual void Dasher2Polar(myint iDasherX, myint iDasherY, double &r, double &theta);	
-	
+  virtual void Dasher2Polar(myint iDasherX, myint iDasherY, double &r, double &theta);  
+  
   /// 
   /// Return true if there is any space around a node spanning y1 to y2
   /// and the screen boundary; return false if such a node entirely encloses
@@ -104,9 +105,20 @@ public:
 private:
   ///
   /// Draw text specified in Dasher co-ordinates
+  /// NOTE: The node pointer optional parameter is to allow the node flags
+  /// to be checked at the time when the exact text position is available.
   ///
+  /// This solution is not intended to be permanent, but it's extremely
+  /// convenient for game mode because an event must be dispatched
+  /// ONLY if a certain node flag (NF_GAME) is true...and it must include
+  /// the text draw position. Grouping these together is the ultimate
+  /// goal here. - Rgee
+  ///
+  /// With a significant amount of code duplication, this could be
+  /// refactored to an overloaded implementation.
+  ///
+  void DasherDrawText(myint iAnchorX1, myint iAnchorY1, myint iAnchorX2, myint iAnchorY2, const std::string & sDisplayText, int &mostleft, bool bShove, CDasherNode* pNode = NULL);
   
-  void DasherDrawText(myint iAnchorX1, myint iAnchorY1, myint iAnchorX2, myint iAnchorY2, const std::string & sDisplayText, int &mostleft, bool bShove);
   
   CDelayedDraw m_DelayDraw;  
 
@@ -148,9 +160,9 @@ private:
   double round(double d)
   {
     if(d - floor(d) < 0.5)
- 	   return floor(d);
+     return floor(d);
     else
- 	   return ceil(d);
+     return ceil(d);
  
   };
 #endif
