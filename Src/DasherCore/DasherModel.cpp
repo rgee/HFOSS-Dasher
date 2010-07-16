@@ -152,7 +152,7 @@ void CDasherModel::HandleEvent(Dasher::CEvent *pEvent) {
     m_strGameTarget = pTargetChangedEvent->m_strTargetText;
    
     // Search from the current root.
-    m_Root->GameSearchChildren(m_strGameTarget);
+    Get_node_under_crosshair()->GameSearchChildren(m_strGameTarget);
   }
 }
 
@@ -617,7 +617,7 @@ void CDasherModel::ExpandNode(CDasherNode *pNode) {
       // Let's give up!
       pNode->SetFlag(NF_END_GAME, true); 
     }*/
-    pNode->GameSearchChildren(m_strGameTarget);
+    Get_node_under_crosshair()->GameSearchChildren(m_strGameTarget);
   }
   ////////////////////////////
   
