@@ -217,7 +217,7 @@ class CGameModule : public CDasherModule {
   /**
    * The events this class listens for
    */
-  static const int vEvents[2];
+  static const int vEvents[3];
 
 };
 
