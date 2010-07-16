@@ -91,13 +91,14 @@ void CDasherControl::SetupUI() {
   g_signal_connect_after(m_pCanvas, "realize", G_CALLBACK(realize_canvas), this);
   g_signal_connect(m_pCanvas, "configure_event", G_CALLBACK(canvas_configure_event), this);
   g_signal_connect(m_pCanvas, "destroy", G_CALLBACK(canvas_destroy_event), this);
-
+  
   g_signal_connect(m_pCanvas, "key-release-event", G_CALLBACK(key_release_event), this);
   g_signal_connect(m_pCanvas, "key_press_event", G_CALLBACK(key_press_event), this);
 
   g_signal_connect(m_pCanvas, "focus_in_event", G_CALLBACK(canvas_focus_event), this);
   g_signal_connect(m_pCanvas, "expose_event", G_CALLBACK(canvas_expose_event), this);
 
+  //g_signal_connect(m_pDasher)
   // Create the Pango cache
 
   // TODO: Use system defaults?

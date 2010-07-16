@@ -14,15 +14,12 @@
 #include <unistd.h>
 
 #include "GtkDasherControl.h"
-#include "KeyboardHelper.h"
-#include "Preferences.h"
 #include "dasher_lock_dialogue.h"
 #ifdef WITH_MAEMO
 #include "dasher_maemo_helper.h"
 #endif
 #include "dasher_main.h"
 
-#include "DasherAppSettings.h"
 #include "dasher_editor_internal.h"
 #include "dasher_editor_external.h"
 
@@ -32,51 +29,6 @@ static DasherMain *g_pDasherMain = NULL;
 // TODO: The following global variable makes control mode editing work
 // - this needs to be sorted out properly.
 static gboolean g_bSend = true;
-
-struct _DasherMainPrivate {
-  GtkBuilder *pXML;
-  GtkBuilder *pPrefXML;
-
-  // Child objects owned here
-  DasherAppSettings *pAppSettings;
-  DasherPreferencesDialogue *pPreferencesDialogue;
-  DasherEditor *pEditor;
-
-  CKeyboardHelper *pKeyboardHelper;
-
-  // Various widgets which need to be cached:
-  // GtkWidget *pBufferView;
-  GtkPaned  *pDivider;
-  GtkWindow *pMainWindow;
-  GtkWidget *pToolbar;
-  GtkSpinButton *pSpeedBox;
-  GtkWidget *pAlphabetCombo;
-  GtkWidget *pStatusControl;
-  GtkWidget *pDasherWidget;
-
-  GtkListStore *pAlphabetList;
-  GtkAccelGroup *pAccel;
-  gulong iAlphabetComboHandler;
-
-  // Widgets used for maemo
-#ifdef WITH_MAEMO
-  DasherMaemoHelper *pMaemoHelper;
-#ifdef WITH_MAEMOFULLSCREEN
-  HildonProgram *pProgram;
-  HildonWindow *pHWindow;
-#endif
-#endif
-
-  // Properties of the main window
-  int iWidth;
-  int iHeight;
-  bool bWidgetsInitialised;
-};
-
-typedef struct _DasherMainPrivate DasherMainPrivate;
-
-// TODO: Make sure this is actually used
-#define DASHER_MAIN_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE((o), DASHER_TYPE_MAIN, DasherMainPrivate))
 
 enum {
   REALIZED,
@@ -111,6 +63,7 @@ extern "C" void dasher_main_cb_preferences(GtkAction*, DasherMain*);
 extern "C" void dasher_main_cb_help(GtkAction*, DasherMain*);
 extern "C" void dasher_main_cb_about(GtkAction*, DasherMain*);
 extern "C" void dasher_main_cb_editor(GtkAction*, DasherMain*);
+extern "C" void dasher_main_cb_toggle_game_mode(GtkAction*, DasherMain*);
 
 static gboolean dasher_main_speed_changed(DasherMain *pSelf);
 static void dasher_main_alphabet_combo_changed(DasherMain *pSelf);

@@ -817,7 +817,7 @@ void CDasherInterfaceBase::DisconnectNode(int iChild, int iParent) {
 }
 
 void CDasherInterfaceBase::SetBoolParameter(int iParameter, bool bValue) {
-  m_pSettingsStore->SetBoolParameter(iParameter, bValue);
+	m_pSettingsStore->SetBoolParameter(iParameter, bValue);
 };
 
 void CDasherInterfaceBase::SetLongParameter(int iParameter, long lValue) {
