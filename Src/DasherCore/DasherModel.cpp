@@ -51,10 +51,10 @@ static char THIS_FILE[] = __FILE__;
 // CDasherModel
 
 CDasherModel::CDasherModel(CEventHandler *pEventHandler,
-			   CSettingsStore *pSettingsStore,
-			   CNodeCreationManager *pNCManager,
-			   CDasherInterfaceBase *pDasherInterface,
-			   CDasherView *pView, int iOffset)
+         CSettingsStore *pSettingsStore,
+         CNodeCreationManager *pNCManager,
+         CDasherInterfaceBase *pDasherInterface,
+         CDasherView *pView, int iOffset)
   : CFrameRate(pEventHandler, pSettingsStore) {
   m_pNodeCreationManager = pNCManager;
   m_pDasherInterface = pDasherInterface;
@@ -122,7 +122,7 @@ void CDasherModel::HandleEvent(Dasher::CEvent *pEvent) {
       break;
     case BP_DASHER_PAUSED:
       if(GetBoolParameter(BP_SLOW_START))
-	TriggerSlowdown();
+  TriggerSlowdown();
       //else, leave m_iStartTime as is - will result in no slow start
       break;
     case BP_GAME_MODE:
@@ -143,6 +143,16 @@ void CDasherModel::HandleEvent(Dasher::CEvent *pEvent) {
     else if(pEditEvent->m_iEditType == 2) {
       m_iOffset -= pEditEvent->m_sText.size();
     }
+  }
+  else if(pEvent->m_iEventType == EV_GAME_TARGET_CHANGED) {
+    
+    
+    CGameTargetChangedEvent *pTargetChangedEvent(static_cast< CGameTargetChangedEvent * >(pEvent));
+    
+    m_strGameTarget = pTargetChangedEvent->m_strTargetText;
+   
+    // Search from the current root.
+    Get_node_under_crosshair()->GameSearchChildren(m_strGameTarget);
   }
 }
 
@@ -289,10 +299,11 @@ void CDasherModel::InitialiseAtOffset(int iOffset, CDasherView *pView) {
 
   m_Root = m_pNodeCreationManager->GetAlphRoot(NULL, 0,GetLongParameter(LP_NORMALIZATION), iOffset!=0, iOffset);
   m_pLastOutput = (m_Root->GetFlag(NF_SEEN)) ? m_Root : NULL;
+  m_Root->SetFlag(NF_GAME, true);
   
   // Create children of the root...
   ExpandNode(m_Root);
-	
+  
   // Set the root coordinates so that the root node is an appropriate
   // size and we're not in any of the children
 
@@ -314,7 +325,7 @@ void CDasherModel::InitialiseAtOffset(int iOffset, CDasherView *pView) {
       CDasherNode *pOldRoot = m_Root;
       Reparent_root();
       if(m_Root == pOldRoot)
-	break;
+  break;
     }
   }
 
@@ -592,19 +603,21 @@ void CDasherModel::ExpandNode(CDasherNode *pNode) {
   // If we are in GameMode, then we do a bit of cooperation with the teacher object when we create
   // new children.
 
-  GameMode::CDasherGameMode* pTeacher = GameMode::CDasherGameMode::GetTeacher();
-  if(m_bGameMode && pNode->GetFlag(NF_GAME) && pTeacher )
+  //GameMode::CDasherGameMode* pTeacher = GameMode::CDasherGameMode::GetTeacher();
+  //if(m_bGameMode && pNode->GetFlag(NF_GAME) && pTeacher )
+  if(pNode->GetFlag(NF_GAME))
   {
-    std::string strTargetUtf8Char(pTeacher->GetSymbolAtOffset(pNode->offset() + 1));
+    /*std::string strTargetUtf8Char(pTeacher->GetSymbolAtOffset(pNode->offset() + 1));
       
     // Check if this is the last node in the sentence...
     if(strTargetUtf8Char == "GameEnd")
-	    pNode->SetFlag(NF_END_GAME, true);
-	  else if (!pNode->GameSearchChildren(strTargetUtf8Char)) {
+      pNode->SetFlag(NF_END_GAME, true);
+    else if (!pNode->GameSearchChildren(strTargetUtf8Char)) {
       // Target character not found - not in our current alphabet?!?!
       // Let's give up!
       pNode->SetFlag(NF_END_GAME, true); 
-    }
+    }*/
+    Get_node_under_crosshair()->GameSearchChildren(m_strGameTarget);
   }
   ////////////////////////////
   

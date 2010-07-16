@@ -262,6 +262,11 @@ class Dasher::CDasherModel:public Dasher::CFrameRate, private NoClones
   // require conversion.
   // TODO: Need to rethink this at some point.
   bool m_bRequireConversion;
+  
+  /**
+   * The string a user must type if game mode is active.
+   */
+  std::string m_strGameTarget;
 
   // Model status...
 

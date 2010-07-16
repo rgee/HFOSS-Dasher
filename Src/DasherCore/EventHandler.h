@@ -27,6 +27,7 @@ namespace Dasher {
  * down on unused event dispatching)
  */
 class Dasher::CEventHandler {
+<<<<<<< HEAD
   
 public: 
   CEventHandler(Dasher::CDasherInterfaceBase * pInterface): m_iNUM_EVENTS(10), m_pInterface(pInterface) {

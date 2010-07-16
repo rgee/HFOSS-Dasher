@@ -24,23 +24,33 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
                       // Check if we've reached the end of a chunk
                       if((m_iCurrentStringPos)  == m_sTargetString.length() - 2) {
                         GenerateChunk();
+
                       } else {
                           ++m_iCurrentStringPos;
+                            m_pEventHandler->InsertEvent(
+                              new CGameTargetChangedEvent(m_sTargetString.substr(m_iCurrentStringPos + 1, 1))
+                            );
                       }
                     }
                     break;
                 // Removed a character (Stepped one node back)
                 case 0:
-                    g_pLogger->Log("Removed a character: " + evt->m_sText);
                     break;
                 default:
                     break;
             }
             break;
         }
+        case EV_GAME_NODE_DRAWN:
+        {
+          CGameNodeDrawEvent* evt = static_cast<CGameNodeDrawEvent*>(pEvent);
+          evt->m_pView->Screen2Dasher(evt->m_iX, evt->m_iY, m_iTargetX, m_iTargetY);
+        }
+        break;
+        /*
         case EV_TEXTDRAW:
         {
-          CTextDrawEvent *evt = static_cast<CTextDrawEvent*>(pEvent);
+          CTextDrawEvent* evt = static_cast<CTextDrawEvent*>(pEvent);
           // Check whether the text that was drawn is the current target character.
           if(CharacterFound(evt)) { 
                //the x and y coordinates (in Dasher coords) of the target node
@@ -49,6 +59,7 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
             }
         }
         break;
+        */
         default:
           break;
 
@@ -140,4 +151,7 @@ void CGameModule::GenerateChunk() {
     m_sTargetString += m_pWordGenerator->GetNextWord();
     m_sTargetString += " ";
   }
+  m_pEventHandler->InsertEvent(
+    new CGameTargetChangedEvent(m_sTargetString.substr(0, 1))
+  );
 }
