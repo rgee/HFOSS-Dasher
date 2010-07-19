@@ -57,7 +57,7 @@
 // STL headers
 #include <cstdio>
 #include <iostream>
-#include <memory>
+#include <tr1/memory>
 
 // Declare our global file logging object
 #include "../DasherCore/FileLogger.h"
@@ -959,8 +959,14 @@ void CDasherInterfaceBase::CreateModules() {
   // TODO: I don't know what a sensible module ID should be
   // for this, so I chose an arbitrary value
   // TODO: Put "Game Mode" in enumeration in Parameter.h    
+  
+  // We use a shared ptr here for the word generator to avoid issues regarding
+  // object ownership. Now this class /could/ own a word generator if it wanted
+  // whereas before its ownership was ambiguous to the only class that
+  // could delete it. (The game module) Therefore, newing directly to
+  // the constructor leaked memory.
   RegisterModule(new CGameModule(m_pEventHandler, m_pSettingsStore, this, 21, _("Game Mode"),
-                              new CFileWordGenerator("test_text.txt")));
+                              std::tr1::shared_ptr<CWordGeneratorBase>(new CFileWordGenerator("test_text.txt"))));
 }
 
 void CDasherInterfaceBase::GetPermittedValues(int iParameter, std::vector<std::string> &vList) {
