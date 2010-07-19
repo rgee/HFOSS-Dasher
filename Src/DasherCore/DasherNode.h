@@ -265,8 +265,8 @@ class Dasher::CDasherNode:private NoClones {
   ///
   /// See if this node represents the specified alphanumeric character; if so, set it's NF_GAME flag and
   /// return true; otherwise, return false.
-  ///
-  virtual bool GameSearchNode(std::string strTargetUtf8Char) {return false;}
+  ///  
+  virtual bool IsTarget(std::string strTargetUtf8Char) {return false;}
   
   /// Clone the context of the specified node, if it's an alphabet node;
   /// else return an empty context. (Used by ConversionManager)

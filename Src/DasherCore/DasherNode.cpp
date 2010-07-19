@@ -198,10 +198,3 @@ int CDasherNode::MostProbableChild() {
   return iMax;
 }
 
-bool CDasherNode::GameSearchChildren(string strTargetUtf8Char) {
-  for (ChildMap::iterator i = Children().begin(); i != Children().end(); i++) {
-    if ((*i)->GameSearchNode(strTargetUtf8Char)) return true;
-  }
-  
-  return false;
-}

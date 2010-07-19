@@ -140,47 +140,10 @@ CAlphabetManager::CAlphNode *CAlphabetManager::GetRoot(CDasherNode *pParent, uns
   return pNewNode;
 }
 
-bool CAlphabetManager::CSymbolNode::GameSearchNode(string strTargetUtf8Char) {
-  if (m_pMgr->m_pNCManager->GetAlphabet()->GetText(iSymbol) == strTargetUtf8Char) {
-    SetFlag(NF_GAME, true);
-    return true;
-  }
-  return false;
-}
-
 bool CAlphabetManager::CSymbolNode::IsTarget(string strTargetUtf8Char) {
-  return m_pMgr->m_pNCManager->GetAlphabet()->GetText(iSymbol) == strTargetUtf8Char;
+  g_pLogger->Log("Comparing to: " + m_pMgr->m_pNCManager->GetAlphabet()->GetText(iSymbol));
+  return (m_pMgr->m_pNCManager->GetAlphabet()->GetText(iSymbol) == strTargetUtf8Char);
 }
-
-/*
-bool CAlphabetManager::CSymbolNode::GameSearchBounds(string strTargetUtf8Char) {
-  int targetSymbol = m_pMgr->m_pNCManager->GetAlphabet()->GetSymbol(strTargetUtf8Char);
-  
-  if( (targetSymbol == iSymbol - 1) ||
-      (targetSymbol == iSymbol + 1)) {
-    
-  }
-}
-*/
-
-bool CAlphabetManager::CGroupNode::GameSearchNode(string strTargetUtf8Char) {
-  if (GameSearchChildren(strTargetUtf8Char)) {
-    SetFlag(NF_GAME, true);
-    return true;
-  }
-  return false;
-}
-
-/*
-bool CAlphabetManager::CGroupNode::GameSearchBounds(string strTargetUtf8Char) {
-  if (GameSearchChildBounds(strTargetUtf8Char)) {
-    return true;
-  }
-  return false;
-}
-*/
-
-
 
 CLanguageModel::Context CAlphabetManager::CAlphNode::CloneAlphContext(CLanguageModel *pLanguageModel) {
   if (iContext) return pLanguageModel->CloneContext(iContext);

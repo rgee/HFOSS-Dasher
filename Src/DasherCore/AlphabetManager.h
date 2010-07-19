@@ -93,7 +93,6 @@ namespace Dasher {
        * @return True if this node represents the target string. False
        * otherwise.
        */
-      virtual bool GameSearchNode(std::string strTargetUtf8Char);
       virtual bool IsTarget(std::string strTargetUTf8Char);
       virtual void GetContext(CDasherInterfaceBase *pInterface, std::vector<symbol> &vContextSymbols, int iOffset, int iLength);
       virtual symbol GetAlphSymbol();
@@ -117,16 +116,6 @@ namespace Dasher {
       virtual CDasherNode *RebuildParent();
       virtual void PopulateChildren();
       virtual int ExpectedNumChildren();
-      
-      /**
-       * Checks whether this node represents the target string.
-       * In the case of group nodes, this function checks this node's
-       * children, which are symbol nodes.
-       * @param strTargetUtf8Char The string to compare to.
-       * @return True if this node represents the target string. False
-       * otherwise.
-       */
-      virtual bool GameSearchNode(std::string strTargetUtf8Char);
       virtual CDasherNode *RebuildSymbol(CAlphNode *pParent, symbol iSymbol, unsigned int iLbnd, unsigned int iHbnd);
       virtual CGroupNode *RebuildGroup(CAlphNode *pParent, SGroupInfo *pInfo, unsigned int iLbnd, unsigned int iHbnd);
       std::vector<unsigned int> *GetProbInfo();

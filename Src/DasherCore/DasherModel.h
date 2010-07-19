@@ -297,10 +297,19 @@ class Dasher::CDasherModel:public Dasher::CFrameRate, private NoClones
 
   ///
   /// Search the model for the target string
+  /// 
+  /// \param pNode The node to search
+  /// \return True if a node was found, false otherwise
+  ///
+  bool GameSearchChildren(CDasherNode* pNode);
+
+  ///
+  /// Search the model (recursively) for the target string
   ///
   /// \param pNode The node to search
+  /// \return True if a node was found, false otherwise
   ///
-  void GameSearch(CDasherNode* pNode);
+  bool GameSearchIndividual(CDasherNode* pNode);
 
 
   ///

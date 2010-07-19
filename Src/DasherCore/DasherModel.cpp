@@ -104,21 +104,29 @@ CDasherModel::~CDasherModel() {
   }
 }
 
-void CDasherModel::GameSearch(CDasherNode* pNode) {
-  int iType = pNode->GetType();
-  
-  if(iType == NT_SYMBOL) {
-    CAlphabetManager::CSymbolNode* specNode = static_cast<CAlphabetManager::CSymbolNode*>(pNode);
-    if(specNode->IsTarget(m_strGameTarget)) {
-      specNode->SetFlag(NF_GAME, true);
-    }
-  } else if(iType == NT_GROUP) {
-    for(std::deque<CDasherNode*>::const_iterator it = pNode->GetChildren().begin();
-                    it != pNode->GetChildren().end(); ++it) {
-      GameSearch((*it));
-    }
+bool CDasherModel::GameSearchChildren(CDasherNode* pNode) {
+  for(CDasherNode::ChildMap::const_iterator it = pNode->GetChildren().begin();
+              it != pNode->GetChildren().end(); it++) {
+    if( GameSearchIndividual((*it)) ) return true;
   }
+  return false;
+}
 
+bool CDasherModel::GameSearchIndividual(CDasherNode* pNode) {
+  int iType = pNode->GetType();
+  if(iType == NT_GROUP) {
+    if(GameSearchChildren(pNode)) {
+      pNode->SetFlag(NF_GAME, true);
+      return true;
+    }
+    return false;
+  } else if(iType == NT_SYMBOL) {
+    if(pNode->IsTarget(m_strGameTarget)) {
+      pNode->SetFlag(NF_GAME, true);
+      return true;
+    }
+    return false;
+  }
 }
 
 void CDasherModel::HandleEvent(Dasher::CEvent *pEvent) {
@@ -169,7 +177,7 @@ void CDasherModel::HandleEvent(Dasher::CEvent *pEvent) {
     m_strGameTarget = pTargetChangedEvent->m_strTargetText;
    
     // Search from the current root.
-    GameSearch(Get_node_under_crosshair());
+    GameSearchChildren(Get_node_under_crosshair());
   }
 }
 
@@ -616,25 +624,8 @@ void CDasherModel::ExpandNode(CDasherNode *pNode) {
 
   // We get here if all our children (groups) and grandchildren (symbols) are created.
   // So lets find the correct letters.
-  ///GAME MODE TEMP///////////
-  // If we are in GameMode, then we do a bit of cooperation with the teacher object when we create
-  // new children.
-
-  //GameMode::CDasherGameMode* pTeacher = GameMode::CDasherGameMode::GetTeacher();
-  //if(m_bGameMode && pNode->GetFlag(NF_GAME) && pTeacher )
-  if(pNode->GetFlag(NF_GAME))
-  {
-    /*std::string strTargetUtf8Char(pTeacher->GetSymbolAtOffset(pNode->offset() + 1));
-      
-    // Check if this is the last node in the sentence...
-    if(strTargetUtf8Char == "GameEnd")
-      pNode->SetFlag(NF_END_GAME, true);
-    else if (!pNode->GameSearchChildren(strTargetUtf8Char)) {
-      // Target character not found - not in our current alphabet?!?!
-      // Let's give up!
-      pNode->SetFlag(NF_END_GAME, true); 
-    }*/
-    GameSearch(Get_node_under_crosshair());
+  if(pNode->GetFlag(NF_GAME)) {
+    GameSearchChildren(Get_node_under_crosshair());
   }
   ////////////////////////////
   
