@@ -169,6 +169,12 @@ class CGameModule : public CDasherModule {
    */
   myint m_iTargetY;
   
+  /**
+   * Flag that denotes whether we are approximating the target position
+   * or not.
+   */
+  bool m_bApproximating;
+  
   
   
 /* ---------------------------------------------------------------------

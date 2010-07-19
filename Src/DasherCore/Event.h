@@ -22,10 +22,18 @@ namespace Dasher {
   class CCommandEvent;
   class CDasherView;
   class CDasherNode;
+  class CNoGameNodeEvent;
 }
 
+/*
+ * The enumeration of event types. Whenever you add a new event type,
+ * you must add its enum representation here. You must also make sure
+ * to change the constant in EventHandler that refers to the number of events
+ * or you will likely get errors.
+ */
 enum {
-  EV_PARAM_NOTIFY = 1, EV_EDIT, EV_EDIT_CONTEXT, EV_START, EV_STOP, EV_CONTROL, EV_LOCK, EV_GAME_TARGET_CHANGED, EV_MESSAGE, EV_COMMAND, EV_GAME_NODE_DRAWN
+  EV_PARAM_NOTIFY = 1, EV_EDIT, EV_EDIT_CONTEXT, EV_START, EV_STOP, EV_CONTROL, EV_LOCK, EV_GAME_TARGET_CHANGED, EV_MESSAGE, EV_COMMAND, EV_GAME_NODE_DRAWN,
+  EV_NO_GAME_NODE
 };
 
 /// \ingroup Core
@@ -36,6 +44,27 @@ enum {
 class Dasher::CEvent {
 public:
   int m_iEventType;
+};
+
+/**
+ * An event that represents when the game target node cannot be found
+ * among the current last-typed node's children. Since the set of child
+ * nodes is a set consisting of all possible characters in the current
+ * alphabet, the only way for it not to exist at all is if it was not
+ * drawn yet.
+ */
+class Dasher::CNoGameNodeEvent : public Dasher::CEvent {
+public:
+  CNoGameNodeEvent(CDasherNode* pNode)
+    : m_pNode(pNode) {
+      m_iEventType = EV_NO_GAME_NODE;
+  };
+  
+  /*
+   * One of the nodes we use to approximate the position of the target
+   * Node
+   */
+  CDasherNode* m_pNode;
 };
 
 class Dasher::CGameNodeDrawEvent : public Dasher::CEvent {

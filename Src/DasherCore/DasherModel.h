@@ -46,6 +46,8 @@ namespace Dasher {
   struct SLockData;
 }
 
+
+
 /// \defgroup Model The Dasher model
 /// @{
 
@@ -292,6 +294,14 @@ class Dasher::CDasherModel:public Dasher::CFrameRate, private NoClones
   /// Go directly to a given coordinate - check semantics
   ///
   void NewGoTo(myint n1, myint n2, Dasher::VECTOR_SYMBOL_PROB* pAdded, int* pNumDeleted);
+
+  ///
+  /// Search the model for the target string
+  ///
+  /// \param pNode The node to search
+  ///
+  void GameSearch(CDasherNode* pNode);
+
 
   ///
   /// CDasherModel::Get_new_root_coords( myint Mousex,myint Mousey )

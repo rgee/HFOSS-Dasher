@@ -104,6 +104,23 @@ CDasherModel::~CDasherModel() {
   }
 }
 
+void CDasherModel::GameSearch(CDasherNode* pNode) {
+  int iType = pNode->GetType();
+  
+  if(iType == NT_SYMBOL) {
+    CAlphabetManager::CSymbolNode* specNode = static_cast<CAlphabetManager::CSymbolNode*>(pNode);
+    if(specNode->IsTarget(m_strGameTarget)) {
+      specNode->SetFlag(NF_GAME, true);
+    }
+  } else if(iType == NT_GROUP) {
+    for(std::deque<CDasherNode*>::const_iterator it = pNode->GetChildren().begin();
+                    it != pNode->GetChildren().end(); ++it) {
+      GameSearch((*it));
+    }
+  }
+
+}
+
 void CDasherModel::HandleEvent(Dasher::CEvent *pEvent) {
   CFrameRate::HandleEvent(pEvent);
 
@@ -152,7 +169,7 @@ void CDasherModel::HandleEvent(Dasher::CEvent *pEvent) {
     m_strGameTarget = pTargetChangedEvent->m_strTargetText;
    
     // Search from the current root.
-    Get_node_under_crosshair()->GameSearchChildren(m_strGameTarget);
+    GameSearch(Get_node_under_crosshair());
   }
 }
 
@@ -617,7 +634,7 @@ void CDasherModel::ExpandNode(CDasherNode *pNode) {
       // Let's give up!
       pNode->SetFlag(NF_END_GAME, true); 
     }*/
-    Get_node_under_crosshair()->GameSearchChildren(m_strGameTarget);
+    GameSearch(Get_node_under_crosshair());
   }
   ////////////////////////////
   
@@ -821,3 +838,4 @@ void CDasherModel::SetControlOffset(int iOffset) {
   
   pNode->SetControlOffset(iOffset);
 }
+

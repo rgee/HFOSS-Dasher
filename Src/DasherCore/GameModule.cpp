@@ -44,6 +44,7 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
         case EV_GAME_NODE_DRAWN:
         {
           CGameNodeDrawEvent* evt = static_cast<CGameNodeDrawEvent*>(pEvent);
+          m_bApproximating = true;
           evt->m_pView->Screen2Dasher(evt->m_iX, evt->m_iY, m_iTargetX, m_iTargetY);
         }
         break;
