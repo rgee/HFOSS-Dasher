@@ -44,6 +44,13 @@ namespace Dasher {
 #define NF_SUPER 32
 #define NF_END_GAME 64
 
+
+// Node types. One for each type of node.
+enum {
+   NT_GROUP = 1, NT_SYMBOL, NT_CONTROL, NT_CONV, NT_CONVROOT
+};
+
+
 /// \ingroup Model
 /// @{
 
@@ -61,6 +68,7 @@ namespace Dasher {
 class Dasher::CDasherNode:private NoClones {
  public:
 
+  inline int GetType() const { return m_iType; }
   /// Display attributes of this node, used for rendering.
   /// Colour: -1 for invisible
   inline int getColour() {return m_iColour;}
@@ -83,7 +91,7 @@ class Dasher::CDasherNode:private NoClones {
   /// @param iHbnd Upper bound of node within parent
   /// @param pDisplayInfo Struct containing information on how to display the node
   ///
-  CDasherNode(CDasherNode *pParent, int iOffset, unsigned int iLbnd, unsigned int iHbnd, int iColour, const std::string &strDisplayText);
+  CDasherNode(CDasherNode *pParent, int iOffset, unsigned int iLbnd, unsigned int iHbnd, int iColour, const std::string &strDisplayText, int iType);
 
   /// @brief Destructor
   ///
@@ -287,6 +295,9 @@ class Dasher::CDasherNode:private NoClones {
   int m_iFlags;
 
   int m_iOffset;
+  
+  // The type of this node.
+  int m_iType;
 
  protected:
   int m_iColour;

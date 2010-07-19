@@ -67,8 +67,8 @@ CDasherNode *CMandarinAlphMgr::CreateSymbolNode(CAlphNode *pParent, symbol iSymb
 
     /*old code:
      * CDasherNode *pNewNode = m_pNCManager->GetConvRoot(pParent, iLbnd, iHbnd, pParent->m_iOffset+1);
-	   * static_cast<CPinYinConversionHelper::CPYConvNode *>(pNewNode)->SetConvSymbol(iSymbol);
-	   * return pNewNode;
+     * static_cast<CPinYinConversionHelper::CPYConvNode *>(pNewNode)->SetConvSymbol(iSymbol);
+     * return pNewNode;
      */
 
 
@@ -80,13 +80,13 @@ CDasherNode *CMandarinAlphMgr::CreateSymbolNode(CAlphNode *pParent, symbol iSymb
     //pNewNode->m_pLanguageModel = m_pLanguageModel;
     pNewNode->iContext = m_pLanguageModel->CloneContext(pParent->iContext);
 
-	  return pNewNode;
+    return pNewNode;
   }
   return CAlphabetManager::CreateSymbolNode(pParent, iSymbol, iLbnd, iHbnd);
 }
 
 CMandarinAlphMgr::CConvRoot::CConvRoot(CDasherNode *pParent, int iOffset, unsigned int iLbnd, unsigned int iHbnd, CMandarinAlphMgr *pMgr, CTrieNode *pTrie)
-: CDasherNode(pParent, iOffset, iLbnd, iHbnd, 9, ""), m_pMgr(pMgr), m_pTrie(pTrie) {
+: CDasherNode(pParent, iOffset, iLbnd, iHbnd, 9, "", NT_CONVROOT), m_pMgr(pMgr), m_pTrie(pTrie) {
   //colour + label from ConversionManager.
 }
 
@@ -262,8 +262,8 @@ int CMandarinAlphMgr::AssignColour(int parentClr, int childIndex) {
 
 CLanguageModel::Context CMandarinAlphMgr::CreateSymbolContext(CAlphNode *pParent, symbol iSymbol)
 {
-	//Context carry-over. This code may worth looking at debug
-	return m_pLanguageModel->CloneContext(pParent->iContext);
+  //Context carry-over. This code may worth looking at debug
+  return m_pLanguageModel->CloneContext(pParent->iContext);
 }
 
 CMandarinAlphMgr::CMandNode::CMandNode(CDasherNode *pParent, int iOffset, unsigned int iLbnd, unsigned int iHbnd, CMandarinAlphMgr *pMgr, symbol iSymbol)
