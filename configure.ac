@@ -1,9 +1,5 @@
 AC_PREREQ(2.59)
-AC_INIT([dasher],
-  m4_esyscmd([build-aux/mkversion]),
-  [http://bugzilla.gnome.org/enter_bug.cgi?product=dasher],
-  [dasher],
-  [http://www.inference.phy.cam.ac.uk/dasher/])
+AC_INIT([dasher],[4.11])
 
 # This becomes part of AC_INIT in autoconf 2.64
 m4_ifndef([AC_PACKAGE_URL],
