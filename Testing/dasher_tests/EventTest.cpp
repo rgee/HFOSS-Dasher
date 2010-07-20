@@ -126,7 +126,7 @@ TEST_F(EventTest, StaysQuiet) {
   DummyComponent *listener1 = new DummyComponent(evtHandler, settingsStore);
   DummyComponent *listener2 = new DummyComponent(evtHandler, settingsStore);
   
-  evtHandler->RegisterListener(listener1, EV_TEXTDRAW);
+  evtHandler->RegisterListener(listener1, EV_GAME_NODE_DRAWN);
   evtHandler->RegisterListener(listener2, EV_COMMAND);
   
   evtHandler->InsertEvent(new Dasher::CParameterNotificationEvent(0));

@@ -85,10 +85,7 @@ GType dasher_main_get_type();
 //DasherEditorInternal *dasher_main_get_editor(DasherMain *pSelf);
 void dasher_main_show(DasherMain *pSelf);
 
-static void dasher_main_toggle_game_mode(DasherAppSettings* pAppSettings) {
-	dasher_app_settings_set_bool(pAppSettings, BP_GAME_MODE, true);
-}
-
+void dasher_main_toggle_game_mode(DasherMain *pSelf); 
 G_END_DECLS
 
 #endif

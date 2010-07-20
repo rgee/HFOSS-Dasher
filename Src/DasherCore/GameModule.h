@@ -60,13 +60,8 @@ class CGameModule : public CDasherModule {
                   std::vector<int>(vEvents, vEvents + sizeof(vEvents) / sizeof(int)))
   {     
     m_pInterface = pInterface;
-    
-    if(m_pWordGenerator == NULL)
-      g_pLogger->LogCritical("Word generator creation FAILED");
       
     GenerateChunk();
-    if(m_sTargetString == "")
-      g_pLogger->LogCritical("Word generation FAILED");
     
   }
 
@@ -213,7 +208,7 @@ class CGameModule : public CDasherModule {
   /**
    * The events this class listens for
    */
-  static const int vEvents[2];
+  static const int vEvents[3];
 
 };
 

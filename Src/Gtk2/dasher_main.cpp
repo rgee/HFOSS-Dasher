@@ -557,7 +557,49 @@ dasher_main_create_preferences(DasherMain *pSelf) {
 // dasher_main_get_editor(DasherMain *pSelf) {
 //   DasherMainPrivate *pPrivate = DASHER_MAIN_GET_PRIVATE(pSelf);
 //   return pPrivate->pEditor;
-// }
+// 
+
+void show_game_file_dialog(GtkWidget *widget, GtkWidget *pButton, gpointer pParent) {
+	
+	GtkWidget *pFileDialog = gtk_file_chooser_dialog_new("Choose a Training Text",
+				      static_cast<GtkWindow*> (pParent),
+				      GTK_FILE_CHOOSER_ACTION_OPEN,
+				      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+				      GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+				      NULL);
+	
+	gtk_window_set_destroy_with_parent(GTK_DIALOG(pDialog));
+
+	if(gtk_dialog_run(GTK_DIALOG(pFileDialog)) == GTK_RESPONSE_ACCEPT) {
+		
+		char *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(pFileDialog));
+
+	}
+
+	gtk_widget_destroy(pFileDialog);
+}
+
+void dasher_main_toggle_game_mode(DasherMain *pSelf) {
+	
+	DasherMainPrivate *pPrivate = DASHER_MAIN_GET_PRIVATE(pSelf);
+	GtkWidget *pDialog = gtk_message_dialog_new(GTK_WINDOW(pPrivate->pMainWindow), GTK_DIALOG_MODAL, 
+                                         GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE, 
+                                         _("Welcome to Game Mode! Please select a training text:"));
+
+	GtkWidget *pDefaultButton = gtk_dialog_add_button(GTK_DIALOG(pDialog), _("Use Default"), GTK_RESPONSE_CLOSE);	
+	GtkWidget *pFileButton = gtk_dialog_add_button(GTK_DIALOG(pDialog), _("Choose File..."), 2);
+	GtkWidget *pCancelButton = gtk_dialog_add_button(GTK_DIALOG(pDialog), _("Cancel"), GTK_RESPONSE_CLOSE);
+
+	g_signal_connect(pDefaultButton, "button-press-event", G_CALLBACK)
+	g_signal_connect(pFileButton, "button-press-event", G_CALLBACK(show_game_file_dialog),
+					pDialog);
+
+    gtk_dialog_run(GTK_DIALOG(pDialog));
+
+	gtk_widget_destroy(pDialog);
+
+	dasher_app_settings_set_bool(pPrivate->pAppSettings, BP_GAME_MODE, true);
+}
 
 static void 
 dasher_main_handle_parameter_change(DasherMain *pSelf, int iParameter) {

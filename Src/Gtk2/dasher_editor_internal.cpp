@@ -921,7 +921,7 @@ dasher_editor_internal_command(DasherEditor *pSelf, const gchar *szCommand) {
   }
 
   if(!strcmp(szCommand, "action_toggle_game_mode")) { //toggle game mode
-	dasher_main_toggle_game_mode((DASHER_MAIN_GET_PRIVATE(pPrivate->pDasherMain))->pAppSettings);
+	dasher_main_toggle_game_mode(pPrivate->pDasherMain);
 	return TRUE;
   }
  

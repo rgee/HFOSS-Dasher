@@ -169,10 +169,6 @@ void CDasherInterfaceBase::Realize() {
   CParameterNotificationEvent oEvent(LP_NODE_BUDGET);
   InterfaceEventHandler(&oEvent);
 
-  //if game mode is enabled , initialize the game module
- // if(GetBoolParameter(BP_GAME_MODE))
-  InitGameModule();
-
   // Set up real orientation to match selection
   if(GetLongParameter(LP_ORIENTATION) == Dasher::Opts::AlphabetDefault)
     SetLongParameter(LP_REAL_ORIENTATION, m_Alphabet->GetOrientation());
@@ -601,7 +597,7 @@ void CDasherInterfaceBase::Redraw(bool bRedrawNodes, CExpansionPolicy &policy) {
     bDecorationsChanged = m_pInputFilter->DecorateView(m_pDasherView);
   }
 
-  if(m_pGameModule) {
+  if(m_pGameModule && GetBoolParameter(BP_GAME_MODE)) {
     bDecorationsChanged = m_pGameModule->DecorateView(m_pDasherView) || bDecorationsChanged;
   }
 
