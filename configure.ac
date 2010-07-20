@@ -1,7 +1,5 @@
-AC_PREREQ(2.59)
-AC_INIT([dasher],
-  4.11,
-  [http://www.inference.phy.cam.ac.uk/dasher/])
+AC_PREREQ(2.5)
+AC_INIT([dasher],[4.11])
 
 # This becomes part of AC_INIT in autoconf 2.64
 m4_ifndef([AC_PACKAGE_URL],

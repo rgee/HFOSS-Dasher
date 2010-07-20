@@ -2,6 +2,12 @@
 
 using namespace Dasher;
 
+/**
+ * Static members of non-integral type must be initialized outside of
+ * class definitions.
+ */
+const int Dasher::CGameModule::vEvents[2] = {EV_EDIT, EV_GAME_NODE_DRAWN}; 
+
 void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
 
     switch(pEvent->m_iEventType)
@@ -18,29 +24,27 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
                       // Check if we've reached the end of a chunk
                       if((m_iCurrentStringPos)  == m_sTargetString.length() - 2) {
                         GenerateChunk();
+
                       } else {
                           ++m_iCurrentStringPos;
+                            m_pEventHandler->InsertEvent(
+                              new CGameTargetChangedEvent(m_sTargetString.substr(m_iCurrentStringPos + 1, 1))
+                            );
                       }
                     }
                     break;
                 // Removed a character (Stepped one node back)
                 case 0:
-                    g_pLogger->Log("Removed a character: " + evt->m_sText);
                     break;
                 default:
                     break;
             }
             break;
         }
-        case EV_TEXTDRAW:
+        case EV_GAME_NODE_DRAWN:
         {
-          CTextDrawEvent *evt = static_cast<CTextDrawEvent*>(pEvent);
-          // Check whether the text that was drawn is the current target character.
-          if(CharacterFound(evt)) { 
-               //the x and y coordinates (in Dasher coords) of the target node
-               evt->m_pDasherView->Screen2Dasher(evt->m_iX, evt->m_iY, m_iTargetX, m_iTargetY);
-               
-            }
+          CGameNodeDrawEvent* evt = static_cast<CGameNodeDrawEvent*>(pEvent);
+          evt->m_pView->Screen2Dasher(evt->m_iX, evt->m_iY, m_iTargetX, m_iTargetY);
         }
         break;
         default:
@@ -53,10 +57,6 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
 
 bool CGameModule::CharacterFound(CEditEvent* pEvent) {
   return !pEvent->m_sText.compare(m_sTargetString.substr(m_iCurrentStringPos + 1, 1));
-}
-
-bool CGameModule::CharacterFound(CTextDrawEvent* pEvent) {
-  return !pEvent->m_sDisplayText.compare(m_sTargetString.substr(m_iCurrentStringPos + 1, 1));
 }
 
 bool CGameModule::DecorateView(CDasherView *pView) {
@@ -134,4 +134,7 @@ void CGameModule::GenerateChunk() {
     m_sTargetString += m_pWordGenerator->GetNextWord();
     m_sTargetString += " ";
   }
+  m_pEventHandler->InsertEvent(
+    new CGameTargetChangedEvent(m_sTargetString.substr(0, 1))
+  );
 }

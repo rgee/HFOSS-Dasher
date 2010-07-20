@@ -1,9 +1,7 @@
-#include "FileWordGenerator.h"
-
-using namespace Dasher;
+ #include "MockFileWordGenerator.h"
 
 
-bool CFileWordGenerator::Generate() { 
+bool MockFileWordGenerator::Generate() { 
   if(!m_sFileHandle.is_open()) {
     m_sFileHandle.open(m_sPath.c_str());
   }
@@ -24,14 +22,14 @@ bool CFileWordGenerator::Generate() {
   }
 }
 
-std::string CFileWordGenerator::GetPath() {
+std::string MockFileWordGenerator::GetPath() {
   return m_sPath; 
 }
-std::string CFileWordGenerator::GetFilename() {
+std::string MockFileWordGenerator::GetFilename() {
   return m_sPath.substr(m_sPath.rfind("/")+1);
 }
 
-std::string CFileWordGenerator::GetNextWord() {
+std::string MockFileWordGenerator::GetNextWord() {
   if(m_uiPos >= m_sGeneratedString.length()) { 
     // Attempt to reload the buffer.
     if(!Generate()) return "";
