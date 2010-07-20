@@ -310,7 +310,15 @@ class Dasher::CDasherModel:public Dasher::CFrameRate, private NoClones
   /// \return True if a node was found, false otherwise
   ///
   bool GameSearchIndividual(CDasherNode* pNode);
-
+  
+  ///
+  /// Approximate the position of the target node, if it was not
+  /// explicitly found.
+  /// 
+  /// \param pNode The node to begin the search from
+  /// \warning Currently only works for symbol or group nodes. This
+  ///          needs to be improved. 
+  void GameSearchApproximate(CAlphabetManager::CSymbolNode* pNode);
 
   ///
   /// CDasherModel::Get_new_root_coords( myint Mousex,myint Mousey )

@@ -55,16 +55,22 @@ public:
  */
 class Dasher::CNoGameNodeEvent : public Dasher::CEvent {
 public:
-  CNoGameNodeEvent(CDasherNode* pNode)
-    : m_pNode(pNode) {
+  CNoGameNodeEvent(std::pair<CDasherNode*, CDasherNode*> pNodes)
+    : m_pNodes(pNodes) {
       m_iEventType = EV_NO_GAME_NODE;
   };
   
   /*
-   * One of the nodes we use to approximate the position of the target
-   * Node
+   * The pair of nodes that represent the closest drawn nodes to the top
+   * and bottom of where the target node /should/ be.
+   * 
+   * If the left of this pair is null, the target node is at the top-most
+   * node in the current subtree of the model (in Dasher space).
+   * 
+   * Conversely, if the right of this pair is null, the target node exists
+   * at the bottom of the current subtree of the model.
    */
-  CDasherNode* m_pNode;
+  std::pair<CDasherNode*, CDasherNode*> m_pNodes;
 };
 
 class Dasher::CGameNodeDrawEvent : public Dasher::CEvent {

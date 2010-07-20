@@ -104,11 +104,59 @@ CDasherModel::~CDasherModel() {
   }
 }
 
+void CDasherModel::GameSearchApproximate(CAlphabetManager::CSymbolNode* pNode) {
+  int iTargetSymbol = m_pNodeCreationManager->GetAlphabet()->GetSymbol(m_strGameTarget);
+  
+  // If the first symbol is greater than the target, we know  the target
+  // must be off the child list to the left
+  if( static_cast<CAlphabetManager::CSymbolNode*>((*pNode->GetChildren().begin()))->iSymbol > iTargetSymbol ) {
+    m_pEventHandler->InsertEvent(new CNoGameNodeEvent(std::make_pair(static_cast<CDasherNode*>(NULL), (*pNode->GetChildren().begin()))));
+    return;
+  }
+  
+  // If the last symbol is less than the target, we know the target must
+  // be off the child list to the right
+  if( static_cast<CAlphabetManager::CSymbolNode*>((*pNode->GetChildren().end()))->iSymbol < iTargetSymbol ) {
+    m_pEventHandler->InsertEvent(new CNoGameNodeEvent(std::make_pair( (*pNode->GetChildren().end()), static_cast<CDasherNode*>(NULL) )));
+    return;
+  }
+  
+  // Otherwise, it's between two elements of the child list. Find those
+  // elements and send them out.
+  for(CDasherNode::ChildMap::const_iterator it = pNode->GetChildren().begin();
+              it != pNode->GetChildren().end(); it++) {
+    if( static_cast<CAlphabetManager::CSymbolNode*>((*it))->iSymbol > iTargetSymbol ) {
+      m_pEventHandler->InsertEvent(new CNoGameNodeEvent( std::make_pair( (*--it), (*it) ) ));
+      return;
+    }
+  }
+
+}
+
 bool CDasherModel::GameSearchChildren(CDasherNode* pNode) {
   for(CDasherNode::ChildMap::const_iterator it = pNode->GetChildren().begin();
               it != pNode->GetChildren().end(); it++) {
     if( GameSearchIndividual((*it)) ) return true;
   }
+
+  // If we cannot find the target string, it must not be drawn. We know this because every subtree
+  // in the dasher model has one instance of each node in the alphabet. It must be there
+  // somewhere or it's not drawn OR it's not in the alphabet at all. In the last case, we have
+  // larger problems...
+  int iType = pNode->GetType();
+  if((iType == NT_GROUP) || (iType == NT_SYMBOL)) {
+    if(iType == NT_SYMBOL) {
+      CAlphabetManager::CSymbolNode* newNode = static_cast<CAlphabetManager::CSymbolNode*>(pNode);
+      GameSearchApproximate(newNode);
+    }
+/*
+    if(iType == NT_GROUP) {
+      CAlphabetManager::CGroupNode* newNode = static_cast<CAlphabetManager::CGroupNode*>(pNode);
+      GameSearchApproximate(newNode);
+    }
+*/
+  }
+  
   return false;
 }
 
