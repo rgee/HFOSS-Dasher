@@ -17,7 +17,7 @@ using namespace std;
 #include "DasherInterfaceBase.h"
 #include "WordGeneratorBase.h"
 #include "EventHandler.h"
-
+#include <tr1/memory>
 
 
 namespace Dasher {
@@ -47,7 +47,7 @@ class CGameModule : public CDasherModule {
    */
   CGameModule(Dasher::CEventHandler *pEventHandler, CSettingsStore *pSettingsStore,  
                 CDasherInterfaceBase *pInterface, ModuleID_t iID, const char *szName,
-                CWordGeneratorBase* pWordGenerator) 
+                std::tr1::shared_ptr<CWordGeneratorBase> pWordGenerator) 
   : m_iCrosshairColor(135),
     m_iCrosshairNumPoints(2),
     m_iCrosshairExtent(25),
@@ -139,7 +139,7 @@ class CGameModule : public CDasherModule {
    * Pointer to the object that encapsulates the word generation
    * algorithm being used.
    */
-  CWordGeneratorBase* m_pWordGenerator;
+  std::tr1::shared_ptr<CWordGeneratorBase> m_pWordGenerator;
   
   /**
    * The target string the user must type.
