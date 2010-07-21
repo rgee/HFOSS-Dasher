@@ -169,6 +169,12 @@ class CGameModule : public CDasherModule {
    */
   myint m_iTargetY;
   
+  /**
+   * Flag that denotes whether we are approximating the target position
+   * or not.
+   */
+  bool m_bApproximating;
+  
   
   
 /* ---------------------------------------------------------------------
@@ -210,7 +216,7 @@ class CGameModule : public CDasherModule {
   /**
    * The events this class listens for
    */
-  static const int vEvents[2];
+  static const int vEvents[3];
 
 };
 

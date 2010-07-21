@@ -6,7 +6,7 @@ using namespace Dasher;
  * Static members of non-integral type must be initialized outside of
  * class definitions.
  */
-const int Dasher::CGameModule::vEvents[2] = {EV_EDIT, EV_GAME_NODE_DRAWN}; 
+const int Dasher::CGameModule::vEvents[3] = {EV_EDIT, EV_GAME_NODE_DRAWN, EV_NO_GAME_NODE}; 
 
 void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
 
@@ -44,6 +44,7 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
         case EV_GAME_NODE_DRAWN:
         {
           CGameNodeDrawEvent* evt = static_cast<CGameNodeDrawEvent*>(pEvent);
+          m_bApproximating = true;
           evt->m_pView->Screen2Dasher(evt->m_iX, evt->m_iY, m_iTargetX, m_iTargetY);
         }
         break;

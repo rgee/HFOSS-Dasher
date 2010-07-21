@@ -55,7 +55,7 @@ CControlManager::CControlManager( CNodeCreationManager *pNCManager )
       LoadDefaultLabels();
     }
       else
-	LoadLabelsFromFile(strFileName, sFileInfo.st_size);
+  LoadLabelsFromFile(strFileName, sFileInfo.st_size);
   }
   else
     LoadLabelsFromFile(strFileName, sFileInfo.st_size);
@@ -279,7 +279,7 @@ CDasherNode *CControlManager::GetRoot(CDasherNode *pParent, unsigned int iLower,
 }
 
 CControlManager::CContNode::CContNode(CDasherNode *pParent, int iOffset, unsigned int iLbnd, unsigned int iHbnd, const SControlItem *pControlItem, CControlManager *pMgr)
-: CDasherNode(pParent, iOffset, iLbnd, iHbnd, (pControlItem->iColour != -1) ? pControlItem->iColour : (pParent->ChildCount()%99)+11, pControlItem->strLabel), m_pControlItem(pControlItem), m_pMgr(pMgr) {
+: CDasherNode(pParent, iOffset, iLbnd, iHbnd, (pControlItem->iColour != -1) ? pControlItem->iColour : (pParent->ChildCount()%99)+11, pControlItem->strLabel, NT_CONTROL), m_pControlItem(pControlItem), m_pMgr(pMgr) {
 }
 
 
@@ -358,7 +358,7 @@ void CControlManager::XmlStartHandler(void *pUserData, const XML_Char *szName, c
         colour = atoi(aszAttr[i+1]);
       }  
     }
-	((CControlManager*)pUserData)->RegisterNode(CControlManager::m_iNextID++, str, colour);
+  ((CControlManager*)pUserData)->RegisterNode(CControlManager::m_iNextID++, str, colour);
     
   }
 }

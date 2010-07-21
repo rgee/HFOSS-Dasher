@@ -28,6 +28,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <algorithm>
 #include <vector>
 
 namespace Dasher {
@@ -87,6 +88,14 @@ namespace Dasher {
       return m_Characters[i];
     } 
     // return string for i'th symbol
+    
+    /**
+     * Return the symbol id of the character with the specified text.
+     * Essentially a reverse lookup of GetText.
+     */
+    const int GetSymbol(std::string & str) const {
+      return std::distance( std::find(m_Characters.begin(), m_Characters.end(), str), m_Characters.begin() ) - 1;
+    }
 
     int GetColour(symbol i, int iPhase) const;
 
