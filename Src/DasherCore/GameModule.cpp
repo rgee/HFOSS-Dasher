@@ -1,4 +1,6 @@
 #include "GameModule.h"
+#include <sstream>
+#include <iostream>
 
 using namespace Dasher;
 
@@ -6,9 +8,17 @@ using namespace Dasher;
  * Static members of non-integral type must be initialized outside of
  * class definitions.
  */
-const int Dasher::CGameModule::vEvents[3] = {EV_EDIT, EV_GAME_NODE_DRAWN, EV_PARAM_NOTIFY}; 
+const int Dasher::CGameModule::vEvents[3] = {EV_EDIT, EV_GAME_NODE_DRAWN}; 
 
 void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
+
+
+	std::stringstream ss;
+	ss << m_iCurrentStringPos;
+	g_pLogger->Log(ss.str());
+
+	if(!m_bIsActive)
+		return;
 
     switch(pEvent->m_iEventType)
     {
@@ -53,6 +63,21 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
     }
     return;
 
+}
+
+void CGameModule::SetWordGenerator(std::tr1::shared_ptr<CWordGeneratorBase> pWordGenerator) {
+	m_pWordGenerator = pWordGenerator;
+	GenerateChunk();
+	m_bIsActive = true;
+}
+
+void CGameModule::reset() {
+	m_pWordGenerator.reset();
+	m_sTargetString = "";
+	m_iCurrentStringPos = 0;
+	m_iTargetX = 0;
+	m_iTargetY = 0;
+	m_bIsActive = false;
 }
 
 bool CGameModule::CharacterFound(CEditEvent* pEvent) {

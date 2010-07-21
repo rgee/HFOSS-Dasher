@@ -46,8 +46,7 @@ class CGameModule : public CDasherModule {
    * @param pWordGenerator A pointer to the word generator
    */
   CGameModule(Dasher::CEventHandler *pEventHandler, CSettingsStore *pSettingsStore,  
-                CDasherInterfaceBase *pInterface, ModuleID_t iID, const char *szName,
-                std::tr1::shared_ptr<CWordGeneratorBase> pWordGenerator) 
+                Dasher::CDasherInterfaceBase *pInterface, ModuleID_t iID, const char *szName) 
   : m_iCrosshairColor(135),
     m_iCrosshairNumPoints(2),
     m_iCrosshairExtent(25),
@@ -55,17 +54,13 @@ class CGameModule : public CDasherModule {
     m_iTargetChunkSize(3),
     m_iFontSize(36),
     m_iCurrentStringPos(-1),
-    m_pWordGenerator(pWordGenerator),
+	m_pInterface(pInterface),
     CDasherModule(pEventHandler, pSettingsStore, iID, 0, szName,
                   std::vector<int>(vEvents, vEvents + sizeof(vEvents) / sizeof(int)))
-  {     
-    m_pInterface = pInterface;
-      
-    GenerateChunk();
-    
-  }
+  {}
 
-  virtual ~CGameModule() {
+  ~CGameModule() {
+	  m_pSettingsStore->SetBoolParameter(BP_GAME_MODE, false);
   }
 
   /**
@@ -93,6 +88,18 @@ class CGameModule : public CDasherModule {
    * @param pEvent The event to be processed.
    */
   virtual void HandleEvent(Dasher::CEvent *pEvent); 
+
+  /**
+   * Set the word generator for this instance to draw words from.
+   * @param pWordGenerator the word generator to be used
+   */ 
+  void SetWordGenerator(std::tr1::shared_ptr<CWordGeneratorBase> pWordGenerator);
+
+  /**
+   * Reset the game module. This makes the game module invalid until it is provided
+   * with a new WordGenerator.
+   */ 
+  void reset();
 
  private:
 /* ---------------------------------------------------------------------
@@ -133,7 +140,12 @@ class CGameModule : public CDasherModule {
  * Member Variables
  * ---------------------------------------------------------------------
  */
-   
+  
+
+  /**
+   * Whether or not this instance is actually playing right now.
+   */ 
+  bool m_bIsActive;
    
   /**
    * Pointer to the object that encapsulates the word generation
@@ -155,7 +167,7 @@ class CGameModule : public CDasherModule {
   /**
    * The dasher interface.
    */
-  CDasherInterfaceBase *m_pInterface;
+  Dasher::CDasherInterfaceBase *m_pInterface;
   
   /**
    * The target x coordinate for the crosshair to point to. 

@@ -332,7 +332,16 @@ void CDasherInterfaceBase::InterfaceEventHandler(Dasher::CEvent *pEvent) {
         break;
     case LP_NODE_BUDGET:
       delete m_defaultPolicy;
-      m_defaultPolicy = new AmortizedPolicy(GetLongParameter(LP_NODE_BUDGET));  
+      m_defaultPolicy = new AmortizedPolicy(GetLongParameter(LP_NODE_BUDGET));
+	case BP_GAME_MODE:
+
+	  if(GetBoolParameter(BP_GAME_MODE)) {
+		InitGameModule();
+	  }
+	  else if(m_pGameModule){
+		ResetGameModule();
+	  }
+	  
     default:
       break;
     }
@@ -597,7 +606,7 @@ void CDasherInterfaceBase::Redraw(bool bRedrawNodes, CExpansionPolicy &policy) {
     bDecorationsChanged = m_pInputFilter->DecorateView(m_pDasherView);
   }
 
-  if(m_pGameModule && GetBoolParameter(BP_GAME_MODE)) {
+  if(m_pGameModule) {
     bDecorationsChanged = m_pGameModule->DecorateView(m_pDasherView) || bDecorationsChanged;
   }
 
@@ -876,7 +885,14 @@ void CDasherInterfaceBase::InitGameModule() {
 
   if(m_pGameModule == NULL) {
     m_pGameModule = (CGameModule*) GetModuleByName("Game Mode");
+	m_pGameModule->SetWordGenerator(std::tr1::shared_ptr<CWordGeneratorBase>
+			(new CFileWordGenerator(GetStringParameter(SP_GAME_TEXT_FILE))));
   }
+}
+
+void CDasherInterfaceBase::ResetGameModule() {
+	m_pGameModule->reset();
+	m_pGameModule = NULL;
 }
 
 void CDasherInterfaceBase::CreateInputFilter()
@@ -961,8 +977,7 @@ void CDasherInterfaceBase::CreateModules() {
   // whereas before its ownership was ambiguous to the only class that
   // could delete it. (The game module) Therefore, newing directly to
   // the constructor leaked memory.
-  RegisterModule(new CGameModule(m_pEventHandler, m_pSettingsStore, this, 21, _("Game Mode"),
-                              std::tr1::shared_ptr<CWordGeneratorBase>(new CFileWordGenerator("test_text.txt"))));
+  RegisterModule(new CGameModule(m_pEventHandler, m_pSettingsStore, this, 21, _("Game Mode")));
 }
 
 void CDasherInterfaceBase::GetPermittedValues(int iParameter, std::vector<std::string> &vList) {
