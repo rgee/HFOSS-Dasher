@@ -141,7 +141,6 @@ CAlphabetManager::CAlphNode *CAlphabetManager::GetRoot(CDasherNode *pParent, uns
 }
 
 bool CAlphabetManager::CSymbolNode::IsTarget(string strTargetUtf8Char) {
-  g_pLogger->Log("Comparing to: " + m_pMgr->m_pNCManager->GetAlphabet()->GetText(iSymbol));
   return (m_pMgr->m_pNCManager->GetAlphabet()->GetText(iSymbol) == strTargetUtf8Char);
 }
 

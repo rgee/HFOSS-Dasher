@@ -104,9 +104,55 @@ CDasherModel::~CDasherModel() {
   }
 }
 
+std::vector<CDasherNode*> CDasherModel::GetSymbolList(CDasherNode* pNode) {
+  std::vector<CDasherNode*> result;
+
+  for(CDasherNode::ChildMap::const_iterator it = pNode->GetChildren().begin();
+              it != pNode->GetChildren().end(); it++) {
+    if(pNode->GetType() == NT_SYMBOL) {
+      result.push_back(pNode);
+    }
+    else if(pNode->GetType() == NT_GROUP) {
+      std::vector<CDasherNode*> group_results;
+      result.insert(result.end(), group_results.begin(), group_results.end());
+    }
+  }
+  
+  return result;  
+}
+
+void CDasherModel::GameApproximate() {
+  std::vector<CDasherNode*> vNodes = GetSymbolList(Get_node_under_crosshair());
+  int iTargetSymbol =  m_pNodeCreationManager->GetAlphabet()->GetSymbol(m_strGameTarget);
+  
+  if( iTargetSymbol < vNodes.begin()->iSymbol) {
+    m_pEventHandler->InsertEvent(
+      new CNoGameNodeEvent(std::make_pair(static_cast<CDasherNode*>(NULL), vNodes.begin()))
+    );
+  }
+
+  if( iTargetSymbol > vNodes.eng()->iSymbol) {
+    m_pEventHandler->InsertEvent(
+      new CNoGameNodeEvent(std::make_pair(vNodes.end(), static_cast<CDasherNode*>(NULL)))
+    );
+  }
+
+  for(std::vector<CDasherNode*>::const_iterator it = vNodes.begin();
+              it != vNodes.end(); it++) {
+    if( iTargetSymbol < (*it).iSymbol ) {
+      m_pEventHandler->InsertEvent(
+        new CNoGameNodeEvent(std::make_pair( (*--it), (*it) ))
+      );
+    }
+  }
+}
+
+
 void CDasherModel::GameSearchApproximate(CAlphabetManager::CSymbolNode* pNode) {
   int iTargetSymbol = m_pNodeCreationManager->GetAlphabet()->GetSymbol(m_strGameTarget);
-  
+  g_pLogger->Log("Begin search for approximate game nodes..."); 
+
+ 
   // If the first symbol is greater than the target, we know  the target
   // must be off the child list to the left
   if( static_cast<CAlphabetManager::CSymbolNode*>((*pNode->GetChildren().begin()))->iSymbol > iTargetSymbol ) {
@@ -134,6 +180,7 @@ void CDasherModel::GameSearchApproximate(CAlphabetManager::CSymbolNode* pNode) {
 }
 
 bool CDasherModel::GameSearchChildren(CDasherNode* pNode) {
+  if(pNode->GetChildren().size() == 0) g_pLogger->Log("NO CHILDREN");
   for(CDasherNode::ChildMap::const_iterator it = pNode->GetChildren().begin();
               it != pNode->GetChildren().end(); it++) {
     if( GameSearchIndividual((*it)) ) return true;

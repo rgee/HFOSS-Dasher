@@ -1,5 +1,5 @@
 #include "GameModule.h"
-
+#include <sstream>
 using namespace Dasher;
 
 /**
@@ -12,6 +12,13 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
 
     switch(pEvent->m_iEventType)
     {
+        case EV_NO_GAME_NODE:
+        {
+            CNoGameNodeEvent* evt = static_cast<CNoGameNodeEvent*>(pEvent);
+            std::stringstream log_stream;
+            log_stream << "First: " << evt->m_pNodes.first << "Second: " << evt->m_pNodes.first << endl;
+            g_pLogger->Log(log_stream.str());
+        }
         case EV_EDIT:
         {     
             CEditEvent* evt = static_cast<CEditEvent*>(pEvent);
