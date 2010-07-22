@@ -885,13 +885,15 @@ void CDasherInterfaceBase::InitGameModule() {
 
   if(m_pGameModule == NULL) {
     m_pGameModule = (CGameModule*) GetModuleByName("Game Mode");
-	m_pGameModule->SetWordGenerator(std::tr1::shared_ptr<CWordGeneratorBase>
-			(new CFileWordGenerator(GetStringParameter(SP_GAME_TEXT_FILE))));
+	CreateModel(0);
+	m_pGameModule->SetWordGenerator(new CFileWordGenerator(GetStringParameter(SP_GAME_TEXT_FILE)));
+
   }
 }
 
 void CDasherInterfaceBase::ResetGameModule() {
 	m_pGameModule->reset();
+	CreateModel(0);
 	m_pGameModule = NULL;
 }
 

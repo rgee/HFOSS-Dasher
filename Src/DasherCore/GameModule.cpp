@@ -8,20 +8,26 @@ using namespace Dasher;
  * Static members of non-integral type must be initialized outside of
  * class definitions.
  */
-const int Dasher::CGameModule::vEvents[3] = {EV_EDIT, EV_GAME_NODE_DRAWN}; 
+const int Dasher::CGameModule::vEvents[3] = {EV_EDIT, EV_GAME_NODE_DRAWN, EV_MODEL_READY}; 
 
 void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
 
 
-	std::stringstream ss;
-	ss << m_iCurrentStringPos;
-	g_pLogger->Log(ss.str());
+	//std::stringstream ss;
+	//ss << m_iCurrentStringPos;
+	//g_pLogger->Log(ss.str());
 
-	if(!m_bIsActive)
-		return;
+	//if(!m_bIsActive)
+	//	return;
 
     switch(pEvent->m_iEventType)
     {
+		case EV_MODEL_READY:
+		{
+			 m_pEventHandler->InsertEvent(new CGameTargetChangedEvent(m_sTargetString.substr(m_iCurrentStringPos + 1, 1)));
+			 g_pLogger->Log("Dasher Model ready");
+	
+		}
 		case EV_EDIT:
         {     
             CEditEvent* evt = static_cast<CEditEvent*>(pEvent);
@@ -40,6 +46,9 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
                             m_pEventHandler->InsertEvent(
                               new CGameTargetChangedEvent(m_sTargetString.substr(m_iCurrentStringPos + 1, 1))
                             );
+
+							g_pLogger->Log(m_sTargetString.substr(m_iCurrentStringPos + 1, 1));
+
                       }
                     }
                     break;
@@ -65,16 +74,19 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
 
 }
 
-void CGameModule::SetWordGenerator(std::tr1::shared_ptr<CWordGeneratorBase> pWordGenerator) {
+void CGameModule::SetWordGenerator(CWordGeneratorBase *pWordGenerator) {
 	m_pWordGenerator = pWordGenerator;
 	GenerateChunk();
 	m_bIsActive = true;
+	//++m_iCurrentStringPos;
+	//m_pEventHandler->InsertEvent(
+    //new CGameTargetChangedEvent(m_sTargetString.substr(m_iCurrentStringPos + 1, 1)));
 }
 
 void CGameModule::reset() {
-	m_pWordGenerator.reset();
+	delete m_pWordGenerator;
 	m_sTargetString = "";
-	m_iCurrentStringPos = 0;
+	m_iCurrentStringPos = -1;
 	m_iTargetX = 0;
 	m_iTargetY = 0;
 	m_bIsActive = false;

@@ -88,6 +88,8 @@ CDasherModel::CDasherModel(CEventHandler *pEventHandler,
   m_Rootmax_max = int64_max / iNormalization / 2;
 
   InitialiseAtOffset(iOffset, pView);
+
+  m_pEventHandler->InsertEvent(new CModelReadyEvent());
 }
 
 CDasherModel::~CDasherModel() {

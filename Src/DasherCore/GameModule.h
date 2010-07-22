@@ -93,7 +93,7 @@ class CGameModule : public CDasherModule {
    * Set the word generator for this instance to draw words from.
    * @param pWordGenerator the word generator to be used
    */ 
-  void SetWordGenerator(std::tr1::shared_ptr<CWordGeneratorBase> pWordGenerator);
+  void SetWordGenerator(CWordGeneratorBase *pWordGenerator);
 
   /**
    * Reset the game module. This makes the game module invalid until it is provided
@@ -151,7 +151,7 @@ class CGameModule : public CDasherModule {
    * Pointer to the object that encapsulates the word generation
    * algorithm being used.
    */
-  std::tr1::shared_ptr<CWordGeneratorBase> m_pWordGenerator;
+  CWordGeneratorBase *m_pWordGenerator;
   
   /**
    * The target string the user must type.

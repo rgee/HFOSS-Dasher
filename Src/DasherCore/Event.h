@@ -22,10 +22,11 @@ namespace Dasher {
   class CCommandEvent;
   class CDasherView;
   class CDasherNode;
+  class CModelReadyEvent;
 }
 
 enum {
-  EV_PARAM_NOTIFY = 1, EV_EDIT, EV_EDIT_CONTEXT, EV_START, EV_STOP, EV_CONTROL, EV_LOCK, EV_GAME_TARGET_CHANGED, EV_MESSAGE, EV_COMMAND, EV_GAME_NODE_DRAWN
+  EV_PARAM_NOTIFY = 1, EV_EDIT, EV_EDIT_CONTEXT, EV_START, EV_STOP, EV_CONTROL, EV_LOCK, EV_GAME_TARGET_CHANGED, EV_MESSAGE, EV_COMMAND, EV_GAME_NODE_DRAWN, EV_MODEL_READY
 };
 
 /// \ingroup Core
@@ -36,6 +37,15 @@ enum {
 class Dasher::CEvent {
 public:
   int m_iEventType;
+};
+
+/**
+ * Signal that the Dasher model is fully constructed and
+ * ready to receieve events.
+ */ 
+class Dasher::CModelReadyEvent : public Dasher::CEvent {	
+public:
+	CModelReadyEvent() { m_iEventType = EV_MODEL_READY; }
 };
 
 class Dasher::CGameNodeDrawEvent : public Dasher::CEvent {

@@ -20,6 +20,7 @@
 #endif
 #include "dasher_main.h"
 
+#include "dasher_editor.h"
 #include "dasher_editor_internal.h"
 #include "dasher_editor_external.h"
 
@@ -559,16 +560,31 @@ dasher_main_create_preferences(DasherMain *pSelf) {
 //   return pPrivate->pEditor;
 // 
 
-void initialize_game_mode(char *trainingText) {
-	
+void clear_dasher_editor_text(DasherMain *pSelf) {
+
+	DasherMainPrivate *pPrivate = DASHER_MAIN_GET_PRIVATE(pSelf);
+	int editorTextLen = strlen(dasher_editor_get_all_text(pPrivate->pEditor));
+	dasher_editor_delete(pPrivate->pEditor, editorTextLen, 0);	
 }
 
+void init_game_mode(char *pGameTextFilePath, DasherMain *pSelf) {
+
+	DasherMainPrivate *pPrivate = DASHER_MAIN_GET_PRIVATE(pSelf);
+
+	dasher_app_settings_set_string(pPrivate->pAppSettings,
+							SP_GAME_TEXT_FILE,
+							pGameTextFilePath);
+
+	dasher_app_settings_set_bool(pPrivate->pAppSettings, BP_GAME_MODE, true);
+	clear_dasher_editor_text(pSelf);
+}
 
 void show_game_file_dialog(GtkWidget *widget, GtkWidget *pButton, gpointer pData) {
 
 	std::pair<GtkWindow*, DasherMain*> *objRefs = (std::pair<GtkWindow*, DasherMain*>*)pData;
 
-	DasherMainPrivate *pPrivate = DASHER_MAIN_GET_PRIVATE(objRefs->second);
+	DasherMain *pSelf = objRefs->second;
+	DasherMainPrivate *pPrivate = DASHER_MAIN_GET_PRIVATE(pSelf);
 
 	GtkWidget *pFileDialog = gtk_file_chooser_dialog_new("Choose a Training Text",
 				      GTK_WINDOW(objRefs->first),
@@ -583,11 +599,8 @@ void show_game_file_dialog(GtkWidget *widget, GtkWidget *pButton, gpointer pData
 	
 		char *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(pFileDialog));
 
-		dasher_app_settings_set_string(pPrivate->pAppSettings,
-							SP_GAME_TEXT_FILE,
-							filename);
-		
-		dasher_app_settings_set_bool(pPrivate->pAppSettings, BP_GAME_MODE, true);
+		init_game_mode(filename, pSelf);
+
 		gtk_widget_destroy(GTK_WIDGET(objRefs->first));	
 	}
 }
@@ -599,8 +612,8 @@ void dasher_main_toggle_game_mode(DasherMain *pSelf) {
 	if(!dasher_app_settings_get_bool(pPrivate->pAppSettings, BP_GAME_MODE)) {
 
 		GtkWidget *pDialog = gtk_message_dialog_new(GTK_WINDOW(pPrivate->pMainWindow), GTK_DIALOG_MODAL, 
-                                         GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE, 
-                                         _("Welcome to Game Mode! Please select a training text:"));
+                                         GTK_MESSAGE_OTHER, GTK_BUTTONS_NONE, 
+                                         _("Welcome to Dasher Game Mode! Game Mode is a fun way to practice entering text in Dasher. Please select a training text to play with:"));
 
 		GtkWidget *pDefaultButton = gtk_dialog_add_button(GTK_DIALOG(pDialog), _("Use Default"), GTK_RESPONSE_CLOSE);	
 		GtkWidget *pFileButton = gtk_dialog_add_button(GTK_DIALOG(pDialog), _("Choose File..."), 2);
@@ -623,6 +636,7 @@ void dasher_main_toggle_game_mode(DasherMain *pSelf) {
 	}
 	else {
 		dasher_app_settings_set_bool(pPrivate->pAppSettings, BP_GAME_MODE, false);
+		clear_dasher_editor_text(pSelf);
 	}
 
 }
