@@ -296,7 +296,7 @@ class Dasher::CDasherModel:public Dasher::CFrameRate, private NoClones
   void NewGoTo(myint n1, myint n2, Dasher::VECTOR_SYMBOL_PROB* pAdded, int* pNumDeleted);
 
   void GameApproximate();
-  std::vector<CDasherNode*> GetSymbolList(CDasherNode* pNode);
+  void GetSymbolList(CDasherNode* pNode, std::deque<CAlphabetManager::CSymbolNode*>& result);
 
   ///
   /// Search the model for the target string

@@ -104,45 +104,47 @@ CDasherModel::~CDasherModel() {
   }
 }
 
-std::vector<CDasherNode*> CDasherModel::GetSymbolList(CDasherNode* pNode) {
-  std::vector<CDasherNode*> result;
+void CDasherModel::GetSymbolList(CDasherNode* pNode, std::deque<CAlphabetManager::CSymbolNode*>& result) {
 
-  for(CDasherNode::ChildMap::const_iterator it = pNode->GetChildren().begin();
+
+  for(std::deque<CDasherNode*>::const_iterator it = pNode->GetChildren().begin();
               it != pNode->GetChildren().end(); it++) {
-    if(pNode->GetType() == NT_SYMBOL) {
-      result.push_back(pNode);
+    if((*it)->GetType() == NT_SYMBOL) {
+      result.push_back(static_cast<CAlphabetManager::CSymbolNode*>(*it));
     }
-    else if(pNode->GetType() == NT_GROUP) {
-      std::vector<CDasherNode*> group_results;
+    else if((*it)->GetType() == NT_GROUP) {
+    
+     std::deque<CAlphabetManager::CSymbolNode*> group_results;
+     GetSymbolList(*it, group_results);
+
       result.insert(result.end(), group_results.begin(), group_results.end());
     }
-  }
-  
-  return result;  
+  } 
 }
 
 void CDasherModel::GameApproximate() {
-  std::vector<CDasherNode*> vNodes = GetSymbolList(Get_node_under_crosshair());
+  std::deque<CAlphabetManager::CSymbolNode*> vNodes; 
+  GetSymbolList(Get_node_under_crosshair(), vNodes);
   int iTargetSymbol =  m_pNodeCreationManager->GetAlphabet()->GetSymbol(m_strGameTarget);
   
-  if( iTargetSymbol < vNodes.begin()->iSymbol) {
+  if( iTargetSymbol > vNodes.front()->iSymbol) {
     m_pEventHandler->InsertEvent(
-      new CNoGameNodeEvent(std::make_pair(static_cast<CDasherNode*>(NULL), vNodes.begin()))
+      new CNoGameNodeEvent(std::make_pair(static_cast<CDasherNode*>(NULL), vNodes.front()))
     );
   }
 
-  if( iTargetSymbol > vNodes.eng()->iSymbol) {
+  if( iTargetSymbol < vNodes.back()->iSymbol) {
     m_pEventHandler->InsertEvent(
-      new CNoGameNodeEvent(std::make_pair(vNodes.end(), static_cast<CDasherNode*>(NULL)))
+      new CNoGameNodeEvent(std::make_pair(vNodes.back(), static_cast<CDasherNode*>(NULL)))
     );
   }
 
-  for(std::vector<CDasherNode*>::const_iterator it = vNodes.begin();
-              it != vNodes.end(); it++) {
-    if( iTargetSymbol < (*it).iSymbol ) {
+  for(std::deque<CAlphabetManager::CSymbolNode*>::iterator it = vNodes.begin();
+              it != vNodes.end(); ++it) {
+    if( iTargetSymbol < (*it)->iSymbol ) {
+      CAlphabetManager::CSymbolNode* prev = *(--it);
       m_pEventHandler->InsertEvent(
-        new CNoGameNodeEvent(std::make_pair( (*--it), (*it) ))
-      );
+        new CNoGameNodeEvent(std::make_pair( prev, *(it) )));
     }
   }
 }
@@ -185,25 +187,15 @@ bool CDasherModel::GameSearchChildren(CDasherNode* pNode) {
               it != pNode->GetChildren().end(); it++) {
     if( GameSearchIndividual((*it)) ) return true;
   }
+  
+
 
   // If we cannot find the target string, it must not be drawn. We know this because every subtree
   // in the dasher model has one instance of each node in the alphabet. It must be there
   // somewhere or it's not drawn OR it's not in the alphabet at all. In the last case, we have
   // larger problems...
-  int iType = pNode->GetType();
-  if((iType == NT_GROUP) || (iType == NT_SYMBOL)) {
-    if(iType == NT_SYMBOL) {
-      CAlphabetManager::CSymbolNode* newNode = static_cast<CAlphabetManager::CSymbolNode*>(pNode);
-      GameSearchApproximate(newNode);
-    }
-/*
-    if(iType == NT_GROUP) {
-      CAlphabetManager::CGroupNode* newNode = static_cast<CAlphabetManager::CGroupNode*>(pNode);
-      GameSearchApproximate(newNode);
-    }
-*/
-  }
-  
+  if(m_strGameTarget != "")
+    GameApproximate();
   return false;
 }
 

@@ -94,7 +94,7 @@ namespace Dasher {
      * Essentially a reverse lookup of GetText.
      */
     const int GetSymbol(std::string & str) const {
-      return std::distance( std::find(m_Characters.begin(), m_Characters.end(), str), m_Characters.begin() ) - 1;
+      return std::distance(m_Characters.begin(), std::find(m_Characters.begin(), m_Characters.end(), str)) - 1;
     }
 
     int GetColour(symbol i, int iPhase) const;
