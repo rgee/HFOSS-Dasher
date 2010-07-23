@@ -1,4 +1,5 @@
 #include "GameModule.h"
+#include <sstream>
 
 using namespace Dasher;
 
@@ -6,12 +7,27 @@ using namespace Dasher;
  * Static members of non-integral type must be initialized outside of
  * class definitions.
  */
-const int Dasher::CGameModule::vEvents[2] = {EV_EDIT, EV_GAME_NODE_DRAWN}; 
+const int Dasher::CGameModule::vEvents[3] = {EV_EDIT, EV_GAME_NODE_DRAWN, EV_NO_GAME_NODE}; 
 
 void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
 
+
+	//std::stringstream ss;
+	//ss << m_iCurrentStringPos;
+	//g_pLogger->Log(ss.str());
+
+	//if(!m_bIsActive)
+	//	return;
+
     switch(pEvent->m_iEventType)
     {
+        case EV_NO_GAME_NODE:
+        {
+            CNoGameNodeEvent* evt = static_cast<CNoGameNodeEvent*>(pEvent);
+            std::stringstream log_stream;
+            log_stream << "First: " << evt->m_pNodes.first << "Second: " << evt->m_pNodes.first << endl;
+            g_pLogger->Log(log_stream.str());
+        }
         case EV_EDIT:
         {     
             CEditEvent* evt = static_cast<CEditEvent*>(pEvent);
@@ -30,6 +46,9 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
                             m_pEventHandler->InsertEvent(
                               new CGameTargetChangedEvent(m_sTargetString.substr(m_iCurrentStringPos + 1, 1))
                             );
+
+							g_pLogger->Log(m_sTargetString.substr(m_iCurrentStringPos + 1, 1));
+
                       }
                     }
                     break;
@@ -44,6 +63,7 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
         case EV_GAME_NODE_DRAWN:
         {
           CGameNodeDrawEvent* evt = static_cast<CGameNodeDrawEvent*>(pEvent);
+          m_bApproximating = true;
           evt->m_pView->Screen2Dasher(evt->m_iX, evt->m_iY, m_iTargetX, m_iTargetY);
         }
         break;
@@ -53,6 +73,19 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
     }
     return;
 
+}
+
+void CGameModule::SetWordGenerator(CWordGeneratorBase *pWordGenerator) {
+	m_pWordGenerator = pWordGenerator;
+	GenerateChunk();
+}
+
+void CGameModule::reset() {
+	delete m_pWordGenerator;
+	m_sTargetString = "";
+	m_iCurrentStringPos = -1;
+	m_iTargetX = 0;
+	m_iTargetY = 0;
 }
 
 bool CGameModule::CharacterFound(CEditEvent* pEvent) {

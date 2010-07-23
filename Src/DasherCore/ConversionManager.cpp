@@ -83,7 +83,7 @@ CConversionManager::CConvNode *CConversionManager::GetRoot(CDasherNode *pParent,
 }
 
 CConversionManager::CConvNode::CConvNode(CDasherNode *pParent, int iOffset, unsigned int iLbnd, unsigned int iHbnd, int iColour, const string &strDisplayText, CConversionManager *pMgr)
- : CDasherNode(pParent, iOffset, iLbnd, iHbnd, iColour, strDisplayText), m_pMgr(pMgr) {
+ : CDasherNode(pParent, iOffset, iLbnd, iHbnd, iColour, strDisplayText, NT_CONV), m_pMgr(pMgr) {
   pMgr->m_iRefCount++;
 }
 

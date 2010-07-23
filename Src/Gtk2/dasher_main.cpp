@@ -3,7 +3,7 @@
 #endif
 
 #include <cstring>
-
+#include <utility>
 #include <gdk/gdk.h>
 #include <gdk/gdkx.h>
 #include <glib/gi18n.h>
@@ -14,15 +14,13 @@
 #include <unistd.h>
 
 #include "GtkDasherControl.h"
-#include "KeyboardHelper.h"
-#include "Preferences.h"
 #include "dasher_lock_dialogue.h"
 #ifdef WITH_MAEMO
 #include "dasher_maemo_helper.h"
 #endif
 #include "dasher_main.h"
 
-#include "DasherAppSettings.h"
+#include "dasher_editor.h"
 #include "dasher_editor_internal.h"
 #include "dasher_editor_external.h"
 
@@ -32,51 +30,6 @@ static DasherMain *g_pDasherMain = NULL;
 // TODO: The following global variable makes control mode editing work
 // - this needs to be sorted out properly.
 static gboolean g_bSend = true;
-
-struct _DasherMainPrivate {
-  GtkBuilder *pXML;
-  GtkBuilder *pPrefXML;
-
-  // Child objects owned here
-  DasherAppSettings *pAppSettings;
-  DasherPreferencesDialogue *pPreferencesDialogue;
-  DasherEditor *pEditor;
-
-  CKeyboardHelper *pKeyboardHelper;
-
-  // Various widgets which need to be cached:
-  // GtkWidget *pBufferView;
-  GtkPaned  *pDivider;
-  GtkWindow *pMainWindow;
-  GtkWidget *pToolbar;
-  GtkSpinButton *pSpeedBox;
-  GtkWidget *pAlphabetCombo;
-  GtkWidget *pStatusControl;
-  GtkWidget *pDasherWidget;
-
-  GtkListStore *pAlphabetList;
-  GtkAccelGroup *pAccel;
-  gulong iAlphabetComboHandler;
-
-  // Widgets used for maemo
-#ifdef WITH_MAEMO
-  DasherMaemoHelper *pMaemoHelper;
-#ifdef WITH_MAEMOFULLSCREEN
-  HildonProgram *pProgram;
-  HildonWindow *pHWindow;
-#endif
-#endif
-
-  // Properties of the main window
-  int iWidth;
-  int iHeight;
-  bool bWidgetsInitialised;
-};
-
-typedef struct _DasherMainPrivate DasherMainPrivate;
-
-// TODO: Make sure this is actually used
-#define DASHER_MAIN_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE((o), DASHER_TYPE_MAIN, DasherMainPrivate))
 
 enum {
   REALIZED,
@@ -111,6 +64,7 @@ extern "C" void dasher_main_cb_preferences(GtkAction*, DasherMain*);
 extern "C" void dasher_main_cb_help(GtkAction*, DasherMain*);
 extern "C" void dasher_main_cb_about(GtkAction*, DasherMain*);
 extern "C" void dasher_main_cb_editor(GtkAction*, DasherMain*);
+extern "C" void dasher_main_cb_toggle_game_mode(GtkAction*, DasherMain*);
 
 static gboolean dasher_main_speed_changed(DasherMain *pSelf);
 static void dasher_main_alphabet_combo_changed(DasherMain *pSelf);
@@ -604,7 +558,116 @@ dasher_main_create_preferences(DasherMain *pSelf) {
 // dasher_main_get_editor(DasherMain *pSelf) {
 //   DasherMainPrivate *pPrivate = DASHER_MAIN_GET_PRIVATE(pSelf);
 //   return pPrivate->pEditor;
-// }
+// 
+
+/**
+ * Clear all text out of the dasher editor.
+ * @param pSelf a reference to an instance of DasherMain
+ */ 
+void clear_dasher_editor_text(DasherMain *pSelf) {
+
+	DasherMainPrivate *pPrivate = DASHER_MAIN_GET_PRIVATE(pSelf);
+	int editorTextLen = strlen(dasher_editor_get_all_text(pPrivate->pEditor));
+	dasher_editor_delete(pPrivate->pEditor, editorTextLen, 0);	
+}
+
+/**
+ * Start game mode, specify the text to play with, and clear out any text in the dasher editor.
+ * Sets BP_GAME_MODE to true, and SP_GAME_TEXT_FILE to the value of pGameTextFilePath.
+ *
+ * @param pGameTextFilePath - the absolute path to the text file to play with
+ * @param pSelf - a reference to an instance of DasherMain
+ */ 
+void init_game_mode(char *pGameTextFilePath, DasherMain *pSelf) {
+
+	DasherMainPrivate *pPrivate = DASHER_MAIN_GET_PRIVATE(pSelf);
+
+	dasher_app_settings_set_string(pPrivate->pAppSettings,
+							SP_GAME_TEXT_FILE,
+							pGameTextFilePath);
+
+	dasher_app_settings_set_bool(pPrivate->pAppSettings, BP_GAME_MODE, true);
+	clear_dasher_editor_text(pSelf);
+}
+
+/**
+ * Event handler which displays a standard GTK file dialog. The dialog allows the user
+ * to specify a text file to play game mode with.
+ *
+ * @param pButton the button that fired the event
+ * @param pWidget reference needed by GTK for callback signature
+ * @param pData pointer to a an std::pair<GtkWindow*, DasherMain*> containing references
+ * to the dialog's parent window and an instance of DasherMain
+ */ 
+void show_game_file_dialog(GtkWidget *pButton, GtkWidget *pWidget, gpointer pData) {
+
+	std::pair<GtkWindow*, DasherMain*> *objRefs = (std::pair<GtkWindow*, DasherMain*>*)pData;
+
+	DasherMain *pSelf = objRefs->second;
+	DasherMainPrivate *pPrivate = DASHER_MAIN_GET_PRIVATE(pSelf);
+
+	GtkWidget *pFileDialog = gtk_file_chooser_dialog_new("Choose a Training Text",
+				      GTK_WINDOW(objRefs->first),
+				      GTK_FILE_CHOOSER_ACTION_OPEN,
+				      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+				      GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+				      NULL);
+	
+	gtk_window_set_destroy_with_parent(GTK_WINDOW(pFileDialog), true);
+
+	if(gtk_dialog_run(GTK_DIALOG(pFileDialog)) == GTK_RESPONSE_ACCEPT) {
+	
+		char *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(pFileDialog));
+
+		init_game_mode(filename, pSelf);
+
+		gtk_widget_destroy(GTK_WIDGET(objRefs->first));	
+	}
+}
+
+/**
+ * Toggle game mode on and off. Toggling on causes a dialog box to be displayed
+ * welcoming the user to game mode and prompting them to specify a file to play with.
+ * Toggling off just sets BP_GAME_MODE to false, which then causes the dasher core
+ * to respond appropriately.
+ *
+ * @param pSelf a reference to an instance of DasherMain
+ */ 
+void dasher_main_toggle_game_mode(DasherMain *pSelf) {
+
+	DasherMainPrivate *pPrivate = DASHER_MAIN_GET_PRIVATE(pSelf);
+
+	if(!dasher_app_settings_get_bool(pPrivate->pAppSettings, BP_GAME_MODE)) {
+
+		GtkWidget *pDialog = gtk_message_dialog_new(GTK_WINDOW(pPrivate->pMainWindow), GTK_DIALOG_MODAL, 
+                                         GTK_MESSAGE_OTHER, GTK_BUTTONS_NONE, 
+                                         _("Welcome to Dasher Game Mode! Game Mode is a fun way to practice entering text in Dasher. Please select a training text to play with:"));
+
+		GtkWidget *pDefaultButton = gtk_dialog_add_button(GTK_DIALOG(pDialog), _("Use Default"), GTK_RESPONSE_CLOSE);	
+		GtkWidget *pFileButton = gtk_dialog_add_button(GTK_DIALOG(pDialog), _("Choose File..."), 2);
+		GtkWidget *pCancelButton = gtk_dialog_add_button(GTK_DIALOG(pDialog), _("Cancel"), GTK_RESPONSE_CLOSE);
+
+		//make a pair with references to the the DasherMain and parent window instances that
+		//handler will need - kind of disgusting, but looks like only way to pass multiple
+		//parameters in g_signal_connect
+		std::pair<GtkWindow*, DasherMain*> objRefs = std::make_pair(GTK_WINDOW(pDialog), pSelf);
+
+		//g_signal_connect(pDefaultButton, "button-press-event", G_CALLBACK)
+		g_signal_connect(pFileButton, "button-press-event", G_CALLBACK(show_game_file_dialog),
+					(gpointer)&objRefs);
+
+		gtk_dialog_run(GTK_DIALOG(pDialog));
+
+		//have to do this check because we might have destroyed the dialog already in show_game_file_dialog
+		if(GTK_IS_WIDGET(pDialog))
+			gtk_widget_destroy(pDialog);
+	}
+	else {
+		dasher_app_settings_set_bool(pPrivate->pAppSettings, BP_GAME_MODE, false);
+		clear_dasher_editor_text(pSelf);
+	}
+
+}
 
 static void 
 dasher_main_handle_parameter_change(DasherMain *pSelf, int iParameter) {

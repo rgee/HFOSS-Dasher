@@ -46,6 +46,8 @@ namespace Dasher {
   struct SLockData;
 }
 
+
+
 /// \defgroup Model The Dasher model
 /// @{
 
@@ -309,6 +311,34 @@ class Dasher::CDasherModel:public Dasher::CFrameRate, private NoClones
   /// Go directly to a given coordinate - check semantics
   ///
   void NewGoTo(myint n1, myint n2, Dasher::VECTOR_SYMBOL_PROB* pAdded, int* pNumDeleted);
+
+  void GameApproximate();
+  void GetSymbolList(CDasherNode* pNode, std::deque<CAlphabetManager::CSymbolNode*>& result);
+
+  ///
+  /// Search the model for the target string
+  /// 
+  /// \param pNode The node to search
+  /// \return True if a node was found, false otherwise
+  ///
+  bool GameSearchChildren(CDasherNode* pNode);
+
+  ///
+  /// Search the model (recursively) for the target string
+  ///
+  /// \param pNode The node to search
+  /// \return True if a node was found, false otherwise
+  ///
+  bool GameSearchIndividual(CDasherNode* pNode);
+  
+  ///
+  /// Approximate the position of the target node, if it was not
+  /// explicitly found.
+  /// 
+  /// \param pNode The node to begin the search from
+  /// \warning Currently only works for symbol or group nodes. This
+  ///          needs to be improved. 
+  void GameSearchApproximate(CAlphabetManager::CSymbolNode* pNode);
 
   ///
   /// CDasherModel::Get_new_root_coords( myint Mousex,myint Mousey )

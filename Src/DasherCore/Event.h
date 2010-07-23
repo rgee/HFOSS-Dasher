@@ -22,10 +22,17 @@ namespace Dasher {
   class CCommandEvent;
   class CDasherView;
   class CDasherNode;
+  class CNoGameNodeEvent;
 }
 
+/*
+ * The enumeration of event types. Whenever you add a new event type,
+ * you must add its enum representation here. You must also make sure
+ * to change the constant in EventHandler that refers to the number of events
+ * or you will likely get errors.
+ */
 enum {
-  EV_PARAM_NOTIFY = 1, EV_EDIT, EV_EDIT_CONTEXT, EV_START, EV_STOP, EV_CONTROL, EV_LOCK, EV_GAME_TARGET_CHANGED, EV_MESSAGE, EV_COMMAND, EV_GAME_NODE_DRAWN
+  EV_PARAM_NOTIFY = 1, EV_EDIT, EV_EDIT_CONTEXT, EV_START, EV_STOP, EV_CONTROL, EV_LOCK, EV_GAME_TARGET_CHANGED, EV_MESSAGE, EV_COMMAND, EV_GAME_NODE_DRAWN, EV_NO_GAME_NODE
 };
 
 /// \ingroup Core
@@ -38,6 +45,36 @@ public:
   int m_iEventType;
 };
 
+ /* An event that represents when the game target node cannot be found
+ * among the current last-typed node's children. Since the set of child
+ * nodes is a set consisting of all possible characters in the current
+ * alphabet, the only way for it not to exist at all is if it was not
+ * drawn yet.
+ */
+class Dasher::CNoGameNodeEvent : public Dasher::CEvent {
+public:
+  CNoGameNodeEvent(std::pair<CDasherNode*, CDasherNode*> pNodes)
+    : m_pNodes(pNodes) {
+      m_iEventType = EV_NO_GAME_NODE;
+  }
+  
+  /**
+   * The pair of nodes that represent the closest drawn nodes to the top
+   * and bottom of where the target node /should/ be.
+   * 
+   * If the left of this pair is null, the target node is at the top-most
+   * node in the current subtree of the model (in Dasher space).
+   * 
+   * Conversely, if the right of this pair is null, the target node exists
+   * at the bottom of the current subtree of the model.
+   */
+  std::pair<CDasherNode*, CDasherNode*> m_pNodes;
+};
+
+/**
+ * An event that notifies listeners that a node previously flagged for
+ * game mode has been drawn.
+ */
 class Dasher::CGameNodeDrawEvent : public Dasher::CEvent {
 public:
   CGameNodeDrawEvent(CDasherNode* pNode, CDasherView* pView, screenint iX, screenint iY)
@@ -48,8 +85,19 @@ public:
       m_iEventType = EV_GAME_NODE_DRAWN;
   };
   
+  /**
+   * The node itself.
+   */
   CDasherNode* m_pNode;
+
+  /**
+   * the coordinates at which m_pNode was drawn.
+   */
   screenint m_iX, m_iY;
+
+  /**
+   * View object for manipulating the screen.
+   */
   CDasherView* m_pView;
 };
 

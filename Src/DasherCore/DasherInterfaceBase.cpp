@@ -169,10 +169,6 @@ void CDasherInterfaceBase::Realize() {
   CParameterNotificationEvent oEvent(LP_NODE_BUDGET);
   InterfaceEventHandler(&oEvent);
 
-  //if game mode is enabled , initialize the game module
- // if(GetBoolParameter(BP_GAME_MODE))
-  InitGameModule();
-
   // Set up real orientation to match selection
   if(GetLongParameter(LP_ORIENTATION) == Dasher::Opts::AlphabetDefault)
     SetLongParameter(LP_REAL_ORIENTATION, m_Alphabet->GetOrientation());
@@ -336,7 +332,16 @@ void CDasherInterfaceBase::InterfaceEventHandler(Dasher::CEvent *pEvent) {
         break;
     case LP_NODE_BUDGET:
       delete m_defaultPolicy;
-      m_defaultPolicy = new AmortizedPolicy(GetLongParameter(LP_NODE_BUDGET));  
+      m_defaultPolicy = new AmortizedPolicy(GetLongParameter(LP_NODE_BUDGET));
+	case BP_GAME_MODE:
+
+	  if(GetBoolParameter(BP_GAME_MODE)) {
+		InitGameModule();
+	  }
+	  else if(m_pGameModule){
+		ResetGameModule();
+	  }
+	  
     default:
       break;
     }
@@ -817,7 +822,7 @@ void CDasherInterfaceBase::DisconnectNode(int iChild, int iParent) {
 }
 
 void CDasherInterfaceBase::SetBoolParameter(int iParameter, bool bValue) {
-  m_pSettingsStore->SetBoolParameter(iParameter, bValue);
+	m_pSettingsStore->SetBoolParameter(iParameter, bValue);
 };
 
 void CDasherInterfaceBase::SetLongParameter(int iParameter, long lValue) {
@@ -876,11 +881,27 @@ void CDasherInterfaceBase::KeyUp(int iTime, int iId, bool bPos, int iX, int iY) 
   }
 }
 
+/**
+ * Reset the dasher model, fetch the game module from the module manager,
+ * set its word generator, and make it available via m_pGameModule.
+ */ 
 void CDasherInterfaceBase::InitGameModule() {
 
   if(m_pGameModule == NULL) {
+	CreateModel(0);
     m_pGameModule = (CGameModule*) GetModuleByName("Game Mode");
+	m_pGameModule->SetWordGenerator(new CFileWordGenerator(GetStringParameter(SP_GAME_TEXT_FILE)));
+
   }
+}
+
+/**
+ * Reset the game module, reset the dasher model, and set m_pGameModule to NULL.
+ */
+void CDasherInterfaceBase::ResetGameModule() {
+	m_pGameModule->reset();
+	CreateModel(0);
+	m_pGameModule = NULL;
 }
 
 void CDasherInterfaceBase::CreateInputFilter()
@@ -965,8 +986,7 @@ void CDasherInterfaceBase::CreateModules() {
   // whereas before its ownership was ambiguous to the only class that
   // could delete it. (The game module) Therefore, newing directly to
   // the constructor leaked memory.
-  RegisterModule(new CGameModule(m_pEventHandler, m_pSettingsStore, this, 21, _("Game Mode"),
-                              std::tr1::shared_ptr<CWordGeneratorBase>(new CFileWordGenerator("test_text.txt"))));
+  RegisterModule(new CGameModule(m_pEventHandler, m_pSettingsStore, this, 21, _("Game Mode")));
 }
 
 void CDasherInterfaceBase::GetPermittedValues(int iParameter, std::vector<std::string> &vList) {

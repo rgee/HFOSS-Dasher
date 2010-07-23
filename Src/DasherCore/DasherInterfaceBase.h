@@ -520,10 +520,16 @@ protected:
   void CreateInput();
 	
   
-  /* Initialize m_pGameModule by fetching the
-  * constructed module from the module manager.
+  /**
+   * Initialize m_pGameModule by fetching the
+   *  constructed module from the module manager.
   */
   void InitGameModule();
+
+  /**
+   * Reset m_pGameModule - called when game mode is disabled.
+   */ 
+  void ResetGameModule();
 
   void CreateInputFilter();
 
