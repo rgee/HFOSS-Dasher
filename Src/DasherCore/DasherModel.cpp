@@ -91,7 +91,6 @@ CDasherModel::CDasherModel(CEventHandler *pEventHandler,
 
   InitialiseAtOffset(iOffset, pView);
 
-  m_pEventHandler->InsertEvent(new CModelReadyEvent());
 }
 
 CDasherModel::~CDasherModel() {
@@ -213,7 +212,7 @@ bool CDasherModel::GameSearchChildren(CDasherNode* pNode) {
      ss << Get_node_under_crosshair()->GetChildren().size();
      g_pLogger->Log(ss.str());
 */
-    GameApproximate();
+    //GameApproximate();
   }
   return false;
 }

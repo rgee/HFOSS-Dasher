@@ -22,11 +22,7 @@ namespace Dasher {
   class CCommandEvent;
   class CDasherView;
   class CDasherNode;
-<<<<<<< HEAD
-  class CModelReadyEvent;
-=======
   class CNoGameNodeEvent;
->>>>>>> 727c5c67d470403739cc4dc357ef25f85ae4c294
 }
 
 /*
@@ -36,8 +32,7 @@ namespace Dasher {
  * or you will likely get errors.
  */
 enum {
-  EV_PARAM_NOTIFY = 1, EV_EDIT, EV_EDIT_CONTEXT, EV_START, EV_STOP, EV_CONTROL, EV_LOCK, EV_GAME_TARGET_CHANGED, EV_MESSAGE, EV_COMMAND, EV_GAME_NODE_DRAWN,
-  EV_NO_GAME_NODE
+  EV_PARAM_NOTIFY = 1, EV_EDIT, EV_EDIT_CONTEXT, EV_START, EV_STOP, EV_CONTROL, EV_LOCK, EV_GAME_TARGET_CHANGED, EV_MESSAGE, EV_COMMAND, EV_GAME_NODE_DRAWN, EV_NO_GAME_NODE
 };
 
 /// \ingroup Core
@@ -48,7 +43,7 @@ enum {
 class Dasher::CEvent {
 public:
   int m_iEventType;
-}
+};
 
  /* An event that represents when the game target node cannot be found
  * among the current last-typed node's children. Since the set of child
@@ -61,7 +56,7 @@ public:
   CNoGameNodeEvent(std::pair<CDasherNode*, CDasherNode*> pNodes)
     : m_pNodes(pNodes) {
       m_iEventType = EV_NO_GAME_NODE;
-  };
+  }
   
   /**
    * The pair of nodes that represent the closest drawn nodes to the top
@@ -80,7 +75,6 @@ public:
  * An event that notifies listeners that a node previously flagged for
  * game mode has been drawn.
  */
->>>>>>> 727c5c67d470403739cc4dc357ef25f85ae4c294
 class Dasher::CGameNodeDrawEvent : public Dasher::CEvent {
 public:
   CGameNodeDrawEvent(CDasherNode* pNode, CDasherView* pView, screenint iX, screenint iY)

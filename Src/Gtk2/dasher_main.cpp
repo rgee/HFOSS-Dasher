@@ -560,6 +560,10 @@ dasher_main_create_preferences(DasherMain *pSelf) {
 //   return pPrivate->pEditor;
 // 
 
+/**
+ * Clear all text out of the dasher editor.
+ * @param pSelf a reference to an instance of DasherMain
+ */ 
 void clear_dasher_editor_text(DasherMain *pSelf) {
 
 	DasherMainPrivate *pPrivate = DASHER_MAIN_GET_PRIVATE(pSelf);
@@ -567,6 +571,13 @@ void clear_dasher_editor_text(DasherMain *pSelf) {
 	dasher_editor_delete(pPrivate->pEditor, editorTextLen, 0);	
 }
 
+/**
+ * Start game mode, specify the text to play with, and clear out any text in the dasher editor.
+ * Sets BP_GAME_MODE to true, and SP_GAME_TEXT_FILE to the value of pGameTextFilePath.
+ *
+ * @param pGameTextFilePath - the absolute path to the text file to play with
+ * @param pSelf - a reference to an instance of DasherMain
+ */ 
 void init_game_mode(char *pGameTextFilePath, DasherMain *pSelf) {
 
 	DasherMainPrivate *pPrivate = DASHER_MAIN_GET_PRIVATE(pSelf);
@@ -579,7 +590,16 @@ void init_game_mode(char *pGameTextFilePath, DasherMain *pSelf) {
 	clear_dasher_editor_text(pSelf);
 }
 
-void show_game_file_dialog(GtkWidget *widget, GtkWidget *pButton, gpointer pData) {
+/**
+ * Event handler which displays a standard GTK file dialog. The dialog allows the user
+ * to specify a text file to play game mode with.
+ *
+ * @param pButton the button that fired the event
+ * @param pWidget reference needed by GTK for callback signature
+ * @param pData pointer to a an std::pair<GtkWindow*, DasherMain*> containing references
+ * to the dialog's parent window and an instance of DasherMain
+ */ 
+void show_game_file_dialog(GtkWidget *pButton, GtkWidget *pWidget, gpointer pData) {
 
 	std::pair<GtkWindow*, DasherMain*> *objRefs = (std::pair<GtkWindow*, DasherMain*>*)pData;
 
@@ -605,6 +625,14 @@ void show_game_file_dialog(GtkWidget *widget, GtkWidget *pButton, gpointer pData
 	}
 }
 
+/**
+ * Toggle game mode on and off. Toggling on causes a dialog box to be displayed
+ * welcoming the user to game mode and prompting them to specify a file to play with.
+ * Toggling off just sets BP_GAME_MODE to false, which then causes the dasher core
+ * to respond appropriately.
+ *
+ * @param pSelf a reference to an instance of DasherMain
+ */ 
 void dasher_main_toggle_game_mode(DasherMain *pSelf) {
 
 	DasherMainPrivate *pPrivate = DASHER_MAIN_GET_PRIVATE(pSelf);

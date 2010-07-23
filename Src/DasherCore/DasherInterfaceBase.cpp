@@ -881,16 +881,23 @@ void CDasherInterfaceBase::KeyUp(int iTime, int iId, bool bPos, int iX, int iY) 
   }
 }
 
+/**
+ * Reset the dasher model, fetch the game module from the module manager,
+ * set its word generator, and make it available via m_pGameModule.
+ */ 
 void CDasherInterfaceBase::InitGameModule() {
 
   if(m_pGameModule == NULL) {
-    m_pGameModule = (CGameModule*) GetModuleByName("Game Mode");
 	CreateModel(0);
+    m_pGameModule = (CGameModule*) GetModuleByName("Game Mode");
 	m_pGameModule->SetWordGenerator(new CFileWordGenerator(GetStringParameter(SP_GAME_TEXT_FILE)));
 
   }
 }
 
+/**
+ * Reset the game module, reset the dasher model, and set m_pGameModule to NULL.
+ */
 void CDasherInterfaceBase::ResetGameModule() {
 	m_pGameModule->reset();
 	CreateModel(0);

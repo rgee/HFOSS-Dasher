@@ -140,12 +140,6 @@ class CGameModule : public CDasherModule {
  * Member Variables
  * ---------------------------------------------------------------------
  */
-  
-
-  /**
-   * Whether or not this instance is actually playing right now.
-   */ 
-  bool m_bIsActive;
    
   /**
    * Pointer to the object that encapsulates the word generation

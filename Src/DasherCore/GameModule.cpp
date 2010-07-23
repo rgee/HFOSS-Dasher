@@ -78,10 +78,6 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
 void CGameModule::SetWordGenerator(CWordGeneratorBase *pWordGenerator) {
 	m_pWordGenerator = pWordGenerator;
 	GenerateChunk();
-	m_bIsActive = true;
-	//++m_iCurrentStringPos;
-	//m_pEventHandler->InsertEvent(
-    //new CGameTargetChangedEvent(m_sTargetString.substr(m_iCurrentStringPos + 1, 1)));
 }
 
 void CGameModule::reset() {
@@ -90,7 +86,6 @@ void CGameModule::reset() {
 	m_iCurrentStringPos = -1;
 	m_iTargetX = 0;
 	m_iTargetY = 0;
-	m_bIsActive = false;
 }
 
 bool CGameModule::CharacterFound(CEditEvent* pEvent) {
