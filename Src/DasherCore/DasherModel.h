@@ -56,6 +56,23 @@ namespace Dasher {
 ///             knows the current viewpoint
 ///             knows how to evolve the viewpoint
 ///
+/// The structure of this tree is the following (English used as an example.
+/// Specifics may change for other languages, but this is a high-level overview) :
+///   - Non-Group node has six group nodes for children:
+///       1) A non-visible group node that has, 26 children. One for every lower-case
+///          character.
+///       2) A yellow group node with 26 children. One for every upper-case character.
+///       3) A green group node who's parent to punctuation nodes.
+///       4) The space character/symbol.
+///       5) The paragraph/newline symbol.
+///       6) A control node, if control mode is turned on.
+///
+///   - Therefore, each level of the tree alternates between 6 group nodes
+///     and n other nodes where n is defined by the current alphabet.
+///
+/// (rgee: This is my current understanding of the Model. Please correct
+///        or rephrase any incorrect information.)
+///
 class Dasher::CDasherModel:public Dasher::CFrameRate, private NoClones
 {
  public:
