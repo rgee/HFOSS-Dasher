@@ -20,6 +20,8 @@
 
 #include "../Common/Common.h"
 
+#include <sstream>
+
 #include <iostream>
 #include <cstring>
 #include "../Common/Random.h"
@@ -106,7 +108,6 @@ CDasherModel::~CDasherModel() {
 
 void CDasherModel::GetSymbolList(CDasherNode* pNode, std::deque<CAlphabetManager::CSymbolNode*>& result) {
 
-
   for(std::deque<CDasherNode*>::const_iterator it = pNode->GetChildren().begin();
               it != pNode->GetChildren().end(); it++) {
     if((*it)->GetType() == NT_SYMBOL) {
@@ -117,41 +118,52 @@ void CDasherModel::GetSymbolList(CDasherNode* pNode, std::deque<CAlphabetManager
      std::deque<CAlphabetManager::CSymbolNode*> group_results;
      GetSymbolList(*it, group_results);
 
-      result.insert(result.end(), group_results.begin(), group_results.end());
+     result.insert(result.end(), group_results.begin(), group_results.end());
     }
   } 
 }
 
 void CDasherModel::GameApproximate() {
+  // Get a list of the symbol IDs of all the currently drawn children.
   std::deque<CAlphabetManager::CSymbolNode*> vNodes; 
   GetSymbolList(Get_node_under_crosshair(), vNodes);
-  int iTargetSymbol =  m_pNodeCreationManager->GetAlphabet()->GetSymbol(m_strGameTarget);
-  
-  if( iTargetSymbol > vNodes.front()->iSymbol) {
+  std::vector<int> iTargetSymbols;
+  m_pNodeCreationManager->GetAlphabet()->GetSymbols(iTargetSymbols, m_strGameTarget);
+
+
+  int iTargetSymbol = iTargetSymbols.front(); 
+  // Check if the target is off to the high end
+  if( iTargetSymbol > vNodes.front()->iSymbol ) {
     m_pEventHandler->InsertEvent(
       new CNoGameNodeEvent(std::make_pair(static_cast<CDasherNode*>(NULL), vNodes.front()))
     );
   }
 
+  // Check if the target is off to the low end
   if( iTargetSymbol < vNodes.back()->iSymbol) {
     m_pEventHandler->InsertEvent(
       new CNoGameNodeEvent(std::make_pair(vNodes.back(), static_cast<CDasherNode*>(NULL)))
     );
   }
 
+  
   for(std::deque<CAlphabetManager::CSymbolNode*>::iterator it = vNodes.begin();
               it != vNodes.end(); ++it) {
     if( iTargetSymbol < (*it)->iSymbol ) {
       CAlphabetManager::CSymbolNode* prev = *(--it);
       m_pEventHandler->InsertEvent(
-        new CNoGameNodeEvent(std::make_pair( prev, *(it) )));
+        new CNoGameNodeEvent(std::make_pair( static_cast<CDasherNode*>(NULL), static_cast<CDasherNode*>(NULL))));
     }
   }
 }
 
 
 void CDasherModel::GameSearchApproximate(CAlphabetManager::CSymbolNode* pNode) {
-  int iTargetSymbol = m_pNodeCreationManager->GetAlphabet()->GetSymbol(m_strGameTarget);
+  std::vector<int> iTargetSymbols;
+  m_pNodeCreationManager->GetAlphabet()->GetSymbols(iTargetSymbols, m_strGameTarget);
+
+  int iTargetSymbol = iTargetSymbols.front();
+
   g_pLogger->Log("Begin search for approximate game nodes..."); 
 
  
@@ -182,7 +194,6 @@ void CDasherModel::GameSearchApproximate(CAlphabetManager::CSymbolNode* pNode) {
 }
 
 bool CDasherModel::GameSearchChildren(CDasherNode* pNode) {
-  if(pNode->GetChildren().size() == 0) g_pLogger->Log("NO CHILDREN");
   for(CDasherNode::ChildMap::const_iterator it = pNode->GetChildren().begin();
               it != pNode->GetChildren().end(); it++) {
     if( GameSearchIndividual((*it)) ) return true;
@@ -194,8 +205,14 @@ bool CDasherModel::GameSearchChildren(CDasherNode* pNode) {
   // in the dasher model has one instance of each node in the alphabet. It must be there
   // somewhere or it's not drawn OR it's not in the alphabet at all. In the last case, we have
   // larger problems...
-  if(m_strGameTarget != "")
+  if(m_strGameTarget != "") {
+/*
+     std::stringstream ss;
+     ss << Get_node_under_crosshair()->GetChildren().size();
+     g_pLogger->Log(ss.str());
+*/
     GameApproximate();
+  }
   return false;
 }
 
