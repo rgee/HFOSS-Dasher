@@ -60,7 +60,7 @@ public:
       m_iEventType = EV_NO_GAME_NODE;
   };
   
-  /*
+  /**
    * The pair of nodes that represent the closest drawn nodes to the top
    * and bottom of where the target node /should/ be.
    * 
@@ -73,6 +73,10 @@ public:
   std::pair<CDasherNode*, CDasherNode*> m_pNodes;
 };
 
+/**
+ * An event that notifies listeners that a node previously flagged for
+ * game mode has been drawn.
+ */
 class Dasher::CGameNodeDrawEvent : public Dasher::CEvent {
 public:
   CGameNodeDrawEvent(CDasherNode* pNode, CDasherView* pView, screenint iX, screenint iY)
@@ -83,8 +87,19 @@ public:
       m_iEventType = EV_GAME_NODE_DRAWN;
   };
   
+  /**
+   * The node itself.
+   */
   CDasherNode* m_pNode;
+
+  /**
+   * the coordinates at which m_pNode was drawn.
+   */
   screenint m_iX, m_iY;
+
+  /**
+   * View object for manipulating the screen.
+   */
   CDasherView* m_pView;
 };
 
