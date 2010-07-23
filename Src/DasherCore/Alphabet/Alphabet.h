@@ -87,15 +87,6 @@ namespace Dasher {
     const std::string & GetText(symbol i) const {
       return m_Characters[i];
     } 
-    // return string for i'th symbol
-    
-    /**
-     * Return the symbol id of the character with the specified text.
-     * Essentially a reverse lookup of GetText.
-     */
-    const int GetSymbol(std::string & str) const {
-      return std::distance(m_Characters.begin(), std::find(m_Characters.begin(), m_Characters.end(), str)) - 1;
-    }
 
     int GetColour(symbol i, int iPhase) const;
 
