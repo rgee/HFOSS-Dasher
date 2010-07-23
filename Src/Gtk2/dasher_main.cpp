@@ -625,6 +625,10 @@ void show_game_file_dialog(GtkWidget *pButton, GtkWidget *pWidget, gpointer pDat
 	}
 }
 
+void quit_game_mode(GtkWidget *pButton, GtkWidget *pWidget, gpointer pData) {
+    DasherMainPrivate *pPrivate = DASHER_MAIN_GET_PRIVATE((DasherMain*)pData);
+}
+
 /**
  * Toggle game mode on and off. Toggling on causes a dialog box to be displayed
  * welcoming the user to game mode and prompting them to specify a file to play with.
@@ -645,7 +649,7 @@ void dasher_main_toggle_game_mode(DasherMain *pSelf) {
 
 		GtkWidget *pDefaultButton = gtk_dialog_add_button(GTK_DIALOG(pDialog), _("Use Default"), GTK_RESPONSE_CLOSE);	
 		GtkWidget *pFileButton = gtk_dialog_add_button(GTK_DIALOG(pDialog), _("Choose File..."), 2);
-		GtkWidget *pCancelButton = gtk_dialog_add_button(GTK_DIALOG(pDialog), _("Cancel"), GTK_RESPONSE_CLOSE);
+		gtk_dialog_add_button(GTK_DIALOG(pDialog), _("Cancel"), GTK_RESPONSE_CLOSE);
 
 		//make a pair with references to the the DasherMain and parent window instances that
 		//handler will need - kind of disgusting, but looks like only way to pass multiple
@@ -663,8 +667,27 @@ void dasher_main_toggle_game_mode(DasherMain *pSelf) {
 			gtk_widget_destroy(pDialog);
 	}
 	else {
-		dasher_app_settings_set_bool(pPrivate->pAppSettings, BP_GAME_MODE, false);
-		clear_dasher_editor_text(pSelf);
+    GtkWidget *pDialog = gtk_message_dialog_new(GTK_WINDOW(pPrivate->pMainWindow), GTK_DIALOG_MODAL,
+                                                GTK_MESSAGE_OTHER, GTK_BUTTONS_NONE,
+                                                _("Are you sure you wish to turn off game mode? All unsaved changes will be lost."));
+
+    GtkWidget *pNoButton = gtk_dialog_add_button(GTK_DIALOG(pDialog), GTK_STOCK_NO, GTK_RESPONSE_REJECT);
+    GtkWidget *pYesButton = gtk_dialog_add_button(GTK_DIALOG(pDialog), GTK_STOCK_YES, GTK_RESPONSE_ACCEPT);
+
+    //g_signal_connect(pYesButton, "button-press-event", G_CALLBACK(quit_game_mode), (gpointer)pSelf);
+
+    switch(gtk_dialog_run(GTK_DIALOG(pDialog))) {
+      case GTK_RESPONSE_REJECT:
+        gtk_widget_destroy(GTK_WIDGET(pDialog));
+        break;
+      case GTK_RESPONSE_ACCEPT:
+		    dasher_app_settings_set_bool(pPrivate->pAppSettings, BP_GAME_MODE, false);
+		    clear_dasher_editor_text(pSelf);
+    }
+
+    if(GTK_IS_WIDGET(pDialog)) {
+      gtk_widget_destroy(GTK_WIDGET(pDialog));
+    }
 	}
 
 }
