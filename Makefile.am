@@ -1,4 +1,4 @@
-SUBDIRS = Src Data Doc Testing/dasher_tests
+SUBDIRS = Src Data Doc
 if USE_INTLTOOL
 SUBDIRS += po
 endif

@@ -42,20 +42,20 @@ static int iNumNodes = 0;
 int Dasher::currentNumNodeObjects() {return iNumNodes;}
 
 //TODO this used to be inline - should we make it so again?
-CDasherNode::CDasherNode(CDasherNode *pParent, int iOffset, unsigned int iLbnd, unsigned int iHbnd, int iColour, const string &strDisplayText)
-: m_pParent(pParent), m_iOffset(iOffset), m_iLbnd(iLbnd), m_iHbnd(iHbnd), m_iColour(iColour), m_strDisplayText(strDisplayText) {
+CDasherNode::CDasherNode(CDasherNode *pParent, int iOffset, unsigned int iLbnd, unsigned int iHbnd, int iColour, const string &strDisplayText, int iType)
+: m_pParent(pParent), m_iOffset(iOffset), m_iLbnd(iLbnd), m_iHbnd(iHbnd), m_iColour(iColour), m_strDisplayText(strDisplayText), m_iType(iType) {
   DASHER_ASSERT(iHbnd >= iLbnd);
-	
+  
   if (pParent) {
     DASHER_ASSERT(!pParent->GetFlag(NF_ALLCHILDREN));
     pParent->Children().push_back(this);
   }
 
   onlyChildRendered = NULL;
-	
+  
   // Default flags (make a definition somewhere, pass flags to constructor?)
   m_iFlags = 0;
-	
+  
   m_iRefCount = 0;
   iNumNodes++;
 }
@@ -149,7 +149,7 @@ void CDasherNode::DeleteNephews(CDasherNode *pChild) {
   ChildMap::iterator i;
   for(i = Children().begin(); i != Children().end(); i++) {
       if(*i != pChild) {
-	(*i)->Delete_children();
+  (*i)->Delete_children();
     }
   }
 }
@@ -198,9 +198,3 @@ int CDasherNode::MostProbableChild() {
   return iMax;
 }
 
-bool CDasherNode::GameSearchChildren(string strTargetUtf8Char) {
-  for (ChildMap::iterator i = Children().begin(); i != Children().end(); i++) {
-    if ((*i)->GameSearchNode(strTargetUtf8Char)) return true;
-  }
-  return false;
-}

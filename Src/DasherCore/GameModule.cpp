@@ -1,6 +1,5 @@
 #include "GameModule.h"
 #include <sstream>
-#include <iostream>
 
 using namespace Dasher;
 
@@ -8,7 +7,7 @@ using namespace Dasher;
  * Static members of non-integral type must be initialized outside of
  * class definitions.
  */
-const int Dasher::CGameModule::vEvents[3] = {EV_EDIT, EV_GAME_NODE_DRAWN, EV_MODEL_READY}; 
+const int Dasher::CGameModule::vEvents[3] = {EV_EDIT, EV_GAME_NODE_DRAWN, EV_NO_GAME_NODE}; 
 
 void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
 
@@ -22,13 +21,14 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
 
     switch(pEvent->m_iEventType)
     {
-		case EV_MODEL_READY:
-		{
-			 m_pEventHandler->InsertEvent(new CGameTargetChangedEvent(m_sTargetString.substr(m_iCurrentStringPos + 1, 1)));
-			 g_pLogger->Log("Dasher Model ready");
-	
-		}
-		case EV_EDIT:
+        case EV_NO_GAME_NODE:
+        {
+            CNoGameNodeEvent* evt = static_cast<CNoGameNodeEvent*>(pEvent);
+            std::stringstream log_stream;
+            log_stream << "First: " << evt->m_pNodes.first << "Second: " << evt->m_pNodes.first << endl;
+            g_pLogger->Log(log_stream.str());
+        }
+        case EV_EDIT:
         {     
             CEditEvent* evt = static_cast<CEditEvent*>(pEvent);
             switch(evt->m_iEditType)
@@ -63,6 +63,7 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
         case EV_GAME_NODE_DRAWN:
         {
           CGameNodeDrawEvent* evt = static_cast<CGameNodeDrawEvent*>(pEvent);
+          m_bApproximating = true;
           evt->m_pView->Screen2Dasher(evt->m_iX, evt->m_iY, m_iTargetX, m_iTargetY);
         }
         break;
