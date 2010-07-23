@@ -194,6 +194,8 @@ void CDasherModel::GameSearchApproximate(CAlphabetManager::CSymbolNode* pNode) {
 }
 
 bool CDasherModel::GameSearchChildren(CDasherNode* pNode) {
+
+
   for(CDasherNode::ChildMap::const_iterator it = pNode->GetChildren().begin();
               it != pNode->GetChildren().end(); it++) {
     if( GameSearchIndividual((*it)) ) return true;
@@ -206,12 +208,9 @@ bool CDasherModel::GameSearchChildren(CDasherNode* pNode) {
   // somewhere or it's not drawn OR it's not in the alphabet at all. In the last case, we have
   // larger problems...
   if(m_strGameTarget != "") {
-/*
-     std::stringstream ss;
-     ss << Get_node_under_crosshair()->GetChildren().size();
-     g_pLogger->Log(ss.str());
-*/
-    GameApproximate();
+
+
+    //GameApproximate();
   }
   return false;
 }
@@ -274,12 +273,13 @@ void CDasherModel::HandleEvent(Dasher::CEvent *pEvent) {
     }
   }
   else if(pEvent->m_iEventType == EV_GAME_TARGET_CHANGED) {
-    
-    
     CGameTargetChangedEvent *pTargetChangedEvent(static_cast< CGameTargetChangedEvent * >(pEvent));
     
     m_strGameTarget = pTargetChangedEvent->m_strTargetText;
    
+  }
+
+
     // Search from the current root.
     GameSearchChildren(Get_node_under_crosshair());
   }
