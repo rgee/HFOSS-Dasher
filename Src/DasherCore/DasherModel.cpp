@@ -30,7 +30,6 @@
 #include "Event.h"
 #include "DasherInterfaceBase.h"
 #include "NodeCreationManager.h"
-#include "DasherGameMode.h"
 #include "AlphabetManager.h"
 
 using namespace Dasher;
@@ -464,10 +463,7 @@ void CDasherModel::UpdateBounds(myint iNewMin, myint iNewMax, unsigned long iTim
 
 void CDasherModel::RecordFrame(unsigned long Time) {
   CFrameRate::RecordFrame(Time);
-  ///GAME MODE TEMP///Pass new frame events onto our teacher
-  GameMode::CDasherGameMode* pTeacher = GameMode::CDasherGameMode::GetTeacher();
-  if(m_bGameMode && pTeacher)
-    pTeacher->NewFrame(Time);
+
 }
 
 void CDasherModel::RecursiveOutput(CDasherNode *pNode, Dasher::VECTOR_SYMBOL_PROB* pAdded) {
@@ -483,12 +479,6 @@ void CDasherModel::RecursiveOutput(CDasherNode *pNode, Dasher::VECTOR_SYMBOL_PRO
   m_pLastOutput = pNode;
   pNode->SetFlag(NF_SEEN, true);
   pNode->Output(pAdded, GetLongParameter(LP_NORMALIZATION));
-
-  // If the node we are outputting is the last one in a game target sentence, then
-  // notify the game mode teacher.
-  if(m_bGameMode)
-    if(pNode->GetFlag(NF_END_GAME))
-      GameMode::CDasherGameMode::GetTeacher()->SentenceFinished();
 }
 
 void CDasherModel::NewGoTo(myint newRootmin, myint newRootmax, Dasher::VECTOR_SYMBOL_PROB* pAdded, int* pNumDeleted) {
@@ -597,31 +587,9 @@ void CDasherModel::ExpandNode(CDasherNode *pNode) {
 
   pNode->SetFlag(NF_ALLCHILDREN, true);
 
-  // We get here if all our children (groups) and grandchildren (symbols) are created.
-  // So lets find the correct letters.
-  ///GAME MODE TEMP///////////
-  // If we are in GameMode, then we do a bit of cooperation with the teacher object when we create
-  // new children.
-
-  //GameMode::CDasherGameMode* pTeacher = GameMode::CDasherGameMode::GetTeacher();
-  //if(m_bGameMode && pNode->GetFlag(NF_GAME) && pTeacher )
-  if(pNode->GetFlag(NF_GAME))
-  {
-    /*std::string strTargetUtf8Char(pTeacher->GetSymbolAtOffset(pNode->offset() + 1));
-      
-    // Check if this is the last node in the sentence...
-    if(strTargetUtf8Char == "GameEnd")
-      pNode->SetFlag(NF_END_GAME, true);
-    else if (!pNode->GameSearchChildren(strTargetUtf8Char)) {
-      // Target character not found - not in our current alphabet?!?!
-      // Let's give up!
-      pNode->SetFlag(NF_END_GAME, true); 
-    }*/
+  if(pNode->GetFlag(NF_GAME)) {
     Get_node_under_crosshair()->GameSearchChildren(m_strGameTarget);
   }
-  ////////////////////////////
-  
-
 }
 
 bool CDasherModel::RenderToView(CDasherView *pView, CExpansionPolicy &policy) {
@@ -639,17 +607,6 @@ bool CDasherModel::RenderToView(CDasherView *pView, CExpansionPolicy &policy) {
   // the appropriate Nodes.
   pView->Render(m_Root, m_Rootmin + m_iDisplayOffset, m_Rootmax + m_iDisplayOffset, policy, true);  
 
-  /////////GAME MODE TEMP//////////////
-  if(m_bGameMode)
-    if(GameMode::CDasherGameMode* pTeacher = GameMode::CDasherGameMode::GetTeacher()) {
-      //ACL 27/10/09 I note the following vector:
-      std::vector<std::pair<myint,bool> > vGameTargetY;
-      //was declared earlier and passed to pView->Render, above; but pView->Render
-      //would never do _anything_ to it. Hence the below seems a bit redundant too,
-      //but leaving around for now as a reminder that Game Mode generally is a TODO.
-      pTeacher->SetTargetY(vGameTargetY);
-    }
-  //////////////////////////////////////
 
   // TODO: Fix up stats
   // TODO: Is this the right way to handle this?
