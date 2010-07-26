@@ -127,71 +127,46 @@ void CDasherModel::GameApproximate() {
   // Get a list of the symbol IDs of all the currently drawn children.
   std::deque<CAlphabetManager::CSymbolNode*> vNodes; 
   GetSymbolList(Get_node_under_crosshair(), vNodes);
+
+
   std::vector<int> iTargetSymbols;
   m_pNodeCreationManager->GetAlphabet()->GetSymbols(iTargetSymbols, m_strGameTarget);
 
 
   int iTargetSymbol = iTargetSymbols.front(); 
   // Check if the target is off to the high end
-  if( iTargetSymbol > vNodes.front()->iSymbol ) {
-    m_pEventHandler->InsertEvent(
-      new CNoGameNodeEvent(std::make_pair(static_cast<CDasherNode*>(NULL), vNodes.front()))
-    );
-  }
-
-  // Check if the target is off to the low end
-  if( iTargetSymbol < vNodes.back()->iSymbol) {
-    m_pEventHandler->InsertEvent(
-      new CNoGameNodeEvent(std::make_pair(vNodes.back(), static_cast<CDasherNode*>(NULL)))
-    );
-  }
-
-  
-  for(std::deque<CAlphabetManager::CSymbolNode*>::iterator it = vNodes.begin();
-              it != vNodes.end(); ++it) {
-    if( iTargetSymbol < (*it)->iSymbol ) {
-      CAlphabetManager::CSymbolNode* prev = *(--it);
-      m_pEventHandler->InsertEvent(
-        new CNoGameNodeEvent(std::make_pair( static_cast<CDasherNode*>(NULL), static_cast<CDasherNode*>(NULL))));
+  if( vNodes.front() != NULL) {
+    if( iTargetSymbol > vNodes.front()->iSymbol ) {
+      vNodes.front()->SetFlag(NF_APPROX, true);
+      m_pEventHandler->InsertEvent(new CApproxFoundEvent()); 
     }
   }
-}
 
+  if( vNodes.back() != NULL) {
+    // Check if the target is off to the low end
+    if( iTargetSymbol < vNodes.back()->iSymbol) {
+      vNodes.front()->SetFlag(NF_APPROX, true);
+      m_pEventHandler->InsertEvent(new CApproxFoundEvent()); 
+    }
+  }
 
-void CDasherModel::GameSearchApproximate(CAlphabetManager::CSymbolNode* pNode) {
-  std::vector<int> iTargetSymbols;
-  m_pNodeCreationManager->GetAlphabet()->GetSymbols(iTargetSymbols, m_strGameTarget);
-
-  int iTargetSymbol = iTargetSymbols.front();
-
-  g_pLogger->Log("Begin search for approximate game nodes..."); 
-
+std::deque<CAlphabetManager::CSymbolNode*>::iterator prev = vNodes.begin();
  
-  // If the first symbol is greater than the target, we know  the target
-  // must be off the child list to the left
-  if( static_cast<CAlphabetManager::CSymbolNode*>((*pNode->GetChildren().begin()))->iSymbol > iTargetSymbol ) {
-    m_pEventHandler->InsertEvent(new CNoGameNodeEvent(std::make_pair(static_cast<CDasherNode*>(NULL), (*pNode->GetChildren().begin()))));
-    return;
-  }
-  
-  // If the last symbol is less than the target, we know the target must
-  // be off the child list to the right
-  if( static_cast<CAlphabetManager::CSymbolNode*>((*pNode->GetChildren().end()))->iSymbol < iTargetSymbol ) {
-    m_pEventHandler->InsertEvent(new CNoGameNodeEvent(std::make_pair( (*pNode->GetChildren().end()), static_cast<CDasherNode*>(NULL) )));
-    return;
-  }
-  
-  // Otherwise, it's between two elements of the child list. Find those
-  // elements and send them out.
-  for(CDasherNode::ChildMap::const_iterator it = pNode->GetChildren().begin();
-              it != pNode->GetChildren().end(); it++) {
-    if( static_cast<CAlphabetManager::CSymbolNode*>((*it))->iSymbol > iTargetSymbol ) {
-      m_pEventHandler->InsertEvent(new CNoGameNodeEvent( std::make_pair( (*--it), (*it) ) ));
-      return;
+  for(std::deque<CAlphabetManager::CSymbolNode*>::iterator it = vNodes.begin();
+              it != vNodes.end(); ++it, ++prev ) {
+    if( prev != vNodes.begin() ) {
+      prev = it - 1;
+    }    
+
+    if( iTargetSymbol < (*it)->iSymbol ) {
+      (*it)->SetFlag(NF_APPROX, true);
+      (*prev)->SetFlag(NF_APPROX, true);
+     m_pEventHandler->InsertEvent(new CApproxFoundEvent());
     }
   }
-
 }
+
+
 
 bool CDasherModel::GameSearchChildren(CDasherNode* pNode) {
 
@@ -210,7 +185,7 @@ bool CDasherModel::GameSearchChildren(CDasherNode* pNode) {
   if(m_strGameTarget != "") {
 
 
-    //GameApproximate();
+    GameApproximate();
   }
   return false;
 }
@@ -277,7 +252,7 @@ void CDasherModel::HandleEvent(Dasher::CEvent *pEvent) {
     
     m_strGameTarget = pTargetChangedEvent->m_strTargetText;
    
-  }
+  
 
 
     // Search from the current root.
