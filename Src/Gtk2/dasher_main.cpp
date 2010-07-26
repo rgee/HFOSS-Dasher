@@ -407,6 +407,7 @@ dasher_main_load_interface(DasherMain *pSelf) {
   //  pPrivate->pEditPane = gtk_builder_get_object(pPrivate->pXML, "vbox40");
   pPrivate->pMainWindow = GTK_WINDOW(gtk_builder_get_object(pPrivate->pXML, "window"));
   pPrivate->pToolbar = GTK_WIDGET(gtk_builder_get_object(pPrivate->pXML, "toolbar"));
+  pPrivate->pGameDisplay = GTK_WIDGET(gtk_builder_get_object(pPrivate->pXML, "GameDisplay"));
   //  pPrivate->pMenuBar = gtk_builder_get_object(pPrivate->pXML, "dasher_menu_bar");
   pPrivate->pDasherWidget = GTK_WIDGET(gtk_builder_get_object(pPrivate->pXML, "DasherControl"));
 
@@ -581,6 +582,9 @@ void clear_dasher_editor_text(DasherMain *pSelf) {
 void init_game_mode(char *pGameTextFilePath, DasherMain *pSelf) {
 
 	DasherMainPrivate *pPrivate = DASHER_MAIN_GET_PRIVATE(pSelf);
+
+	GtkDasherControl *pControl = GTK_DASHER_CONTROL(pPrivate->pDasherWidget);
+	gtk_dasher_control_set_game_display(pControl, pPrivate->pGameDisplay);
 
 	dasher_app_settings_set_string(pPrivate->pAppSettings,
 							SP_GAME_TEXT_FILE,

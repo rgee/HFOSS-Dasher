@@ -125,6 +125,14 @@ public:
 
   void ExternalKeyDown(int iKeyVal);
   void ExternalKeyUp(int iKeyVal);
+
+  /**
+   * Give GameDisplay a reference to the GtkWidget
+   * so it can start drawing text.
+   *
+   * @param pGameDisplay the reference
+   */ 
+  void SetGameDisplay(void* pGameDisplay);
   
   gboolean ExposeEvent();
 
