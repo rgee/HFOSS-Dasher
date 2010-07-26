@@ -174,7 +174,7 @@ class CGameModule : public CDasherModule {
    */ 
   bool m_bApproxDataReady;
  
-  std::vector<myint> m_iApproximationData;
+  std::vector<myint> m_vApproximationData;
   
 /* ---------------------------------------------------------------------
  * Constants

@@ -21,8 +21,8 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
           if(!m_bApproxDataReady) {
             CApproxDrawnEvent* evt = static_cast<CApproxDrawnEvent*>(pEvent);
             
-            m_iApproximationData.push_back(evt->m_iX);
-            m_iApproximationData.push_back(evt->m_iY); 
+            m_vApproximationData.push_back(evt->m_iX);
+            m_vApproximationData.push_back(evt->m_iY); 
           }
         }
         case EV_EDIT:
@@ -59,6 +59,8 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
           CGameNodeDrawEvent* evt = static_cast<CGameNodeDrawEvent*>(pEvent);
           m_iTargetX = evt->m_iX;
           m_iTargetY = evt->m_iY;
+        
+          m_bApproxDataReady = false;
         }
         break;
         default:
@@ -74,13 +76,23 @@ bool CGameModule::CharacterFound(CEditEvent* pEvent) {
 }
 
 bool CGameModule::DecorateView(CDasherView *pView) {
+    CDasherScreen::point points[2];
+    if(m_bApproxDataReady) {
+      if(m_vApproximationData.size() == 2) {
+        points[0].x = -10;
+        points[1].x = 0;
+        points[0].y = m_vApproximationData[1];
+        points[1].y = m_vApproximationData[3];
+        pView->ScreenPolyline(points, 2, GetLongParameter(LP_LINE_WIDTH)*3, m_iCrosshairColor);
+      }
+    }
+
     screenint screenTargetX, screenTargetY;
 
     screenTargetX = m_iTargetX;
     screenTargetY = m_iTargetY;
 
-    CDasherScreen::point points[2];
-
+   
     // Top Line
     points[0].x = screenTargetX + m_iCrosshairExtent;
     points[1].x = screenTargetX - m_iCrosshairExtent;
