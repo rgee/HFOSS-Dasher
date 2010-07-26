@@ -162,20 +162,19 @@ class CGameModule : public CDasherModule {
   /**
    * The target x coordinate for the crosshair to point to. 
    */
-  myint m_iTargetX;
+  screenint m_iTargetX;
 
   /**
    * The target y coordinate for the crosshair to point to.
    */
-  myint m_iTargetY;
-  
+  screenint m_iTargetY;
+
   /**
-   * Flag that denotes whether we are approximating the target position
-   * or not.
-   */
-  bool m_bApproximating;
-  
-  
+   * Flag for whether the approximation data is ready.
+   */ 
+  bool m_bApproxDataReady;
+ 
+  std::vector<myint> m_iApproximationData;
   
 /* ---------------------------------------------------------------------
  * Constants
@@ -216,7 +215,7 @@ class CGameModule : public CDasherModule {
   /**
    * The events this class listens for
    */
-  static const int vEvents[3];
+  static const int vEvents[4];
 
 };
 

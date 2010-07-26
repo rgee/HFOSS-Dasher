@@ -6,18 +6,24 @@ using namespace Dasher;
  * Static members of non-integral type must be initialized outside of
  * class definitions.
  */
-const int Dasher::CGameModule::vEvents[3] = {EV_EDIT, EV_GAME_NODE_DRAWN, EV_NO_GAME_NODE}; 
+const int Dasher::CGameModule::vEvents[4] = {EV_EDIT, EV_GAME_NODE_DRAWN, EV_APPROXIMATION_DRAWN, EV_APPROXIMATIONS_FOUND}; 
 
 void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
 
     switch(pEvent->m_iEventType)
     {
-        case EV_NO_GAME_NODE:
+        case EV_APPROXIMATIONS_FOUND:
         {
-            CNoGameNodeEvent* evt = static_cast<CNoGameNodeEvent*>(pEvent);
-            std::stringstream log_stream;
-            log_stream << "First: " << evt->m_pNodes.first << "Second: " << evt->m_pNodes.first << endl;
-            g_pLogger->Log(log_stream.str());
+          m_bApproxDataReady = true;
+        }
+        case EV_APPROXIMATION_DRAWN:
+        {
+          if(!m_bApproxDataReady) {
+            CApproxDrawnEvent* evt = static_cast<CApproxDrawnEvent*>(pEvent);
+            
+            m_iApproximationData.push_back(evt->m_iX);
+            m_iApproximationData.push_back(evt->m_iY); 
+          }
         }
         case EV_EDIT:
         {     
@@ -51,8 +57,8 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
         case EV_GAME_NODE_DRAWN:
         {
           CGameNodeDrawEvent* evt = static_cast<CGameNodeDrawEvent*>(pEvent);
-          m_bApproximating = true;
-          evt->m_pView->Screen2Dasher(evt->m_iX, evt->m_iY, m_iTargetX, m_iTargetY);
+          m_iTargetX = evt->m_iX;
+          m_iTargetY = evt->m_iY;
         }
         break;
         default:
@@ -69,7 +75,9 @@ bool CGameModule::CharacterFound(CEditEvent* pEvent) {
 
 bool CGameModule::DecorateView(CDasherView *pView) {
     screenint screenTargetX, screenTargetY;
-    pView->Dasher2Screen(m_iTargetX, m_iTargetY, screenTargetX, screenTargetY);
+
+    screenTargetX = m_iTargetX;
+    screenTargetY = m_iTargetY;
 
     CDasherScreen::point points[2];
 
