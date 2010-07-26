@@ -43,6 +43,7 @@ namespace Dasher {
 #define NF_ALLCHILDREN 16
 #define NF_SUPER 32
 #define NF_END_GAME 64
+#define NF_APPROX 128
 
 
 // Node types. One for each type of node.
