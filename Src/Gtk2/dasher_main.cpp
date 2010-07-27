@@ -584,12 +584,15 @@ void init_game_mode(char *pGameTextFilePath, DasherMain *pSelf) {
 	DasherMainPrivate *pPrivate = DASHER_MAIN_GET_PRIVATE(pSelf);
 
 	GtkDasherControl *pControl = GTK_DASHER_CONTROL(pPrivate->pDasherWidget);
+
 	gtk_dasher_control_set_game_display(pControl, pPrivate->pGameDisplay);
+
+	gtk_widget_set_visible(GTK_WIDGET(pPrivate->pGameDisplay), true);
 
 	dasher_app_settings_set_string(pPrivate->pAppSettings,
 							SP_GAME_TEXT_FILE,
 							pGameTextFilePath);
-
+	
 	dasher_app_settings_set_bool(pPrivate->pAppSettings, BP_GAME_MODE, true);
 	clear_dasher_editor_text(pSelf);
 }

@@ -286,9 +286,9 @@ gtk_dasher_control_get_module_settings(GtkDasherControl * pControl, const gchar 
 }
 
 void
-gtk_dasher_control_set_game_display(GtkDasherControl *pControl, void* gameHelper) {
+gtk_dasher_control_set_game_display(GtkDasherControl *pControl, void* gameDisplay) {
   GtkDasherControlPrivate *pPrivate = GTK_DASHER_CONTROL_GET_PRIVATE(pControl);
-  pPrivate->pControl->SetGameDisplay(gameHelper);	
+  pPrivate->pControl->CreateGameDisplay(gameDisplay);	
 }
 
 void 

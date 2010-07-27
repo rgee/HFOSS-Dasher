@@ -260,32 +260,10 @@
             
 					<child>
 					
-						<object class = "GtkTable" id = "GameDisplay">
+						<object class = "GtkHBox" id = "GameDisplay">
 					
-							<property name = "n-columns">2</property>
-							<property name = "n-rows">1</property>
-							<property name = "row-spacing">0</property>
-							<property name = "column-spacing">0</property>
-							<property name = "visible">True</property>
-							
-							<child>
-							
-								<object class = "GtkLabel" id = "GameChunkDisplay">
-									<property name = "visible">True</property>
-									<property name = "label">This is a test</property>
-									<property name = "xalign">0</property>
-									<property name="use_markup">True</property>
-								</object>
-								
-								<packing>
-									<property name = "left-attach">1</property>
-								</packing>
-								
-							</child>
-							<child>
-								<placeholder/>
-								<!-- Add more table cells to implement new Game Mode display elements" -->
-							</child>
+							<property name = "visible">False</property>
+							<property name = "height_request">30</property>
 							
 						</object>
 						

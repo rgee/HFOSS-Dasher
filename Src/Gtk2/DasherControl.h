@@ -127,12 +127,12 @@ public:
   void ExternalKeyUp(int iKeyVal);
 
   /**
-   * Give GameDisplay a reference to the GtkWidget
-   * so it can start drawing text.
+   * Instantiate the Game Display object with a reference to the Gtk 
+   * table it will be populating.
    *
    * @param pGameDisplay the reference
    */ 
-  void SetGameDisplay(void* pGameDisplay);
+  void CreateGameDisplay(void* pGameDisplay);
   
   gboolean ExposeEvent();
 
@@ -163,6 +163,11 @@ private:
   ///
 
   void HandleParameterNotification(int iParameter);
+
+  /**
+   * The GTK implementation of the game display widget. Need to keep a
+   * reference so that we can initialize it, then pass it into Game
+   */ 
 
   GtkWidget *m_pVBox;
   GtkWidget *m_pCanvas;

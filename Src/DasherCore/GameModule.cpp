@@ -30,9 +30,14 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
         }
         case EV_EDIT:
         {     
-            CEditEvent* evt = static_cast<CEditEvent*>(pEvent);
+            DecorateDisplay();
+			
+			CEditEvent* evt = static_cast<CEditEvent*>(pEvent);
             switch(evt->m_iEditType)
             {
+				
+				DecorateDisplay();
+
                 // Added a new character (Stepped one node forward)
                 case 1:
                     // Check if the typed character is correct
@@ -92,6 +97,8 @@ bool CGameModule::CharacterFound(CEditEvent* pEvent) {
   return !pEvent->m_sText.compare(m_sTargetString.substr(m_iCurrentStringPos + 1, 1));
 }
 
+
+
 bool CGameModule::DecorateView(CDasherView *pView) {
     screenint screenTargetX, screenTargetY;
     pView->Dasher2Screen(m_iTargetX, m_iTargetY, screenTargetX, screenTargetY);
@@ -145,8 +152,8 @@ bool CGameModule::DecorateView(CDasherView *pView) {
     points[1].y = screenTargetY;
     pView->ScreenPolyline(points, 2, GetLongParameter(LP_LINE_WIDTH)*4, m_iCrosshairColor);
     
-    pView->DrawText(m_sTargetString, 400, 17, m_iFontSize, m_iCrosshairColor);
-    pView->DrawText(GetTypedTarget(), 400, 20, m_iFontSize, m_iCrosshairColor - 20);
+    //pView->DrawText(m_sTargetString, 400, 17, m_iFontSize, m_iCrosshairColor);
+    //pView->DrawText(GetTypedTarget(), 400, 20, m_iFontSize, m_iCrosshairColor - 20);
     return true;
 }
 
@@ -170,4 +177,33 @@ void CGameModule::GenerateChunk() {
   m_pEventHandler->InsertEvent(
     new CGameTargetChangedEvent(m_sTargetString.substr(0, 1))
   );
+
+  DecorateDisplay();
+  g_pLogger->Log(m_sTargetString);
+}
+
+void CGameModule::DecorateDisplay() {
+		
+	if(m_pGameDisplay == NULL) return;
+
+	std::vector<std::string> *colors = new std::vector<std::string>();
+	
+	for(int pos = 0; pos < m_sTargetString.length(); pos++) {
+		
+		if(pos < m_iCurrentStringPos + 1) {	
+			colors->push_back("blue");
+		}
+		else if(pos == m_iCurrentStringPos + 1) {
+			colors->push_back("red");
+		}
+		else {
+			colors->push_back("black");
+		}
+	}
+
+	m_pGameDisplay->DisplayChunkText(m_sTargetString, colors);
+}
+
+void CGameModule::SetGameDisplay(CGameDisplay *pGameDisplay) {
+	m_pGameDisplay = pGameDisplay;
 }

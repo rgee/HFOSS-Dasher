@@ -9,6 +9,7 @@
 #include "Timer.h"
 #include "../DasherCore/Event.h"
 #include "../DasherCore/ModuleManager.h"
+#include "GtkGameDisplay.h"
 
 #include <fcntl.h>
 
@@ -127,6 +128,10 @@ void CDasherControl::SetupPaths() {
   SetStringParameter(SP_SYSTEM_LOC, system_data_dir);
   SetStringParameter(SP_USER_LOC, user_data_dir);
   delete[] user_data_dir;
+}
+
+void CDasherControl::CreateGameDisplay(void* pGameDisplay) {
+	m_pGameDisplay = new GtkGameDisplay(GTK_WIDGET(pGameDisplay));
 }
 
 void CDasherControl::CreateSettingsStore() {

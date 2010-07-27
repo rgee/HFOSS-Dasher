@@ -41,6 +41,7 @@
 #include "InputFilter.h"
 #include "ModuleManager.h"
 #include "GameModule.h"
+#include "GameDisplay.h"
 
 #include <map>
 #include <algorithm>
@@ -434,6 +435,13 @@ protected:
 
   CEventHandler *m_pEventHandler;
   CSettingsStore *m_pSettingsStore;
+  
+  /**
+   * The display widget used by GameModule to display a helpful UI. 
+   * Insantiated by platform specific implementations of DasherIntefaceBase.
+   */ 
+  CGameDisplay *m_pGameDisplay;
+
 
  private:
 
@@ -569,9 +577,12 @@ protected:
   CNodeCreationManager *m_pNCManager;
   CUserLogBase *m_pUserLog;
 
-  // the game mode module - only
-  // initialized if game mode is enabled
+  /** 
+   * The game mode module - only
+   * initialized if game mode is enabled
+   */
   CGameModule *m_pGameModule;
+
   /// @}
 
   std::string strTrainfileBuffer;

@@ -29,6 +29,8 @@ endif
 libdashercontrol_la_SOURCES = \
 		Canvas.cpp \
 		Canvas.h \
+		GtkGameDisplay.cpp  \
+		GtkGameDisplay.h \
 		DasherControl.cpp \
 		DasherControl.h \
 		GtkDasherControl.cpp \
