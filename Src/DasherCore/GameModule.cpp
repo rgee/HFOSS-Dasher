@@ -186,18 +186,18 @@ void CGameModule::DecorateDisplay() {
 		
 	if(m_pGameDisplay == NULL) return;
 
-	std::vector<std::string> *colors = new std::vector<std::string>();
+	std::vector<std::string> colors = std::vector<std::string>();
 	
 	for(int pos = 0; pos < m_sTargetString.length(); pos++) {
 		
 		if(pos < m_iCurrentStringPos + 1) {	
-			colors->push_back("blue");
+			colors.push_back("blue");
 		}
 		else if(pos == m_iCurrentStringPos + 1) {
-			colors->push_back("red");
+			colors.push_back("red");
 		}
 		else {
-			colors->push_back("black");
+			colors.push_back("black");
 		}
 	}
 

@@ -29,7 +29,7 @@ class CGameDisplay {
 	 * @param text the sequence of characters
 	 * @param colors the color to give each index of text
 	 */ 
-	virtual void DisplayChunkText(std::string text, std::vector<std::string> *colors) = 0;
+	virtual void DisplayChunkText(std::string text, std::vector<std::string>& colors) = 0;
 };
 
 }

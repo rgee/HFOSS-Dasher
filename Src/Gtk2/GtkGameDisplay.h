@@ -23,7 +23,7 @@ class GtkGameDisplay : public Dasher::CGameDisplay {
 
 	 }	 
 
-	 virtual void DisplayChunkText(std::string text, std::vector<std::string> *colors);
+	 virtual void DisplayChunkText(std::string text, std::vector<std::string>& colors);
 
 	private:
 
