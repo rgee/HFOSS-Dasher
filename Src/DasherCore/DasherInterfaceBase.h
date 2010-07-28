@@ -404,6 +404,12 @@ protected:
   void NewFrame(unsigned long iTime, bool bForceRedraw);
 
 
+  /**
+   * Initialize m_pGameModule by fetching the
+   *  constructed module from the module manager.
+  */
+  void InitGameModule();
+
   enum ETransition {
     TR_MODEL_INIT = 0,
     TR_UI_INIT,
@@ -442,6 +448,12 @@ protected:
    */ 
   CGameDisplay *m_pGameDisplay;
 
+
+  /** 
+   * The game mode module - only
+   * initialized if game mode is enabled
+   */
+  CGameModule *m_pGameModule;
 
  private:
 
@@ -529,12 +541,6 @@ protected:
 	
   
   /**
-   * Initialize m_pGameModule by fetching the
-   *  constructed module from the module manager.
-  */
-  void InitGameModule();
-
-  /**
    * Reset m_pGameModule - called when game mode is disabled.
    */ 
   void ResetGameModule();
@@ -575,13 +581,7 @@ protected:
   CAlphIO *m_AlphIO;
   CColourIO *m_ColourIO;
   CNodeCreationManager *m_pNCManager;
-  CUserLogBase *m_pUserLog;
-
-  /** 
-   * The game mode module - only
-   * initialized if game mode is enabled
-   */
-  CGameModule *m_pGameModule;
+  CUserLogBase *m_pUserLog; 
 
   /// @}
 

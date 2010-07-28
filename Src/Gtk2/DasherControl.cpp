@@ -47,6 +47,9 @@ CDasherControl::CDasherControl(GtkVBox *pVBox, GtkDasherControl *pDasherControl)
 }
 
 void CDasherControl::CreateModules() {
+
+  g_message("Creating modules");
+
   CDasherInterfaceBase::CreateModules(); //create default set first
   // Create locally cached copies of the mouse input objects, as we
   // need to pass coordinates to them from the timer callback
@@ -131,7 +134,10 @@ void CDasherControl::SetupPaths() {
 }
 
 void CDasherControl::CreateGameDisplay(void* pGameDisplay) {
+
 	m_pGameDisplay = new GtkGameDisplay(GTK_WIDGET(pGameDisplay));
+	InitGameModule();
+	m_pGameModule->SetGameDisplay(m_pGameDisplay);
 }
 
 void CDasherControl::CreateSettingsStore() {

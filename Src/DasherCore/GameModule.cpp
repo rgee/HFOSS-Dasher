@@ -7,17 +7,12 @@ using namespace Dasher;
  * Static members of non-integral type must be initialized outside of
  * class definitions.
  */
-const int Dasher::CGameModule::vEvents[3] = {EV_EDIT, EV_GAME_NODE_DRAWN, EV_NO_GAME_NODE}; 
+const int Dasher::CGameModule::vEvents[3] = {EV_EDIT, EV_GAME_NODE_DRAWN, EV_NO_GAME_NODE, }; 
 
 void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
 
 
-	//std::stringstream ss;
-	//ss << m_iCurrentStringPos;
-	//g_pLogger->Log(ss.str());
-
-	//if(!m_bIsActive)
-	//	return;
+	g_pLogger->Log(m_pGameDisplay == NULL ? "NULL" : "NOT NULL");
 
     switch(pEvent->m_iEventType)
     {
@@ -30,14 +25,10 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
         }
         case EV_EDIT:
         {     
-            DecorateDisplay();
-			
 			CEditEvent* evt = static_cast<CEditEvent*>(pEvent);
+
             switch(evt->m_iEditType)
             {
-				
-				DecorateDisplay();
-
                 // Added a new character (Stepped one node forward)
                 case 1:
                     // Check if the typed character is correct
@@ -48,6 +39,9 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
 
                       } else {
                           ++m_iCurrentStringPos;
+
+						  DecorateDisplay();
+
                             m_pEventHandler->InsertEvent(
                               new CGameTargetChangedEvent(m_sTargetString.substr(m_iCurrentStringPos + 1, 1))
                             );
@@ -184,7 +178,7 @@ void CGameModule::GenerateChunk() {
 
 void CGameModule::DecorateDisplay() {
 		
-	if(m_pGameDisplay == NULL) return;
+	//if(m_pGameDisplay == NULL) return;
 
 	std::vector<std::string> *colors = new std::vector<std::string>();
 	
