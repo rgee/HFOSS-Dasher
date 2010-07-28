@@ -311,8 +311,17 @@ class Dasher::CDasherModel:public Dasher::CFrameRate, private NoClones
   /// Go directly to a given coordinate - check semantics
   ///
   void NewGoTo(myint n1, myint n2, Dasher::VECTOR_SYMBOL_PROB* pAdded, int* pNumDeleted);
-
+  
+  /**
+   * Approximate position of target game node. Used when the node cannot be found visible.
+   */ 
   void GameApproximate();
+
+  /**
+   * Gets a collection of all the current symbols under pNode
+   * @param pNode The node to search under.
+   * @param result The collection to be populated by the function.
+   */
   void GetSymbolList(CDasherNode* pNode, std::deque<CAlphabetManager::CSymbolNode*>& result);
 
   ///

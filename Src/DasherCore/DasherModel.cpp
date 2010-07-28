@@ -194,6 +194,7 @@ void CDasherModel::GameSearchApproximate(CAlphabetManager::CSymbolNode* pNode) {
 }
 
 bool CDasherModel::GameSearchChildren(CDasherNode* pNode) {
+
   for(CDasherNode::ChildMap::const_iterator it = pNode->GetChildren().begin();
               it != pNode->GetChildren().end(); it++) {
     if( GameSearchIndividual((*it)) ) return true;
@@ -256,6 +257,7 @@ void CDasherModel::HandleEvent(Dasher::CEvent *pEvent) {
       break;
     case BP_GAME_MODE:
       m_bGameMode = GetBoolParameter(BP_GAME_MODE);
+      GameSearchChildren(Get_node_under_crosshair());
       // Maybe reload something here to begin game mode?
       break;
     default:
@@ -280,8 +282,10 @@ void CDasherModel::HandleEvent(Dasher::CEvent *pEvent) {
     
     m_strGameTarget = pTargetChangedEvent->m_strTargetText;
    
-    // Search from the current root.
-    GameSearchChildren(Get_node_under_crosshair());
+    if(m_bGameMode) {
+      // Search from the current root.
+      GameSearchChildren(Get_node_under_crosshair());
+    }
   }
 }
 
@@ -717,10 +721,12 @@ void CDasherModel::ExpandNode(CDasherNode *pNode) {
 
   pNode->SetFlag(NF_ALLCHILDREN, true);
 
-  // We get here if all our children (groups) and grandchildren (symbols) are created.
-  // So lets find the correct letters.
-  if(pNode->GetFlag(NF_GAME)) {
-    GameSearchChildren(Get_node_under_crosshair());
+  if(m_bGameMode) {
+    // We get here if all our children (groups) and grandchildren (symbols) are created.
+    // So lets find the correct letters.
+    if(pNode->GetFlag(NF_GAME)) {
+      GameSearchChildren(Get_node_under_crosshair());
+    }
   }
 }
 
