@@ -163,14 +163,10 @@ void CDasherInterfaceBase::Realize() {
 #endif
 
   CreateModules();
-
   CreateInput();
   CreateInputFilter();
   SetupActionButtons();
-
-  if(GetBoolParameter(BP_GAME_MODE)) 
-	InitGameModule();
-
+  InitGameModule();
 
   CParameterNotificationEvent oEvent(LP_NODE_BUDGET);
   InterfaceEventHandler(&oEvent);
@@ -274,7 +270,6 @@ void CDasherInterfaceBase::PreSetNotify(int iParameter, const std::string &sNewV
 }
 
 void CDasherInterfaceBase::InterfaceEventHandler(Dasher::CEvent *pEvent) {
-
   if(pEvent->m_iEventType == EV_PARAM_NOTIFY) {
     Dasher::CParameterNotificationEvent * pEvt(static_cast < Dasher::CParameterNotificationEvent * >(pEvent));
 
@@ -613,7 +608,7 @@ void CDasherInterfaceBase::Redraw(bool bRedrawNodes, CExpansionPolicy &policy) {
     bDecorationsChanged = m_pInputFilter->DecorateView(m_pDasherView);
   }
 
-  if(m_pGameModule) {
+  if(m_pGameModule && GetBoolParameter(BP_GAME_MODE)) {
     bDecorationsChanged = m_pGameModule->DecorateView(m_pDasherView) || bDecorationsChanged;
   }
 
@@ -894,13 +889,12 @@ void CDasherInterfaceBase::KeyUp(int iTime, int iId, bool bPos, int iX, int iY) 
  */ 
 void CDasherInterfaceBase::InitGameModule() {
 
-  if(m_pGameModule == NULL) {
-	CreateModel(0);
-    m_pGameModule = (CGameModule*) GetModuleByName("Game Mode");
-	m_pGameModule->SetWordGenerator(new CFileWordGenerator(GetStringParameter(SP_GAME_TEXT_FILE)));
-	m_pGameModule->SetGameDisplay(m_pGameDisplay);
+	m_pGameModule = (CGameModule*) GetModuleByName("Game Mode");
 
-  }
+	if(GetBoolParameter(BP_GAME_MODE)) {
+		//CreateModel(0);
+		m_pGameModule->SetWordGenerator(new CFileWordGenerator(GetStringParameter(SP_GAME_TEXT_FILE)));
+	}
 }
 
 /**

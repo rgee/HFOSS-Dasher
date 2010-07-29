@@ -1,5 +1,5 @@
 #include "FileWordGenerator.h"
-
+#include "DasherInterfaceBase.h"
 using namespace Dasher;
 
 
@@ -32,7 +32,8 @@ std::string CFileWordGenerator::GetFilename() {
 }
 
 std::string CFileWordGenerator::GetNextWord() {
-  if(m_uiPos >= m_sGeneratedString.length()) { 
+  if(m_uiPos >= m_sGeneratedString.length()) {
+     
     // Attempt to reload the buffer.
     if(!Generate()) return "";
   } 
@@ -48,6 +49,7 @@ std::string CFileWordGenerator::GetNextWord() {
     m_uiPos += (found + 1);
   } else {
     result = m_sGeneratedString.substr(m_uiPos);
+    m_uiPos = m_sGeneratedString.length();
   };
   
   return result;
