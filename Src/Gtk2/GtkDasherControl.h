@@ -24,6 +24,7 @@ struct _DasherMessageInfo {
 };
 
 G_BEGIN_DECLS
+
 #define GTK_DASHER_TYPE_CONTROL         (gtk_dasher_control_get_type())
 #define GTK_DASHER_CONTROL(obj)         (G_TYPE_CHECK_INSTANCE_CAST((obj), GTK_DASHER_TYPE_CONTROL, GtkDasherControl ))
 #define GTK_DASHER_CONTROL_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), GTK_DASHER_TYPE_CONTROL, GtkDasherControlClass ))
@@ -88,6 +89,16 @@ void gtk_dasher_control_external_key_up(GtkDasherControl *pControl, int iKeyVal)
 gboolean gtk_dasher_control_get_module_settings(GtkDasherControl * pControl, const gchar *szModule, SModuleSettings **pSettings, gint *iCount);
 void gtk_dasher_control_add_game_mode_string(GtkDasherControl *pControl, const gchar *szString);
 void gtk_dasher_control_game_messagein(GtkDasherControl *pControl, int message, void* messagedata);
+
+/**
+ * Pass a reference to the GTK widget containing the game mode display down to DasherControl
+ * so that it can construct the game display UI.
+ * @param pControl reference to GtkDasherControl instance
+ * @gameDisplay reference to the GTK table containing the game display
+ */ 
+void gtk_dasher_control_set_game_display(GtkDasherControl *pControl, void* gameDisplay);
+
+
 void gtk_dasher_control_game_helperreg(GtkDasherControl *pControl, void* gameHelper);
 void gtk_dasher_control_game_messageout(GtkDasherControl *pControl, int message, const void* messagedata);
 

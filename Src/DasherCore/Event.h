@@ -23,6 +23,7 @@ namespace Dasher {
   class CDasherView;
   class CDasherNode;
   class CNoGameNodeEvent;
+  class CGameModeCompleteEvent;
 }
 
 /*
@@ -32,7 +33,8 @@ namespace Dasher {
  * or you will likely get errors.
  */
 enum {
-  EV_PARAM_NOTIFY = 1, EV_EDIT, EV_EDIT_CONTEXT, EV_START, EV_STOP, EV_CONTROL, EV_LOCK, EV_GAME_TARGET_CHANGED, EV_MESSAGE, EV_COMMAND, EV_GAME_NODE_DRAWN, EV_NO_GAME_NODE
+  EV_PARAM_NOTIFY = 1, EV_EDIT, EV_EDIT_CONTEXT, EV_START, EV_STOP, EV_CONTROL, EV_LOCK, EV_GAME_TARGET_CHANGED, EV_MESSAGE, EV_COMMAND, EV_GAME_NODE_DRAWN, EV_NO_GAME_NODE,
+  EV_GAME_MODE_COMPLETE
 };
 
 /// \ingroup Core
@@ -45,7 +47,19 @@ public:
   int m_iEventType;
 };
 
- /* An event that represents when the game target node cannot be found
+/**
+ * This is an event to signal that the user has finished typing the game mode
+ * target. Appropriate action should be taken by visual components to
+ * congratulate them in response to this evt.
+ */ 
+class Dasher::CGameModeCompleteEvent : public Dasher::CEvent {
+public:
+  CGameModeCompleteEvent() {
+    m_iEventType = EV_GAME_MODE_COMPLETE;
+  }
+};
+
+ /** An event that represents when the game target node cannot be found
  * among the current last-typed node's children. Since the set of child
  * nodes is a set consisting of all possible characters in the current
  * alphabet, the only way for it not to exist at all is if it was not

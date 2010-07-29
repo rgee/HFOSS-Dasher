@@ -202,6 +202,8 @@ dasher_main_new(int *argc, char ***argv, SCommandLine *pCommandLine) {
       dasher_app_settings_set_long(pPrivate->pAppSettings, APP_LP_STYLE, APP_STYLE_TRAD);
     }
 
+	g_message("loading interface");
+
     dasher_main_load_interface(pDasherMain);
 
     dasher_app_settings_set_widget(pPrivate->pAppSettings, GTK_DASHER_CONTROL(pPrivate->pDasherWidget));
@@ -407,9 +409,12 @@ dasher_main_load_interface(DasherMain *pSelf) {
   //  pPrivate->pEditPane = gtk_builder_get_object(pPrivate->pXML, "vbox40");
   pPrivate->pMainWindow = GTK_WINDOW(gtk_builder_get_object(pPrivate->pXML, "window"));
   pPrivate->pToolbar = GTK_WIDGET(gtk_builder_get_object(pPrivate->pXML, "toolbar"));
+  pPrivate->pGameDisplay = GTK_WIDGET(gtk_builder_get_object(pPrivate->pXML, "GameDisplay"));
   //  pPrivate->pMenuBar = gtk_builder_get_object(pPrivate->pXML, "dasher_menu_bar");
   pPrivate->pDasherWidget = GTK_WIDGET(gtk_builder_get_object(pPrivate->pXML, "DasherControl"));
 
+  gtk_dasher_control_set_game_display(GTK_DASHER_CONTROL(pPrivate->pDasherWidget), pPrivate->pGameDisplay);
+  
 #ifndef WITH_MAEMO
   pPrivate->pSpeedBox = GTK_SPIN_BUTTON(gtk_builder_get_object(pPrivate->pXML, "spinbutton1"));
   pPrivate->pAlphabetCombo = GTK_WIDGET(gtk_builder_get_object(pPrivate->pXML, "combobox1"));
@@ -582,10 +587,14 @@ void init_game_mode(char *pGameTextFilePath, DasherMain *pSelf) {
 
 	DasherMainPrivate *pPrivate = DASHER_MAIN_GET_PRIVATE(pSelf);
 
+	GtkDasherControl *pControl = GTK_DASHER_CONTROL(pPrivate->pDasherWidget);
+
+	gtk_widget_set_visible(GTK_WIDGET(pPrivate->pGameDisplay), true);
+
 	dasher_app_settings_set_string(pPrivate->pAppSettings,
 							SP_GAME_TEXT_FILE,
 							pGameTextFilePath);
-
+	
 	dasher_app_settings_set_bool(pPrivate->pAppSettings, BP_GAME_MODE, true);
 	clear_dasher_editor_text(pSelf);
 }

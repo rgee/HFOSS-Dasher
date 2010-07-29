@@ -127,7 +127,7 @@
           </object>
         </child>
         <child>
-          <object class="GtkAction" id="action_toggle_game_mode">
+          <object class="GtkToggleAction" id="action_toggle_game_mode">
             <property name="stock_id">action_toggle_game_mode</property>
 			<property name="tooltip" translatable="yes">_Game Mode</property>
 			<property name = "label" translatable="yes">_Game Mode</property>
@@ -247,30 +247,70 @@
               </packing>
             </child>
             <child>
-              <object class="GtkDasherControl" id="DasherControl">
-                <property name="width_request">200</property>
-                <property name="height_request">200</property>
-                <property name="visible">True</property>
-                <signal handler="parameter_notification" name="dasher_changed"/>
-                <signal handler="handle_start_event" name="dasher_start"/>
-                <signal handler="handle_stop_event" name="dasher_stop"/>
-                <signal handler="handle_control_event" name="dasher_control"/>
-                <signal handler="gtk2_edit_output_callback" name="dasher_edit_insert"/>
-                <signal handler="gtk2_edit_delete_callback" name="dasher_edit_delete"/>
-                <signal handler="handle_context_request" name="dasher_context_request"/>
-                <signal handler="handle_request_settings" name="dasher_request_settings"/>
-                <signal handler="focus_in_event" name="focus_in_event"/>
-                <signal handler="on_lock_info" name="dasher_lock_info"/>
-                <signal handler="on_message" name="dasher_message"/>
-                <signal handler="convert_cb" name="dasher_edit_convert"/>
-                <signal handler="protect_cb" name="dasher_edit_protect"/>
-                <signal handler="on_command" name="dasher_command"/>
-                <signal handler="test_focus_handler" name="focus-in-event"/>
+            
+            
+            
+				<object class = "GtkTable" id = "BottomTable">
+            
+					<property name = "n-columns">1</property>
+					<property name = "n-rows">2</property>
+					<property name = "row-spacing">0</property>
+					<property name = "column-spacing">0</property>
+					<property name = "visible">True</property>
+            
+					<child>
+					
+						<object class = "GtkHBox" id = "GameDisplay">
+					
+							<property name = "visible">False</property>
+							<property name = "height_request">30</property>
+							
+						</object>
+						
+						<packing>
+							<property name = "y-options">GTK_FILL</property>
+							<property name = "x-padding">10</property>
+							<property name = "y-padding">10</property>
+						</packing>
+							
+					</child>
+            
+					<child>
+					
+					  <object class="GtkDasherControl" id="DasherControl">
+						<property name="width_request">200</property>
+						<property name="height_request">200</property>
+						<property name="visible">True</property>
+						<signal handler="parameter_notification" name="dasher_changed"/>
+						<signal handler="handle_start_event" name="dasher_start"/>
+						<signal handler="handle_stop_event" name="dasher_stop"/>
+						<signal handler="handle_control_event" name="dasher_control"/>
+						<signal handler="gtk2_edit_output_callback" name="dasher_edit_insert"/>
+						<signal handler="gtk2_edit_delete_callback" name="dasher_edit_delete"/>
+						<signal handler="handle_context_request" name="dasher_context_request"/>
+						<signal handler="handle_request_settings" name="dasher_request_settings"/>
+						<signal handler="focus_in_event" name="focus_in_event"/>
+						<signal handler="on_lock_info" name="dasher_lock_info"/>
+						<signal handler="on_message" name="dasher_message"/>
+						<signal handler="convert_cb" name="dasher_edit_convert"/>
+						<signal handler="protect_cb" name="dasher_edit_protect"/>
+						<signal handler="on_command" name="dasher_command"/>
+						<signal handler="test_focus_handler" name="focus-in-event"/>
+					  </object>
+					  
+					  <packing>
+						<property name = "top-attach">1</property>
+						<property name = "bottom-attach">2</property>
+					  </packing>
+							  	  
+						 
+				  </child>
+				
+				
               </object>
-              <packing>
-                <property name="shrink">True</property>
-                <property name="resize">True</property>
-              </packing>
+              
+      
+      
             </child>
           </object>
           <packing>

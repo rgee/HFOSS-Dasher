@@ -7,30 +7,22 @@ using namespace Dasher;
  * Static members of non-integral type must be initialized outside of
  * class definitions.
  */
-const int Dasher::CGameModule::vEvents[3] = {EV_EDIT, EV_GAME_NODE_DRAWN, EV_NO_GAME_NODE}; 
+const int Dasher::CGameModule::vEvents[3] = {EV_EDIT, EV_GAME_NODE_DRAWN, EV_NO_GAME_NODE, }; 
 
 void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
 
 
-	//std::stringstream ss;
-	//ss << m_iCurrentStringPos;
-	//g_pLogger->Log(ss.str());
-
-	//if(!m_bIsActive)
-	//	return;
 
     switch(pEvent->m_iEventType)
     {
         case EV_NO_GAME_NODE:
         {
             CNoGameNodeEvent* evt = static_cast<CNoGameNodeEvent*>(pEvent);
-            std::stringstream log_stream;
-            log_stream << "First: " << evt->m_pNodes.first << "Second: " << evt->m_pNodes.first << endl;
-            g_pLogger->Log(log_stream.str());
         }
         case EV_EDIT:
         {     
-            CEditEvent* evt = static_cast<CEditEvent*>(pEvent);
+			CEditEvent* evt = static_cast<CEditEvent*>(pEvent);
+
             switch(evt->m_iEditType)
             {
                 // Added a new character (Stepped one node forward)
@@ -43,12 +35,12 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
 
                       } else {
                           ++m_iCurrentStringPos;
+
+						  DecorateDisplay();
+
                             m_pEventHandler->InsertEvent(
                               new CGameTargetChangedEvent(m_sTargetString.substr(m_iCurrentStringPos + 1, 1))
                             );
-
-							g_pLogger->Log(m_sTargetString.substr(m_iCurrentStringPos + 1, 1));
-
                       }
                     }
                     break;
@@ -91,6 +83,8 @@ void CGameModule::reset() {
 bool CGameModule::CharacterFound(CEditEvent* pEvent) {
   return !pEvent->m_sText.compare(m_sTargetString.substr(m_iCurrentStringPos + 1, 1));
 }
+
+
 
 bool CGameModule::DecorateView(CDasherView *pView) {
     screenint screenTargetX, screenTargetY;
@@ -145,15 +139,13 @@ bool CGameModule::DecorateView(CDasherView *pView) {
     points[1].y = screenTargetY;
     pView->ScreenPolyline(points, 2, GetLongParameter(LP_LINE_WIDTH)*4, m_iCrosshairColor);
     
-    pView->DrawText(m_sTargetString, 400, 17, m_iFontSize, m_iCrosshairColor);
-    pView->DrawText(GetTypedTarget(), 400, 20, m_iFontSize, m_iCrosshairColor - 20);
     return true;
 }
 
 
 std::string CGameModule::GetTypedTarget() {
-    return ((m_iCurrentStringPos == -1) ?
-            "" : m_sTargetString.substr(0, m_iCurrentStringPos + 1));
+  return ((m_iCurrentStringPos == -1) ?
+      "" : m_sTargetString.substr(0, m_iCurrentStringPos + 1));
 }
 
 std::string CGameModule::GetUntypedTarget() {
@@ -163,11 +155,49 @@ std::string CGameModule::GetUntypedTarget() {
 void CGameModule::GenerateChunk() {
   m_iCurrentStringPos = -1;
   m_sTargetString.clear();
+
+  std::string nextWord;
+
   for(int i = 0; i < m_iTargetChunkSize; i++) {
-    m_sTargetString += m_pWordGenerator->GetNextWord();
-    m_sTargetString += " ";
+    nextWord = m_pWordGenerator->GetNextWord();
+    if(nextWord == "") {
+      m_sTargetString = "";
+      m_pEventHandler->InsertEvent(new CGameModeCompleteEvent());
+      return;
+    } else {
+      m_sTargetString += nextWord;
+      m_sTargetString += " ";
+    }
   }
   m_pEventHandler->InsertEvent(
-    new CGameTargetChangedEvent(m_sTargetString.substr(0, 1))
-  );
+      new CGameTargetChangedEvent(m_sTargetString.substr(0, 1))
+      );
+
+  DecorateDisplay();
+}
+
+void CGameModule::DecorateDisplay() {
+	if(m_pGameDisplay == NULL) return;
+
+	std::vector<std::string> colors = std::vector<std::string>();
+	
+	for(int pos = 0; pos < m_sTargetString.length(); pos++) {
+		
+		if(pos < m_iCurrentStringPos + 1) {	
+			colors.push_back("blue");
+		}
+		else if(pos == m_iCurrentStringPos + 1) {
+			colors.push_back("red");
+		}
+		else {
+			colors.push_back("black");
+		}
+	}
+
+	m_pGameDisplay->DisplayChunkText(m_sTargetString, colors);
+
+}
+
+void CGameModule::SetGameDisplay(CGameDisplay *pGameDisplay) {
+  m_pGameDisplay = pGameDisplay;
 }

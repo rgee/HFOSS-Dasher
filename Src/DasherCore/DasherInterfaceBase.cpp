@@ -101,6 +101,7 @@ CDasherInterfaceBase::CDasherInterfaceBase() {
   m_pNCManager = NULL;
   m_defaultPolicy = NULL;
   m_pGameModule = NULL;
+  m_pGameDisplay = NULL;
 
   // Various state variables
   m_bRedrawScheduled = false;
@@ -162,10 +163,11 @@ void CDasherInterfaceBase::Realize() {
 #endif
 
   CreateModules();
-
   CreateInput();
   CreateInputFilter();
   SetupActionButtons();
+  InitGameModule();
+
   CParameterNotificationEvent oEvent(LP_NODE_BUDGET);
   InterfaceEventHandler(&oEvent);
 
@@ -174,6 +176,7 @@ void CDasherInterfaceBase::Realize() {
     SetLongParameter(LP_REAL_ORIENTATION, m_Alphabet->GetOrientation());
   else
     SetLongParameter(LP_REAL_ORIENTATION, GetLongParameter(LP_ORIENTATION));
+
 
 
   // FIXME - need to rationalise this sort of thing.
@@ -267,7 +270,6 @@ void CDasherInterfaceBase::PreSetNotify(int iParameter, const std::string &sNewV
 }
 
 void CDasherInterfaceBase::InterfaceEventHandler(Dasher::CEvent *pEvent) {
-
   if(pEvent->m_iEventType == EV_PARAM_NOTIFY) {
     Dasher::CParameterNotificationEvent * pEvt(static_cast < Dasher::CParameterNotificationEvent * >(pEvent));
 
@@ -606,7 +608,7 @@ void CDasherInterfaceBase::Redraw(bool bRedrawNodes, CExpansionPolicy &policy) {
     bDecorationsChanged = m_pInputFilter->DecorateView(m_pDasherView);
   }
 
-  if(m_pGameModule) {
+  if(m_pGameModule && GetBoolParameter(BP_GAME_MODE)) {
     bDecorationsChanged = m_pGameModule->DecorateView(m_pDasherView) || bDecorationsChanged;
   }
 
@@ -887,12 +889,12 @@ void CDasherInterfaceBase::KeyUp(int iTime, int iId, bool bPos, int iX, int iY) 
  */ 
 void CDasherInterfaceBase::InitGameModule() {
 
-  if(m_pGameModule == NULL) {
-	CreateModel(0);
-    m_pGameModule = (CGameModule*) GetModuleByName("Game Mode");
-	m_pGameModule->SetWordGenerator(new CFileWordGenerator(GetStringParameter(SP_GAME_TEXT_FILE)));
+	m_pGameModule = (CGameModule*) GetModuleByName("Game Mode");
 
-  }
+	if(GetBoolParameter(BP_GAME_MODE)) {
+		//CreateModel(0);
+		m_pGameModule->SetWordGenerator(new CFileWordGenerator(GetStringParameter(SP_GAME_TEXT_FILE)));
+	}
 }
 
 /**
@@ -975,17 +977,8 @@ void CDasherInterfaceBase::CreateModules() {
   RegisterModule(new CStylusFilter(m_pEventHandler, m_pSettingsStore, this, 15, _("Stylus Control")));
 
   // Register game mode with the module manager
-  // TODO should this be wrapped in an "if game mode enabled"
-  // conditional?
   // TODO: I don't know what a sensible module ID should be
   // for this, so I chose an arbitrary value
-  // TODO: Put "Game Mode" in enumeration in Parameter.h    
-  
-  // We use a shared ptr here for the word generator to avoid issues regarding
-  // object ownership. Now this class /could/ own a word generator if it wanted
-  // whereas before its ownership was ambiguous to the only class that
-  // could delete it. (The game module) Therefore, newing directly to
-  // the constructor leaked memory.
   RegisterModule(new CGameModule(m_pEventHandler, m_pSettingsStore, this, 21, _("Game Mode")));
 }
 

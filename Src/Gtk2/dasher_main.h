@@ -45,6 +45,7 @@ struct _DasherMainPrivate {
   // GtkWidget *pBufferView;
   GtkPaned  *pDivider;
   GtkWindow *pMainWindow;
+  GtkWidget *pGameDisplay;
   GtkWidget *pToolbar;
   GtkSpinButton *pSpeedBox;
   GtkWidget *pAlphabetCombo;

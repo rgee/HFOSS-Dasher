@@ -17,7 +17,7 @@ using namespace std;
 #include "DasherInterfaceBase.h"
 #include "WordGeneratorBase.h"
 #include "EventHandler.h"
-#include <tr1/memory>
+#include "GameDisplay.h"
 
 
 namespace Dasher {
@@ -57,7 +57,8 @@ class CGameModule : public CDasherModule {
 	m_pInterface(pInterface),
     CDasherModule(pEventHandler, pSettingsStore, iID, 0, szName,
                   std::vector<int>(vEvents, vEvents + sizeof(vEvents) / sizeof(int)))
-  {}
+  {
+  }
 
   ~CGameModule() {
 	  m_pSettingsStore->SetBoolParameter(BP_GAME_MODE, false);
@@ -101,6 +102,8 @@ class CGameModule : public CDasherModule {
    */ 
   void reset();
 
+  void SetGameDisplay(CGameDisplay *pGameDisplay);
+
  private:
 /* ---------------------------------------------------------------------
  * Private Methods
@@ -135,12 +138,21 @@ class CGameModule : public CDasherModule {
    */
   myint DistanceFromOrigin(myint xCoord, myint yCoord);
 
-  
+  /**
+   * Update the game display.
+   */ 
+  void DecorateDisplay();
+
 /* ---------------------------------------------------------------------
  * Member Variables
  * ---------------------------------------------------------------------
  */
    
+  /**
+   * The display widget that this module is using to draw its UI.
+   */ 
+  CGameDisplay *m_pGameDisplay;
+
   /**
    * Pointer to the object that encapsulates the word generation
    * algorithm being used.
