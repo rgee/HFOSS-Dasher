@@ -163,9 +163,6 @@ void CDasherInterfaceBase::Realize() {
 #endif
 
   CreateModules();
-
-  g_pLogger->Log(m_pGameDisplay == NULL ? "null in ibase" : "not null in ibase");
-
   CreateInput();
   CreateInputFilter();
   SetupActionButtons();
@@ -273,9 +270,6 @@ void CDasherInterfaceBase::PreSetNotify(int iParameter, const std::string &sNewV
 }
 
 void CDasherInterfaceBase::InterfaceEventHandler(Dasher::CEvent *pEvent) {
-
-  g_pLogger->Log(m_pGameDisplay == NULL ? "NULL" : "NOT NULL");
-
   if(pEvent->m_iEventType == EV_PARAM_NOTIFY) {
     Dasher::CParameterNotificationEvent * pEvt(static_cast < Dasher::CParameterNotificationEvent * >(pEvent));
 
