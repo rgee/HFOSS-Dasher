@@ -18,12 +18,15 @@ class GtkGameDisplay : public Dasher::CGameDisplay {
 	 {
 		m_pChunkDisplay = gtk_label_new(NULL);
 		gtk_container_add(GTK_CONTAINER(m_pContainer), m_pChunkDisplay);
-		//gtk_misc_set_alignment(GTK_MISC(m_pChunkDisplay), 0, .5);
 		gtk_widget_set_visible(m_pChunkDisplay, true);
 
 	 }	 
 
 	 virtual void DisplayChunkText(std::string text, std::vector<std::string>& colors);
+
+	 virtual void hide();
+
+	 virtual void alert(std::string message);
 
 	private:
 

@@ -378,6 +378,10 @@ void CDasherInterfaceBase::InterfaceEventHandler(Dasher::CEvent *pEvent) {
       m_pDasherModel->TriggerSlowdown();
     }
   }
+  else if(pEvent->m_iEventType == EV_GAME_MODE_COMPLETE) {
+	 SetBoolParameter(BP_GAME_MODE, false);
+	 Pause();
+  }
 }
 
 void CDasherInterfaceBase::WriteTrainFileFull() {
@@ -901,9 +905,12 @@ void CDasherInterfaceBase::InitGameModule() {
  * Reset the game module, reset the dasher model, and set m_pGameModule to NULL.
  */
 void CDasherInterfaceBase::ResetGameModule() {
-	m_pGameModule->reset();
-	CreateModel(0);
-	m_pGameModule = NULL;
+	
+	if(m_pGameModule) {
+		m_pGameModule->reset();
+		CreateModel(0);
+		m_pGameModule = NULL;
+	}
 }
 
 void CDasherInterfaceBase::CreateInputFilter()

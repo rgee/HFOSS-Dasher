@@ -30,6 +30,17 @@ class CGameDisplay {
 	 * @param colors the color to give each index of text
 	 */ 
 	virtual void DisplayChunkText(std::string text, std::vector<std::string>& colors) = 0;
+
+	/**
+	 * Hide the display and clear the text in the label.
+	 */ 
+	virtual void hide() = 0;
+
+	/**
+	 * Display a dialog alerting the user about something
+	 * related to game mode.
+	 */ 
+	virtual void alert(std::string message) = 0;
 };
 
 }

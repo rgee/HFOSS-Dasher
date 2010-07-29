@@ -73,11 +73,18 @@ void CGameModule::SetWordGenerator(CWordGeneratorBase *pWordGenerator) {
 }
 
 void CGameModule::reset() {
-	delete m_pWordGenerator;
+
 	m_sTargetString = "";
 	m_iCurrentStringPos = -1;
 	m_iTargetX = 0;
 	m_iTargetY = 0;
+
+	if(m_pGameDisplay)
+		m_pGameDisplay->hide();
+
+	if(m_pWordGenerator)
+		delete m_pWordGenerator;
+
 }
 
 bool CGameModule::CharacterFound(CEditEvent* pEvent) {
@@ -160,9 +167,14 @@ void CGameModule::GenerateChunk() {
 
   for(int i = 0; i < m_iTargetChunkSize; i++) {
     nextWord = m_pWordGenerator->GetNextWord();
-    if(nextWord == "") {
+    
+	//done with game text
+	if(nextWord == "") {
+
       m_sTargetString = "";
+	  m_pGameDisplay->alert("Congratulations! You've completed Dasher game mode!");
       m_pEventHandler->InsertEvent(new CGameModeCompleteEvent());
+
       return;
     } else {
       m_sTargetString += nextWord;
