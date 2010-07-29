@@ -17,7 +17,7 @@ using namespace std;
 #include "DasherInterfaceBase.h"
 #include "WordGeneratorBase.h"
 #include "EventHandler.h"
-#include <tr1/memory>
+#include "GameDisplay.h"
 
 
 namespace Dasher {
@@ -46,8 +46,7 @@ class CGameModule : public CDasherModule {
    * @param pWordGenerator A pointer to the word generator
    */
   CGameModule(Dasher::CEventHandler *pEventHandler, CSettingsStore *pSettingsStore,  
-                CDasherInterfaceBase *pInterface, ModuleID_t iID, const char *szName,
-                std::tr1::shared_ptr<CWordGeneratorBase> pWordGenerator) 
+                Dasher::CDasherInterfaceBase *pInterface, ModuleID_t iID, const char *szName) 
   : m_iCrosshairColor(135),
     m_iCrosshairNumPoints(2),
     m_iCrosshairExtent(25),
@@ -55,19 +54,14 @@ class CGameModule : public CDasherModule {
     m_iTargetChunkSize(3),
     m_iFontSize(36),
     m_iCurrentStringPos(-1),
-    m_pWordGenerator(pWordGenerator),
+	m_pInterface(pInterface),
     CDasherModule(pEventHandler, pSettingsStore, iID, 0, szName,
                   std::vector<int>(vEvents, vEvents + sizeof(vEvents) / sizeof(int)))
-  {     
-    m_pInterface = pInterface;
-      
-    GenerateChunk();
-    if(m_sTargetString == "")
-      g_pLogger->LogCritical("Word generation FAILED");
-    
+  {
   }
 
-  virtual ~CGameModule() {
+  ~CGameModule() {
+	  m_pSettingsStore->SetBoolParameter(BP_GAME_MODE, false);
   }
 
   /**
@@ -95,6 +89,20 @@ class CGameModule : public CDasherModule {
    * @param pEvent The event to be processed.
    */
   virtual void HandleEvent(Dasher::CEvent *pEvent); 
+
+  /**
+   * Set the word generator for this instance to draw words from.
+   * @param pWordGenerator the word generator to be used
+   */ 
+  void SetWordGenerator(CWordGeneratorBase *pWordGenerator);
+
+  /**
+   * Reset the game module. This makes the game module invalid until it is provided
+   * with a new WordGenerator.
+   */ 
+  void reset();
+
+  void SetGameDisplay(CGameDisplay *pGameDisplay);
 
  private:
 /* ---------------------------------------------------------------------
@@ -130,18 +138,26 @@ class CGameModule : public CDasherModule {
    */
   myint DistanceFromOrigin(myint xCoord, myint yCoord);
 
-  
+  /**
+   * Update the game display.
+   */ 
+  void DecorateDisplay();
+
 /* ---------------------------------------------------------------------
  * Member Variables
  * ---------------------------------------------------------------------
  */
    
-   
+  /**
+   * The display widget that this module is using to draw its UI.
+   */ 
+  CGameDisplay *m_pGameDisplay;
+
   /**
    * Pointer to the object that encapsulates the word generation
    * algorithm being used.
    */
-  std::tr1::shared_ptr<CWordGeneratorBase> m_pWordGenerator;
+  CWordGeneratorBase *m_pWordGenerator;
   
   /**
    * The target string the user must type.
@@ -157,7 +173,7 @@ class CGameModule : public CDasherModule {
   /**
    * The dasher interface.
    */
-  CDasherInterfaceBase *m_pInterface;
+  Dasher::CDasherInterfaceBase *m_pInterface;
   
   /**
    * The target x coordinate for the crosshair to point to. 
@@ -168,6 +184,12 @@ class CGameModule : public CDasherModule {
    * The target y coordinate for the crosshair to point to.
    */
   myint m_iTargetY;
+  
+  /**
+   * Flag that denotes whether we are approximating the target position
+   * or not.
+   */
+  bool m_bApproximating;
   
   
   
@@ -210,7 +232,7 @@ class CGameModule : public CDasherModule {
   /**
    * The events this class listens for
    */
-  static const int vEvents[2];
+  static const int vEvents[3];
 
 };
 

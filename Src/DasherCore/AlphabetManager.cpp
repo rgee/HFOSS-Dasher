@@ -53,20 +53,20 @@ CAlphabetManager::CAlphabetManager(CDasherInterfaceBase *pInterface, CNodeCreati
 
 }
 
-CAlphabetManager::CAlphNode::CAlphNode(CDasherNode *pParent, int iOffset, unsigned int iLbnd, unsigned int iHbnd, int iColour, const string &strDisplayText, CAlphabetManager *pMgr)
-: CDasherNode(pParent, iOffset, iLbnd, iHbnd, iColour, strDisplayText), m_pProbInfo(NULL), m_pMgr(pMgr) {
+CAlphabetManager::CAlphNode::CAlphNode(CDasherNode *pParent, int iType,  int iOffset, unsigned int iLbnd, unsigned int iHbnd, int iColour, const string &strDisplayText, CAlphabetManager *pMgr)
+: CDasherNode(pParent, iOffset, iLbnd, iHbnd, iColour, strDisplayText, iType), m_pProbInfo(NULL), m_pMgr(pMgr) {
 };
 
 CAlphabetManager::CSymbolNode::CSymbolNode(CDasherNode *pParent, int iOffset, unsigned int iLbnd, unsigned int iHbnd, CAlphabetManager *pMgr, symbol _iSymbol)
-: CAlphNode(pParent, iOffset, iLbnd, iHbnd, pMgr->m_pNCManager->GetAlphabet()->GetColour(_iSymbol, iOffset%2), pMgr->m_pNCManager->GetAlphabet()->GetDisplayText(_iSymbol), pMgr), iSymbol(_iSymbol) {
+: CAlphNode(pParent, NT_SYMBOL, iOffset, iLbnd, iHbnd, pMgr->m_pNCManager->GetAlphabet()->GetColour(_iSymbol, iOffset%2), pMgr->m_pNCManager->GetAlphabet()->GetDisplayText(_iSymbol), pMgr), iSymbol(_iSymbol) {
 };
 
 CAlphabetManager::CSymbolNode::CSymbolNode(CDasherNode *pParent, int iOffset, unsigned int iLbnd, unsigned int iHbnd, int iColour, const string &strDisplayText, CAlphabetManager *pMgr, symbol _iSymbol)
-: CAlphNode(pParent, iOffset, iLbnd, iHbnd, iColour, strDisplayText, pMgr), iSymbol(_iSymbol) {
+: CAlphNode(pParent, NT_SYMBOL, iOffset, iLbnd, iHbnd, iColour, strDisplayText, pMgr), iSymbol(_iSymbol) {
 };
 
 CAlphabetManager::CGroupNode::CGroupNode(CDasherNode *pParent, int iOffset, unsigned int iLbnd, unsigned int iHbnd, CAlphabetManager *pMgr, SGroupInfo *pGroup)
-: CAlphNode(pParent, iOffset, iLbnd, iHbnd,
+: CAlphNode(pParent, NT_GROUP, iOffset, iLbnd, iHbnd,
             pGroup ? (pGroup->bVisible ? pGroup->iColour : pParent->getColour())
                    : pMgr->m_pNCManager->GetAlphabet()->GetColour(0, iOffset%2),
             pGroup ? pGroup->strLabel : "", pMgr), m_pGroup(pGroup) {
@@ -140,20 +140,8 @@ CAlphabetManager::CAlphNode *CAlphabetManager::GetRoot(CDasherNode *pParent, uns
   return pNewNode;
 }
 
-bool CAlphabetManager::CSymbolNode::GameSearchNode(string strTargetUtf8Char) {
-  if (m_pMgr->m_pNCManager->GetAlphabet()->GetText(iSymbol) == strTargetUtf8Char) {
-    SetFlag(NF_GAME, true);
-    return true;
-  }
-  return false;
-}
-
-bool CAlphabetManager::CGroupNode::GameSearchNode(string strTargetUtf8Char) {
-  if (GameSearchChildren(strTargetUtf8Char)) {
-    SetFlag(NF_GAME, true);
-    return true;
-  }
-  return false;
+bool CAlphabetManager::CSymbolNode::IsTarget(string strTargetUtf8Char) {
+  return (m_pMgr->m_pNCManager->GetAlphabet()->GetText(iSymbol) == strTargetUtf8Char);
 }
 
 CLanguageModel::Context CAlphabetManager::CAlphNode::CloneAlphContext(CLanguageModel *pLanguageModel) {

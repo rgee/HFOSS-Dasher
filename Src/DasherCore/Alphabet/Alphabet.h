@@ -28,6 +28,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <algorithm>
 #include <vector>
 
 namespace Dasher {
@@ -86,7 +87,6 @@ namespace Dasher {
     const std::string & GetText(symbol i) const {
       return m_Characters[i];
     } 
-    // return string for i'th symbol
 
     int GetColour(symbol i, int iPhase) const;
 

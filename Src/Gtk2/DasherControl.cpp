@@ -9,6 +9,7 @@
 #include "Timer.h"
 #include "../DasherCore/Event.h"
 #include "../DasherCore/ModuleManager.h"
+#include "GtkGameDisplay.h"
 
 #include <fcntl.h>
 
@@ -46,6 +47,9 @@ CDasherControl::CDasherControl(GtkVBox *pVBox, GtkDasherControl *pDasherControl)
 }
 
 void CDasherControl::CreateModules() {
+
+  g_message("Creating modules");
+
   CDasherInterfaceBase::CreateModules(); //create default set first
   // Create locally cached copies of the mouse input objects, as we
   // need to pass coordinates to them from the timer callback
@@ -91,13 +95,14 @@ void CDasherControl::SetupUI() {
   g_signal_connect_after(m_pCanvas, "realize", G_CALLBACK(realize_canvas), this);
   g_signal_connect(m_pCanvas, "configure_event", G_CALLBACK(canvas_configure_event), this);
   g_signal_connect(m_pCanvas, "destroy", G_CALLBACK(canvas_destroy_event), this);
-
+  
   g_signal_connect(m_pCanvas, "key-release-event", G_CALLBACK(key_release_event), this);
   g_signal_connect(m_pCanvas, "key_press_event", G_CALLBACK(key_press_event), this);
 
   g_signal_connect(m_pCanvas, "focus_in_event", G_CALLBACK(canvas_focus_event), this);
   g_signal_connect(m_pCanvas, "expose_event", G_CALLBACK(canvas_expose_event), this);
 
+  //g_signal_connect(m_pDasher)
   // Create the Pango cache
 
   // TODO: Use system defaults?
@@ -126,6 +131,13 @@ void CDasherControl::SetupPaths() {
   SetStringParameter(SP_SYSTEM_LOC, system_data_dir);
   SetStringParameter(SP_USER_LOC, user_data_dir);
   delete[] user_data_dir;
+}
+
+void CDasherControl::CreateGameDisplay(void* pGameDisplay) {
+
+	m_pGameDisplay = new GtkGameDisplay(GTK_WIDGET(pGameDisplay));
+	InitGameModule();
+	m_pGameModule->SetGameDisplay(m_pGameDisplay);
 }
 
 void CDasherControl::CreateSettingsStore() {

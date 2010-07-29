@@ -41,6 +41,7 @@
 #include "InputFilter.h"
 #include "ModuleManager.h"
 #include "GameModule.h"
+#include "GameDisplay.h"
 
 #include <map>
 #include <algorithm>
@@ -403,6 +404,12 @@ protected:
   void NewFrame(unsigned long iTime, bool bForceRedraw);
 
 
+  /**
+   * Initialize m_pGameModule by fetching the
+   *  constructed module from the module manager.
+  */
+  void InitGameModule();
+
   enum ETransition {
     TR_MODEL_INIT = 0,
     TR_UI_INIT,
@@ -434,6 +441,19 @@ protected:
 
   CEventHandler *m_pEventHandler;
   CSettingsStore *m_pSettingsStore;
+  
+  /**
+   * The display widget used by GameModule to display a helpful UI. 
+   * Insantiated by platform specific implementations of DasherIntefaceBase.
+   */ 
+  CGameDisplay *m_pGameDisplay;
+
+
+  /** 
+   * The game mode module - only
+   * initialized if game mode is enabled
+   */
+  CGameModule *m_pGameModule;
 
  private:
 
@@ -520,10 +540,10 @@ protected:
   void CreateInput();
 	
   
-  /* Initialize m_pGameModule by fetching the
-  * constructed module from the module manager.
-  */
-  void InitGameModule();
+  /**
+   * Reset m_pGameModule - called when game mode is disabled.
+   */ 
+  void ResetGameModule();
 
   void CreateInputFilter();
 
@@ -561,11 +581,8 @@ protected:
   CAlphIO *m_AlphIO;
   CColourIO *m_ColourIO;
   CNodeCreationManager *m_pNCManager;
-  CUserLogBase *m_pUserLog;
+  CUserLogBase *m_pUserLog; 
 
-  // the game mode module - only
-  // initialized if game mode is enabled
-  CGameModule *m_pGameModule;
   /// @}
 
   std::string strTrainfileBuffer;

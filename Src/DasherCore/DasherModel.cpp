@@ -20,6 +20,8 @@
 
 #include "../Common/Common.h"
 
+#include <sstream>
+
 #include <iostream>
 #include <cstring>
 #include "../Common/Random.h"
@@ -88,6 +90,7 @@ CDasherModel::CDasherModel(CEventHandler *pEventHandler,
   m_Rootmax_max = int64_max / iNormalization / 2;
 
   InitialiseAtOffset(iOffset, pView);
+
 }
 
 CDasherModel::~CDasherModel() {
@@ -101,6 +104,133 @@ CDasherModel::~CDasherModel() {
   } else {
     delete m_Root;
     m_Root = NULL;
+  }
+}
+
+void CDasherModel::GetSymbolList(CDasherNode* pNode, std::deque<CAlphabetManager::CSymbolNode*>& result) {
+
+  for(std::deque<CDasherNode*>::const_iterator it = pNode->GetChildren().begin();
+              it != pNode->GetChildren().end(); it++) {
+    if((*it)->GetType() == NT_SYMBOL) {
+      result.push_back(static_cast<CAlphabetManager::CSymbolNode*>(*it));
+    }
+    else if((*it)->GetType() == NT_GROUP) {
+    
+     std::deque<CAlphabetManager::CSymbolNode*> group_results;
+     GetSymbolList(*it, group_results);
+
+     result.insert(result.end(), group_results.begin(), group_results.end());
+    }
+  } 
+}
+
+void CDasherModel::GameApproximate() {
+  // Get a list of the symbol IDs of all the currently drawn children.
+  std::deque<CAlphabetManager::CSymbolNode*> vNodes; 
+  GetSymbolList(Get_node_under_crosshair(), vNodes);
+  std::vector<int> iTargetSymbols;
+  m_pNodeCreationManager->GetAlphabet()->GetSymbols(iTargetSymbols, m_strGameTarget);
+
+
+  int iTargetSymbol = iTargetSymbols.front(); 
+  // Check if the target is off to the high end
+  if( iTargetSymbol > vNodes.front()->iSymbol ) {
+    m_pEventHandler->InsertEvent(
+      new CNoGameNodeEvent(std::make_pair(static_cast<CDasherNode*>(NULL), vNodes.front()))
+    );
+  }
+
+  // Check if the target is off to the low end
+  if( iTargetSymbol < vNodes.back()->iSymbol) {
+    m_pEventHandler->InsertEvent(
+      new CNoGameNodeEvent(std::make_pair(vNodes.back(), static_cast<CDasherNode*>(NULL)))
+    );
+  }
+
+  
+  for(std::deque<CAlphabetManager::CSymbolNode*>::iterator it = vNodes.begin();
+              it != vNodes.end(); ++it) {
+    if( iTargetSymbol < (*it)->iSymbol ) {
+      CAlphabetManager::CSymbolNode* prev = *(--it);
+      m_pEventHandler->InsertEvent(
+        new CNoGameNodeEvent(std::make_pair( static_cast<CDasherNode*>(NULL), static_cast<CDasherNode*>(NULL))));
+    }
+  }
+}
+
+
+void CDasherModel::GameSearchApproximate(CAlphabetManager::CSymbolNode* pNode) {
+  std::vector<int> iTargetSymbols;
+  m_pNodeCreationManager->GetAlphabet()->GetSymbols(iTargetSymbols, m_strGameTarget);
+
+  int iTargetSymbol = iTargetSymbols.front();
+
+  g_pLogger->Log("Begin search for approximate game nodes..."); 
+
+ 
+  // If the first symbol is greater than the target, we know  the target
+  // must be off the child list to the left
+  if( static_cast<CAlphabetManager::CSymbolNode*>((*pNode->GetChildren().begin()))->iSymbol > iTargetSymbol ) {
+    m_pEventHandler->InsertEvent(new CNoGameNodeEvent(std::make_pair(static_cast<CDasherNode*>(NULL), (*pNode->GetChildren().begin()))));
+    return;
+  }
+  
+  // If the last symbol is less than the target, we know the target must
+  // be off the child list to the right
+  if( static_cast<CAlphabetManager::CSymbolNode*>((*pNode->GetChildren().end()))->iSymbol < iTargetSymbol ) {
+    m_pEventHandler->InsertEvent(new CNoGameNodeEvent(std::make_pair( (*pNode->GetChildren().end()), static_cast<CDasherNode*>(NULL) )));
+    return;
+  }
+  
+  // Otherwise, it's between two elements of the child list. Find those
+  // elements and send them out.
+  for(CDasherNode::ChildMap::const_iterator it = pNode->GetChildren().begin();
+              it != pNode->GetChildren().end(); it++) {
+    if( static_cast<CAlphabetManager::CSymbolNode*>((*it))->iSymbol > iTargetSymbol ) {
+      m_pEventHandler->InsertEvent(new CNoGameNodeEvent( std::make_pair( (*--it), (*it) ) ));
+      return;
+    }
+  }
+
+}
+
+bool CDasherModel::GameSearchChildren(CDasherNode* pNode) {
+  for(CDasherNode::ChildMap::const_iterator it = pNode->GetChildren().begin();
+              it != pNode->GetChildren().end(); it++) {
+    if( GameSearchIndividual((*it)) ) return true;
+  }
+  
+
+
+  // If we cannot find the target string, it must not be drawn. We know this because every subtree
+  // in the dasher model has one instance of each node in the alphabet. It must be there
+  // somewhere or it's not drawn OR it's not in the alphabet at all. In the last case, we have
+  // larger problems...
+  if(m_strGameTarget != "") {
+/*
+     std::stringstream ss;
+     ss << Get_node_under_crosshair()->GetChildren().size();
+     g_pLogger->Log(ss.str());
+*/
+    //GameApproximate();
+  }
+  return false;
+}
+
+bool CDasherModel::GameSearchIndividual(CDasherNode* pNode) {
+  int iType = pNode->GetType();
+  if(iType == NT_GROUP) {
+    if(GameSearchChildren(pNode)) {
+      pNode->SetFlag(NF_GAME, true);
+      return true;
+    }
+    return false;
+  } else if(iType == NT_SYMBOL) {
+    if(pNode->IsTarget(m_strGameTarget)) {
+      pNode->SetFlag(NF_GAME, true);
+      return true;
+    }
+    return false;
   }
 }
 
@@ -152,7 +282,7 @@ void CDasherModel::HandleEvent(Dasher::CEvent *pEvent) {
     m_strGameTarget = pTargetChangedEvent->m_strTargetText;
    
     // Search from the current root.
-    Get_node_under_crosshair()->GameSearchChildren(m_strGameTarget);
+    GameSearchChildren(Get_node_under_crosshair());
   }
 }
 
@@ -599,25 +729,8 @@ void CDasherModel::ExpandNode(CDasherNode *pNode) {
 
   // We get here if all our children (groups) and grandchildren (symbols) are created.
   // So lets find the correct letters.
-  ///GAME MODE TEMP///////////
-  // If we are in GameMode, then we do a bit of cooperation with the teacher object when we create
-  // new children.
-
-  //GameMode::CDasherGameMode* pTeacher = GameMode::CDasherGameMode::GetTeacher();
-  //if(m_bGameMode && pNode->GetFlag(NF_GAME) && pTeacher )
-  if(pNode->GetFlag(NF_GAME))
-  {
-    /*std::string strTargetUtf8Char(pTeacher->GetSymbolAtOffset(pNode->offset() + 1));
-      
-    // Check if this is the last node in the sentence...
-    if(strTargetUtf8Char == "GameEnd")
-      pNode->SetFlag(NF_END_GAME, true);
-    else if (!pNode->GameSearchChildren(strTargetUtf8Char)) {
-      // Target character not found - not in our current alphabet?!?!
-      // Let's give up!
-      pNode->SetFlag(NF_END_GAME, true); 
-    }*/
-    Get_node_under_crosshair()->GameSearchChildren(m_strGameTarget);
+  if(pNode->GetFlag(NF_GAME)) {
+    GameSearchChildren(Get_node_under_crosshair());
   }
   ////////////////////////////
   
@@ -821,3 +934,4 @@ void CDasherModel::SetControlOffset(int iOffset) {
   
   pNode->SetControlOffset(iOffset);
 }
+
