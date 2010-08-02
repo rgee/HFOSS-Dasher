@@ -43,18 +43,15 @@ public:
 
   /**
    * Gets a single word based on the generation rules.
-   * @pre { Generate must have been called at least once. }
    * @return The next string from this generator
    */
   virtual std::string GetNextWord() = 0;
 
   /**
-   * -- NOT YET IMPLEMENTED --
    * Gets the previous word in the generated string based on generation rules.
-   * @pre { Generate must have been called at least once. }
    * @return The previous string from this generator
    */
-  //virtual std::string GetPreviousWord() = 0;
+  virtual std::string GetPreviousWord() = 0;
   
 protected:
 

@@ -2,6 +2,7 @@
 #define __FileWordGenerator_h__
 
 #include <string>
+#include <vector>
 #include <iostream>
 #include <fstream>
 #include <stdexcept>
@@ -31,13 +32,13 @@ public:
   CFileWordGenerator(std::string sPath, int iRegen) 
     : m_sPath(sPath),
       CWordGeneratorBase(iRegen) {
-    Generate();
+    GenerateForward();
   }
     
   CFileWordGenerator(std::string sPath)
     : m_sPath(sPath),
       CWordGeneratorBase() {
-    Generate();
+    GenerateForward();
   }
       
   virtual ~CFileWordGenerator() {
@@ -53,6 +54,7 @@ public:
    */
   virtual std::string GetNextWord();
 
+  virtual std::string GetPreviousWord();
 
   /**
    * File path getter
@@ -75,12 +77,24 @@ private:
  */
   
   /**
-   * The generator function. Reads words from the specified file.
+   * The forward generator function. Reads words from the specified file
+   * in a standard, forward order.
+   *
    * @return True if generating the new buffer was successful,
    *          false if we've reached the end of the file.
    * @throw Throws an exception if the file cannot be read.
    */ 
-  bool Generate();
+  bool GenerateForward();
+  
+  /**
+   * Reverse generator function. Reads words from the specified file in
+   * reverse order.
+   *
+   * @return True if generating the new buffer was successful, false
+   *          if we are at the beginning of the file.
+   * @throw Throws an exception if the file cannot be read.
+   */
+  bool GenerateReverse();
 
 
 /* ---------------------------------------------------------------------
@@ -107,6 +121,8 @@ private:
    * The input stream that acts as the handle to the underlying file.
    */
   ifstream m_sFileHandle;
+
+  std::vector<std::streampos> m_vPreviousLines;
 };
 }
 

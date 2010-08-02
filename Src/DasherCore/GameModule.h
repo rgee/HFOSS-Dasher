@@ -124,10 +124,12 @@ class CGameModule : public CDasherModule {
 
   /**
    * Helper function for generating (Or regenerating) a new chunk.
+   * 
+   * @param reverse If true, will grab the previous chunk from the generator
    * @warning This will destroy the previous chunk. Only use when you
    *          need to grab an entirely new chunk to display.
    */
-  void GenerateChunk();
+  void GenerateChunk(bool reverse = false);
 
   /**
    * Get the distance of a given point (in Dasher Coordinates) from the origin.

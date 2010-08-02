@@ -30,22 +30,29 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
                     // Check if the typed character is correct
                     if(CharacterFound(evt)) {
                       // Check if we've reached the end of a chunk
-                      if((m_iCurrentStringPos)  == m_sTargetString.length() - 2) {
+                      if(m_iCurrentStringPos  == m_sTargetString.length() - 2) {
                         GenerateChunk();
 
                       } else {
-                          ++m_iCurrentStringPos;
+                        ++m_iCurrentStringPos;
 
-						  DecorateDisplay();
+						            DecorateDisplay();
 
-                            m_pEventHandler->InsertEvent(
-                              new CGameTargetChangedEvent(m_sTargetString.substr(m_iCurrentStringPos + 1, 1))
-                            );
+                        m_pEventHandler->InsertEvent(
+                          new CGameTargetChangedEvent(m_sTargetString.substr(m_iCurrentStringPos + 1, 1)));
                       }
                     }
                     break;
                 // Removed a character (Stepped one node back)
                 case 0:
+                    if(m_iCurrentStringPos == -1) {
+                      GenerateChunk(true);
+                    } else {
+                      --m_iCurrentStringPos;
+                      DecorateDisplay();
+                      m_pEventHandler->InsertEvent(
+                        new CGameTargetChangedEvent(m_sTargetString.substr(m_iCurrentStringPos + 1, 1)));
+                    }
                     break;
                 default:
                     break;
@@ -152,29 +159,44 @@ std::string CGameModule::GetUntypedTarget() {
   return m_sTargetString.substr(m_iCurrentStringPos + 1);
 }
 
-void CGameModule::GenerateChunk() {
-  m_iCurrentStringPos = -1;
-  m_sTargetString.clear();
+void CGameModule::GenerateChunk(bool reverse) {
 
-  std::string nextWord;
-
-  for(int i = 0; i < m_iTargetChunkSize; i++) {
-    nextWord = m_pWordGenerator->GetNextWord();
-    if(nextWord == "") {
-      m_sTargetString = "";
-      m_pEventHandler->InsertEvent(new CGameModeCompleteEvent());
-      return;
-    } else {
-      m_sTargetString += nextWord;
-      m_sTargetString += " ";
+  if(reverse) {
+    std::string previousWord;
+    for(int i = 0; i < m_iTargetChunkSize; i++) {
+      previousWord = m_pWordGenerator->GetPreviousWord();
+      if(previousWord == "") {
+        m_sTargetString = "";
+      } else {
+        m_sTargetString = " " + previousWord + m_sTargetString;
+      }
     }
+    m_iCurrentStringPos = m_sTargetString.length() - 1;
+    m_pEventHandler->InsertEvent(new CGameTargetChangedEvent(m_sTargetString.substr()));
+  } else {
+    std::string nextWord;
+    m_iCurrentStringPos = -1;
+    m_sTargetString.clear();
+
+    for(int i = 0; i < m_iTargetChunkSize; i++) {
+      nextWord = m_pWordGenerator->GetNextWord();
+      if(nextWord == "") {
+        m_sTargetString = "";
+        m_pEventHandler->InsertEvent(new CGameModeCompleteEvent());
+        return;
+      } else {
+        m_sTargetString += nextWord;
+        m_sTargetString += " ";
+      }
+    }
+    m_pEventHandler->InsertEvent(
+        new CGameTargetChangedEvent(m_sTargetString.substr(0, 1))
+        );
   }
-  m_pEventHandler->InsertEvent(
-      new CGameTargetChangedEvent(m_sTargetString.substr(0, 1))
-      );
 
   DecorateDisplay();
 }
+
 
 void CGameModule::DecorateDisplay() {
 	if(m_pGameDisplay == NULL) return;
