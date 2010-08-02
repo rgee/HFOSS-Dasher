@@ -189,6 +189,7 @@ void CGameModule::GenerateChunk() {
 }
 
 void CGameModule::DecorateDisplay() {
+
 	if(m_pGameDisplay == NULL) return;
 
 	std::vector<std::string> colors = std::vector<std::string>();

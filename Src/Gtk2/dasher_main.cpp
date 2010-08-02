@@ -599,6 +599,16 @@ void init_game_mode(char *pGameTextFilePath, DasherMain *pSelf) {
 	clear_dasher_editor_text(pSelf);
 }
 
+void init_game_from_default_button(GtkWidget *pButton, GtkWidget *pWidget, gpointer pData) {
+	init_game_mode(_(""), (DasherMain*)pData);
+
+	//TODO: this is really ugly - clearly symptomatic of doing something wrong with GTK
+	//but I can't figure out what. For now, it makes the UI behave properly.
+	gtk_widget_destroy(gtk_widget_get_parent(
+					   gtk_widget_get_parent(
+					   (gtk_widget_get_parent(GTK_WIDGET(pButton))))));
+}
+
 /**
  * Event handler which displays a standard GTK file dialog. The dialog allows the user
  * to specify a text file to play game mode with.
@@ -657,7 +667,7 @@ void dasher_main_toggle_game_mode(DasherMain *pSelf) {
                                          _("Welcome to Dasher Game Mode! Game Mode is a fun way to practice entering text in Dasher. Please select a training text to play with:"));
 
 		GtkWidget *pDefaultButton = gtk_dialog_add_button(GTK_DIALOG(pDialog), _("Use Default"), GTK_RESPONSE_CLOSE);	
-		GtkWidget *pFileButton = gtk_dialog_add_button(GTK_DIALOG(pDialog), _("Choose File..."), 2);
+		GtkWidget *pFileButton = gtk_dialog_add_button(GTK_DIALOG(pDialog), _("Choose File..."), GTK_RESPONSE_NONE);
 		gtk_dialog_add_button(GTK_DIALOG(pDialog), _("Cancel"), GTK_RESPONSE_CLOSE);
 
 		//make a pair with references to the the DasherMain and parent window instances that
@@ -665,7 +675,7 @@ void dasher_main_toggle_game_mode(DasherMain *pSelf) {
 		//parameters in g_signal_connect
 		std::pair<GtkWindow*, DasherMain*> objRefs = std::make_pair(GTK_WINDOW(pDialog), pSelf);
 
-		//g_signal_connect(pDefaultButton, "button-press-event", G_CALLBACK)
+		g_signal_connect(pDefaultButton, "button-press-event", G_CALLBACK(init_game_from_default_button), pSelf);
 		g_signal_connect(pFileButton, "button-press-event", G_CALLBACK(show_game_file_dialog),
 					(gpointer)&objRefs);
 

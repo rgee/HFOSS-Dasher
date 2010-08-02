@@ -48,8 +48,6 @@ CDasherControl::CDasherControl(GtkVBox *pVBox, GtkDasherControl *pDasherControl)
 
 void CDasherControl::CreateModules() {
 
-  g_message("Creating modules");
-
   CDasherInterfaceBase::CreateModules(); //create default set first
   // Create locally cached copies of the mouse input objects, as we
   // need to pass coordinates to them from the timer callback
@@ -372,6 +370,9 @@ void CDasherControl::ExternalEventHandler(Dasher::CEvent *pEvent) {
   else if(pEvent->m_iEventType == EV_COMMAND) {
     CCommandEvent *pCommandEvent(static_cast<CCommandEvent *>(pEvent));
     g_signal_emit_by_name(GTK_OBJECT(m_pDasherControl), "dasher_command", pCommandEvent->m_strCommand.c_str());
+  }
+  else if(pEvent->m_iEventType == EV_GAME_MODE_COMPLETE) {
+	 //TODO: clear the dasher editor text here!
   }
 };
 

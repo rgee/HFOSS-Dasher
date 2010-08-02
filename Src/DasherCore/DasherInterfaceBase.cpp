@@ -341,6 +341,7 @@ void CDasherInterfaceBase::InterfaceEventHandler(Dasher::CEvent *pEvent) {
 		InitGameModule();
 	  }
 	  else if(m_pGameModule){
+		CreateModel(0);
 		ResetGameModule();
 	  }
 	  
@@ -896,19 +897,23 @@ void CDasherInterfaceBase::InitGameModule() {
 	m_pGameModule = (CGameModule*) GetModuleByName("Game Mode");
 
 	if(GetBoolParameter(BP_GAME_MODE)) {
-		//CreateModel(0);
+		
+		if(GetStringParameter(SP_GAME_TEXT_FILE) == "")
+			SetStringParameter(SP_GAME_TEXT_FILE,
+							   GetStringParameter(SP_SYSTEM_LOC) + m_Alphabet->GetGameModeFile());		
+
 		m_pGameModule->SetWordGenerator(new CFileWordGenerator(GetStringParameter(SP_GAME_TEXT_FILE)));
 	}
 }
 
 /**
- * Reset the game module, reset the dasher model, and set m_pGameModule to NULL.
+ * Reset the game module, and set m_pGameModule to NULL.
  */
 void CDasherInterfaceBase::ResetGameModule() {
 	
 	if(m_pGameModule) {
 		m_pGameModule->reset();
-		CreateModel(0);
+		SetStringParameter(SP_GAME_TEXT_FILE, "");
 		m_pGameModule = NULL;
 	}
 }
