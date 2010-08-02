@@ -1,0 +1,1 @@
+pkgdata_DATA = $(srcdir)/game_mode_*.txt
