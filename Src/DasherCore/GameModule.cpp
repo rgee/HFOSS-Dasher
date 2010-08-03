@@ -174,6 +174,7 @@ void CGameModule::GenerateChunk() {
       m_sTargetString = "";
 	  m_pGameDisplay->alert("Congratulations! You've completed Dasher game mode!");
       m_pEventHandler->InsertEvent(new CGameModeCompleteEvent());
+	  m_pGameDisplay->ClearEditor();
 
       return;
     } else {

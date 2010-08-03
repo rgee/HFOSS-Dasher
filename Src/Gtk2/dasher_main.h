@@ -5,6 +5,7 @@
 #include <glib-object.h>
 #include "Preferences.h"
 #include "KeyboardHelper.h"
+#include "dasher_editor.h"
 #include "DasherAppSettings.h"
 
 G_BEGIN_DECLS

@@ -41,6 +41,12 @@ class CGameDisplay {
 	 * related to game mode.
 	 */ 
 	virtual void alert(std::string message) = 0;
+
+	/**
+	 * Clear the dasher editor, as is appropriate when starting
+	 * or ending game mode.
+	 */ 
+	virtual void ClearEditor() = 0;
 };
 
 }

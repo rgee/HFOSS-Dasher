@@ -33,3 +33,7 @@ void GtkGameDisplay::alert(std::string message) {
 	gtk_dialog_run(GTK_DIALOG(dialog));
 	gtk_widget_destroy(GTK_WIDGET(dialog));
 }
+
+void GtkGameDisplay::ClearEditor() {
+	dasher_editor_clear_text(m_pEditor);
+}

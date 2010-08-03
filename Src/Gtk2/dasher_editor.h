@@ -109,6 +109,7 @@ void dasher_editor_handle_control(DasherEditor *pSelf, int iNodeID);
 void dasher_editor_grab_focus(DasherEditor *pSelf);
 gboolean dasher_editor_file_changed(DasherEditor *pSelf);
 const gchar *dasher_editor_get_filename(DasherEditor *pSelf);
+void dasher_editor_clear_text(DasherEditor *pSelf);
 
 G_END_DECLS
 

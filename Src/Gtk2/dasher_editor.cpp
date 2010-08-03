@@ -300,6 +300,16 @@ dasher_editor_end_compose(DasherEditor *pSelf, bool bKeep) {
     DASHER_EDITOR_GET_CLASS(pSelf)->end_compose(pSelf, bKeep);
 }
 
+/**
+ * Clear all text out of the dasher editor.
+ * @param pSelf a reference to an instance of DasherEditor
+ */ 
+void dasher_editor_clear_text(DasherEditor *pSelf) {
+
+	int editorTextLen = strlen(dasher_editor_get_all_text(pSelf));
+	dasher_editor_delete(pSelf, editorTextLen, 0);	
+}
+
 
 const gchar *
 dasher_editor_get_context(DasherEditor *pSelf, int iOffset, int iLength) {

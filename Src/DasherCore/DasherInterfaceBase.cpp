@@ -361,6 +361,8 @@ void CDasherInterfaceBase::InterfaceEventHandler(Dasher::CEvent *pEvent) {
     }
     else if(pEditEvent->m_iEditType == 2) {
       strCurrentContext = strCurrentContext.substr( 0, strCurrentContext.size() - pEditEvent->m_sText.size());
+		
+	  g_pLogger->Log(strCurrentContext);
       if(GetBoolParameter(BP_LM_ADAPTIVE))
    strTrainfileBuffer = strTrainfileBuffer.substr( 0, strTrainfileBuffer.size() - pEditEvent->m_sText.size());
     }

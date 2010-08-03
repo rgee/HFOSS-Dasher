@@ -412,8 +412,6 @@ dasher_main_load_interface(DasherMain *pSelf) {
   pPrivate->pGameDisplay = GTK_WIDGET(gtk_builder_get_object(pPrivate->pXML, "GameDisplay"));
   //  pPrivate->pMenuBar = gtk_builder_get_object(pPrivate->pXML, "dasher_menu_bar");
   pPrivate->pDasherWidget = GTK_WIDGET(gtk_builder_get_object(pPrivate->pXML, "DasherControl"));
-
-  gtk_dasher_control_set_game_display(GTK_DASHER_CONTROL(pPrivate->pDasherWidget), pPrivate->pGameDisplay);
   
 #ifndef WITH_MAEMO
   pPrivate->pSpeedBox = GTK_SPIN_BUTTON(gtk_builder_get_object(pPrivate->pXML, "spinbutton1"));
@@ -551,6 +549,10 @@ dasher_main_load_interface(DasherMain *pSelf) {
   pPrivate->pEditor = DASHER_EDITOR(gtk_builder_get_object(pPrivate->pXML, "DasherEditor"));
   // TODO: szFullPath
   pPrivate->bWidgetsInitialised = true;
+
+  
+  gtk_dasher_control_set_game_display(GTK_DASHER_CONTROL(pPrivate->pDasherWidget), pPrivate->pGameDisplay, pPrivate->pEditor);
+
 }
 
 static void 
@@ -564,17 +566,6 @@ dasher_main_create_preferences(DasherMain *pSelf) {
 //   DasherMainPrivate *pPrivate = DASHER_MAIN_GET_PRIVATE(pSelf);
 //   return pPrivate->pEditor;
 // 
-
-/**
- * Clear all text out of the dasher editor.
- * @param pSelf a reference to an instance of DasherMain
- */ 
-void clear_dasher_editor_text(DasherMain *pSelf) {
-
-	DasherMainPrivate *pPrivate = DASHER_MAIN_GET_PRIVATE(pSelf);
-	int editorTextLen = strlen(dasher_editor_get_all_text(pPrivate->pEditor));
-	dasher_editor_delete(pPrivate->pEditor, editorTextLen, 0);	
-}
 
 /**
  * Start game mode, specify the text to play with, and clear out any text in the dasher editor.
@@ -596,7 +587,7 @@ void init_game_mode(char *pGameTextFilePath, DasherMain *pSelf) {
 							pGameTextFilePath);
 	
 	dasher_app_settings_set_bool(pPrivate->pAppSettings, BP_GAME_MODE, true);
-	clear_dasher_editor_text(pSelf);
+	dasher_editor_clear_text(pPrivate->pEditor);
 }
 
 void init_game_from_default_button(GtkWidget *pButton, GtkWidget *pWidget, gpointer pData) {
@@ -695,18 +686,18 @@ void dasher_main_toggle_game_mode(DasherMain *pSelf) {
 
     //g_signal_connect(pYesButton, "button-press-event", G_CALLBACK(quit_game_mode), (gpointer)pSelf);
 
-    switch(gtk_dialog_run(GTK_DIALOG(pDialog))) {
-      case GTK_RESPONSE_REJECT:
-        gtk_widget_destroy(GTK_WIDGET(pDialog));
-        break;
-      case GTK_RESPONSE_ACCEPT:
+		switch(gtk_dialog_run(GTK_DIALOG(pDialog))) {
+		case GTK_RESPONSE_REJECT:
+			gtk_widget_destroy(GTK_WIDGET(pDialog));
+			break;
+		case GTK_RESPONSE_ACCEPT:
 		    dasher_app_settings_set_bool(pPrivate->pAppSettings, BP_GAME_MODE, false);
-		    clear_dasher_editor_text(pSelf);
-    }
+		    dasher_editor_clear_text(pPrivate->pEditor);
+		}
 
-    if(GTK_IS_WIDGET(pDialog)) {
-      gtk_widget_destroy(GTK_WIDGET(pDialog));
-    }
+		if(GTK_IS_WIDGET(pDialog)) {
+			gtk_widget_destroy(GTK_WIDGET(pDialog));
+		}
 	}
 
 }
@@ -1123,7 +1114,7 @@ static void dasher_main_command_quit(DasherMain *pSelf) {
 #endif
 
     gtk_dialog_add_buttons(GTK_DIALOG(pDialogue), 
-                           _("Don't save"), GTK_RESPONSE_REJECT,
+                          _("Don't save"), GTK_RESPONSE_REJECT,
                            _("Don't quit"), GTK_RESPONSE_CANCEL, 
                            _("Save and quit"), GTK_RESPONSE_ACCEPT, 
                            NULL);
