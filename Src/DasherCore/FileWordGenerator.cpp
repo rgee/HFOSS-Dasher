@@ -19,6 +19,7 @@ bool CFileWordGenerator::GenerateForward() {
     return false;
   } else if(m_sFileHandle.good()) {
     std::getline(m_sFileHandle, m_sGeneratedString);
+    g_pLogger->Log("Next Line: " + m_sGeneratedString);
     m_vPreviousLines.push_back(m_sFileHandle.tellg());
     return true;
   }
@@ -29,9 +30,14 @@ bool CFileWordGenerator::GenerateReverse() {
     throw std::runtime_error("File: " + m_sPath + " cannot be read.");
   }
 
-  m_sGeneratedString.clear();
+  m_sGeneratedString = "";
+  g_pLogger->Log("Cleared old string.");
+
+  m_vPreviousLines.pop_back();
+  g_pLogger->Log("Removed last line ptr.");
+
   std::streampos sp = m_vPreviousLines.back();
-  m_vPreviousLines.erase(m_vPreviousLines.end());
+  g_pLogger->Log("Grabbed the line pointer we want.");
 
   if(sp == 0) {
     return false;
@@ -54,20 +60,20 @@ std::string CFileWordGenerator::GetPreviousWord() {
     if(!GenerateReverse()) {
       return "";
     }
+  }
     
-    size_t found = m_sGeneratedString.rfind(" ");
-    m_uiPos = found;
+  size_t found = m_sGeneratedString.rfind(" ");
+  m_uiPos = found;
 
-    if(found == string::npos) {
-      // We just take the entire string here for the following reasons
-      //
-      // If m_sGeneratedString is of the form "someword", we return that
-      // word. If it's of the form "" for some reason, we indicate failure
-      // by returning it.
-      return m_sGeneratedString;
-    } else {
-      return m_sGeneratedString.substr(found);
-    }
+  if(found == string::npos) {
+    // We just take the entire string here for the following reasons
+    //
+    // If m_sGeneratedString is of the form "someword", we return that
+    // word. If it's of the form "" for some reason, we indicate failure
+    // by returning it.
+    return m_sGeneratedString;
+  } else {
+    return m_sGeneratedString.substr(found);
   } 
 }
 
