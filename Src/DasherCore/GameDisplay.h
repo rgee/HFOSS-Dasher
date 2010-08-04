@@ -34,13 +34,13 @@ class CGameDisplay {
 	/**
 	 * Hide the display and clear the text in the label.
 	 */ 
-	virtual void hide() = 0;
+	virtual void Hide() = 0;
 
 	/**
 	 * Display a dialog alerting the user about something
 	 * related to game mode.
 	 */ 
-	virtual void alert(std::string message) = 0;
+	virtual void Alert(std::string message) = 0;
 };
 
 }

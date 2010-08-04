@@ -25,14 +25,15 @@ namespace Dasher {
 /**
  * This Dasher Module encapsulates all game mode logic. In game mode, users will be given
  * a target string to type as well as visual feedback for their progress and a helpful 
- * arrow to guide them in the right path through the dasher model.
+ * crosshair to guide them in the right path through the dasher model.
  * 
  * The way target strings will be displayed and reasoned about in code is in terms
  * of chunks. Chunks represent the collection of strings that is displayed at once
  * on the screen. After typing all the words in a given chunk, a new chunk of size
  * m_iTargetChunkSize is retrieved from the word generator and displayed.
  *
- * This class handles logic and drawing code with respect to the above.
+ * This class handles logic with respect to the above. It handles drawing to the dasher display,
+ * but delegates platform specific UI modifications to a CDasherDisplay.
  */
 class CGameModule : public CDasherModule {
  public:

@@ -19,12 +19,14 @@ namespace Dasher {
  * see CWordGeneratorBase.
  * 
  * This class specifically reads words from a given file. Files ARE
- * kept open for the lifetime of this object and the size of the file
+ * kept open for the lifetime of this object but the size of the file
  * should not pose an issue. 
  * 
  * However, if you read in a file that has unreasonably long lines,
  * the behavior is undefined as you may cause the file to be read in all
- * at once. 
+ * at once. It's highly unlikely anyone will ever have a text file
+ * large enough to fill the memory allocated to Dasher by the OS where
+ * the text is one giant line. 
  */
 class CFileWordGenerator : public CWordGeneratorBase {
 public:

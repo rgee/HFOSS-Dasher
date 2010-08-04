@@ -29,13 +29,13 @@ namespace Dasher {
 class Dasher::CEventHandler {
   
 public: 
-  CEventHandler(Dasher::CDasherInterfaceBase * pInterface): m_iNUM_EVENTS(NUM_EVENTS), m_pInterface(pInterface) {
+  CEventHandler(Dasher::CDasherInterfaceBase * pInterface): m_pInterface(pInterface) {
 
     m_bIsDispatching = false;
     
     // Initialize the event listener container (and queue) so we can add elements without
     // checking if the sub-vectors actually exist or not.
-    for(int i = 0; i < m_iNUM_EVENTS; i++) {
+    for(int i = 0; i < NUM_EVENTS; i++) {
       m_vSpecificListeners.push_back(std::vector<Dasher::CDasherComponent*>());
     }
   };
@@ -158,7 +158,7 @@ private:
  * keep this up to date with the number of items in the enumeration.
  * TODO - figure out a better solution to the compiler problem - this one is kind of clumsy
  */
-  const int m_iNUM_EVENTS;
+  //const int m_iNUM_EVENTS;
 
 
 };

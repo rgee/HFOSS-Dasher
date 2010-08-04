@@ -93,7 +93,7 @@ void CEventHandler::RegisterListener(CDasherComponent *pListener, int iEventType
 
 void CEventHandler::RegisterListener(CDasherComponent *pListener) {
    
-   for(int curEvtType = 1; curEvtType <= m_iNUM_EVENTS; curEvtType++) {
+   for(int curEvtType = 1; curEvtType <= NUM_EVENTS; curEvtType++) {
     RegisterListener(pListener, curEvtType);
    }
 }
@@ -116,7 +116,7 @@ void CEventHandler::UnregisterListener(CDasherComponent *pListener, int iEventTy
 
 void CEventHandler::UnregisterListener(CDasherComponent *pListener) {    
   
-  for(int curEvtType = 1; curEvtType <= m_iNUM_EVENTS; curEvtType++) {
+  for(int curEvtType = 1; curEvtType <= NUM_EVENTS; curEvtType++) {
     UnregisterListener(pListener, curEvtType);
    }
 }

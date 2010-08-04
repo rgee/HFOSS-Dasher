@@ -1,5 +1,4 @@
 #include "GameModule.h"
-#include <sstream>
 
 using namespace Dasher;
 
@@ -70,7 +69,7 @@ void CGameModule::reset() {
 	m_iTargetY = 0;
 
 	if(m_pGameDisplay)
-		m_pGameDisplay->hide();
+		m_pGameDisplay->Hide();
 
 	if(m_pWordGenerator)
 		delete m_pWordGenerator;
@@ -162,7 +161,7 @@ void CGameModule::GenerateChunk() {
 	if(nextWord == "") {
 
       m_sTargetString = "";
-	  m_pGameDisplay->alert("Congratulations! You've completed Dasher game mode!");
+      m_pGameDisplay->Alert("Congratulations! You've completed Dasher game mode!");
       m_pEventHandler->InsertEvent(new CGameModeCompleteEvent());
 
       return;

@@ -24,9 +24,9 @@ class GtkGameDisplay : public Dasher::CGameDisplay {
 
 	 virtual void DisplayChunkText(std::string text, std::vector<std::string>& colors);
 
-	 virtual void hide();
+	 virtual void Hide();
 
-	 virtual void alert(std::string message);
+	 virtual void Alert(std::string message);
 
 	private:
 
@@ -34,6 +34,11 @@ class GtkGameDisplay : public Dasher::CGameDisplay {
 	  * The Gtk table containing the game mode UI.
 	  */ 
 	 GtkWidget *m_pContainer;
+
+
+  /**
+   * The label object used to display the text.
+   */
 	 GtkWidget *m_pChunkDisplay;
 
 };

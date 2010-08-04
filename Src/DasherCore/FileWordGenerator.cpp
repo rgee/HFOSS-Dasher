@@ -35,13 +35,15 @@ std::string CFileWordGenerator::GetNextWord() {
   if(m_uiPos >= m_sGeneratedString.length()) {
      
     // Attempt to reload the buffer.
-    if(!Generate()) return "";
+    if(!Generate()) {
+      return "";
+    }
   } 
   
   size_t found = m_sGeneratedString.substr(m_uiPos).find(" ");
   std::string result;
   
-    // If there are no space characters.
+  // If there are no space characters.
   if(found != string::npos) 
   {
     result = m_sGeneratedString.substr(m_uiPos, found);
