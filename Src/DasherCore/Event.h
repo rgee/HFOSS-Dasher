@@ -29,8 +29,7 @@ namespace Dasher {
 /*
  * The enumeration of event types. Whenever you add a new event type,
  * you must add its enum representation here. You must also make sure
- * to change the constant in EventHandler that refers to the number of events
- * or you will likely get errors.
+ * to change the number of events or you will likely get errors.
  */
 enum {
   EV_PARAM_NOTIFY = 1, EV_EDIT, EV_EDIT_CONTEXT, EV_START, EV_STOP, EV_CONTROL, EV_LOCK, EV_GAME_TARGET_CHANGED, EV_MESSAGE, EV_COMMAND, EV_GAME_NODE_DRAWN, EV_NO_GAME_NODE,

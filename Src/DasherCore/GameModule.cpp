@@ -15,20 +15,17 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
 
     switch(pEvent->m_iEventType)
     {
-        case EV_NO_GAME_NODE:
-        {
-            CNoGameNodeEvent* evt = static_cast<CNoGameNodeEvent*>(pEvent);
-        }
         case EV_EDIT:
         {     
-			CEditEvent* evt = static_cast<CEditEvent*>(pEvent);
+			    CEditEvent* evt = static_cast<CEditEvent*>(pEvent);
 
             switch(evt->m_iEditType)
             {
                 // Added a new character (Stepped one node forward)
                 case 1:
+                {
                     // Check if the typed character is correct
-                    if(CharacterFound(evt)) {
+                  if(CharacterFound(evt)) {
                       // Check if we've reached the end of a chunk
                       if((m_iCurrentStringPos)  == m_sTargetString.length() - 2) {
                         GenerateChunk();
@@ -36,7 +33,7 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
                       } else {
                           ++m_iCurrentStringPos;
 
-						  DecorateDisplay();
+                            DecorateDisplay();
 
                             m_pEventHandler->InsertEvent(
                               new CGameTargetChangedEvent(m_sTargetString.substr(m_iCurrentStringPos + 1, 1))
@@ -44,11 +41,7 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
                       }
                     }
                     break;
-                // Removed a character (Stepped one node back)
-                case 0:
-                    break;
-                default:
-                    break;
+                }
             }
             break;
         }
@@ -59,9 +52,6 @@ void CGameModule::HandleEvent(Dasher::CEvent *pEvent) {
           evt->m_pView->Screen2Dasher(evt->m_iX, evt->m_iY, m_iTargetX, m_iTargetY);
         }
         break;
-        default:
-          break;
-
     }
     return;
 
