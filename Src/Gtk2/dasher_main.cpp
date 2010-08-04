@@ -634,14 +634,18 @@ void show_game_file_dialog(GtkWidget *pButton, GtkWidget *pWidget, gpointer pDat
 	
 	gtk_window_set_destroy_with_parent(GTK_WINDOW(pFileDialog), true);
 
-	if(gtk_dialog_run(GTK_DIALOG(pFileDialog)) == GTK_RESPONSE_ACCEPT) {
+  gint response = gtk_dialog_run(GTK_DIALOG(pFileDialog));
+
+	if(response == GTK_RESPONSE_ACCEPT) {
 	
 		char *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(pFileDialog));
 
 		init_game_mode(filename, pSelf);
 
 		gtk_widget_destroy(GTK_WIDGET(objRefs->first));	
-	}
+	} else if( response == GTK_RESPONSE_CANCEL ) {
+    gtk_widget_destroy(GTK_WIDGET(objRefs->first));
+  }
 }
 
 void quit_game_mode(GtkWidget *pButton, GtkWidget *pWidget, gpointer pData) {
