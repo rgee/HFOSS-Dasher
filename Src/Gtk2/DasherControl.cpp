@@ -131,9 +131,9 @@ void CDasherControl::SetupPaths() {
   delete[] user_data_dir;
 }
 
-void CDasherControl::CreateGameDisplay(void* pGameDisplay) {
+void CDasherControl::CreateGameDisplay(GtkWidget *pGameDisplay, void *pEditor) {
 
-	m_pGameDisplay = new GtkGameDisplay(GTK_WIDGET(pGameDisplay));
+	m_pGameDisplay = new GtkGameDisplay(GTK_WIDGET(pGameDisplay), DASHER_EDITOR(pEditor));
 	InitGameModule();
 	m_pGameModule->SetGameDisplay(m_pGameDisplay);
 }
@@ -372,7 +372,10 @@ void CDasherControl::ExternalEventHandler(Dasher::CEvent *pEvent) {
     g_signal_emit_by_name(GTK_OBJECT(m_pDasherControl), "dasher_command", pCommandEvent->m_strCommand.c_str());
   }
   else if(pEvent->m_iEventType == EV_GAME_MODE_COMPLETE) {
-	 //TODO: clear the dasher editor text here!
+	 
+	   g_signal_emit_by_name(GTK_OBJECT(m_pDasherControl), "dasher_edit_delete", _(""), 0);
+	  //gtk_dasher_control_set_buffer(m_pDasherControl, 0);
+		 //TODO: clear the dasher editor text here!
   }
 };
 

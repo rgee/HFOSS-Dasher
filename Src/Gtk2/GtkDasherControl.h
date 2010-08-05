@@ -94,10 +94,10 @@ void gtk_dasher_control_game_messagein(GtkDasherControl *pControl, int message, 
  * Pass a reference to the GTK widget containing the game mode display down to DasherControl
  * so that it can construct the game display UI.
  * @param pControl reference to GtkDasherControl instance
- * @gameDisplay reference to the GTK table containing the game display
+ * @p_GameDisplay reference to the GTK table containing the game display
+ * @p_Editor reference to dasher editor
  */ 
-void gtk_dasher_control_set_game_display(GtkDasherControl *pControl, void* gameDisplay);
-
+void gtk_dasher_control_set_game_display(GtkDasherControl *pControl, GtkWidget *p_GameDisplay, void* p_Editor);
 
 void gtk_dasher_control_game_helperreg(GtkDasherControl *pControl, void* gameHelper);
 void gtk_dasher_control_game_messageout(GtkDasherControl *pControl, int message, const void* messagedata);

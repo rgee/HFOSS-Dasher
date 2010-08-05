@@ -101,7 +101,7 @@ class CGameModule : public CDasherModule {
    * Reset the game module. This makes the game module invalid until it is provided
    * with a new WordGenerator.
    */ 
-  void reset();
+  void Reset();
 
   void SetGameDisplay(CGameDisplay *pGameDisplay);
 

@@ -32,15 +32,21 @@ class CGameDisplay {
 	virtual void DisplayChunkText(std::string text, std::vector<std::string>& colors) = 0;
 
 	/**
-	 * Hide the display and clear the text in the label.
-	 */ 
-	virtual void Hide() = 0;
-
-	/**
 	 * Display a dialog alerting the user about something
 	 * related to game mode.
 	 */ 
 	virtual void Alert(std::string message) = 0;
+
+	/**
+	 * Clear the dasher editor, as is appropriate when starting
+	 * or ending game mode.
+	 */ 
+	virtual void ClearEditor() = 0;
+
+  /**
+   * Sets the visibility of the Game Display widget.
+   */
+  virtual void SetVisible(bool visibility) = 0;
 };
 
 }

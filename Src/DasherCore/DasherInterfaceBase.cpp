@@ -340,9 +340,12 @@ void CDasherInterfaceBase::InterfaceEventHandler(Dasher::CEvent *pEvent) {
 	  if(GetBoolParameter(BP_GAME_MODE)) {
 		InitGameModule();
 	  }
-	  else if(m_pGameModule){
-		CreateModel(0);
-		ResetGameModule();
+	  else {
+      SetStringParameter(SP_GAME_TEXT_FILE, "");
+      if(m_pGameModule) {
+        CreateModel(0);
+        ResetGameModule();
+      }
 	  }
 	  
     default:
@@ -361,6 +364,8 @@ void CDasherInterfaceBase::InterfaceEventHandler(Dasher::CEvent *pEvent) {
     }
     else if(pEditEvent->m_iEditType == 2) {
       strCurrentContext = strCurrentContext.substr( 0, strCurrentContext.size() - pEditEvent->m_sText.size());
+		
+	  g_pLogger->Log(strCurrentContext);
       if(GetBoolParameter(BP_LM_ADAPTIVE))
    strTrainfileBuffer = strTrainfileBuffer.substr( 0, strTrainfileBuffer.size() - pEditEvent->m_sText.size());
     }
@@ -897,11 +902,20 @@ void CDasherInterfaceBase::InitGameModule() {
 	m_pGameModule = (CGameModule*) GetModuleByName("Game Mode");
 
 	if(GetBoolParameter(BP_GAME_MODE)) {
-		
-		if(GetStringParameter(SP_GAME_TEXT_FILE) == "")
+	  /* If the USER hasn't provided a text */	
+		if(GetStringParameter(SP_GAME_TEXT_FILE) == "") {
+      /* If there a default */
+      if(m_Alphabet->GetGameModeFile() != "") {
 			SetStringParameter(SP_GAME_TEXT_FILE,
-							   GetStringParameter(SP_SYSTEM_LOC) + m_Alphabet->GetGameModeFile());		
-
+							   GetStringParameter(SP_SYSTEM_LOC) + m_Alphabet->GetGameModeFile());
+      } else {
+        m_pGameModule = NULL;
+        SetBoolParameter(BP_GAME_MODE, false);
+        m_pGameDisplay->SetVisible(false);
+        m_pGameDisplay->Alert("No game text found for the current alphabet.");
+        return; 
+      }		
+    }
 		m_pGameModule->SetWordGenerator(new CFileWordGenerator(GetStringParameter(SP_GAME_TEXT_FILE)));
 	}
 }
@@ -912,7 +926,7 @@ void CDasherInterfaceBase::InitGameModule() {
 void CDasherInterfaceBase::ResetGameModule() {
 	
 	if(m_pGameModule) {
-		m_pGameModule->reset();
+		m_pGameModule->Reset();
 		SetStringParameter(SP_GAME_TEXT_FILE, "");
 		m_pGameModule = NULL;
 	}

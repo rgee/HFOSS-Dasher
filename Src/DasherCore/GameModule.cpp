@@ -61,7 +61,7 @@ void CGameModule::SetWordGenerator(CWordGeneratorBase *pWordGenerator) {
 	GenerateChunk();
 }
 
-void CGameModule::reset() {
+void CGameModule::Reset() {
 
 	m_sTargetString = "";
 	m_iCurrentStringPos = -1;
@@ -69,7 +69,7 @@ void CGameModule::reset() {
 	m_iTargetY = 0;
 
 	if(m_pGameDisplay)
-		m_pGameDisplay->Hide();
+		m_pGameDisplay->SetVisible(false);
 
 	if(m_pWordGenerator)
 		delete m_pWordGenerator;
@@ -163,6 +163,7 @@ void CGameModule::GenerateChunk() {
       m_sTargetString = "";
       m_pGameDisplay->Alert("Congratulations! You've completed Dasher game mode!");
       m_pEventHandler->InsertEvent(new CGameModeCompleteEvent());
+	  m_pGameDisplay->ClearEditor();
 
       return;
     } else {

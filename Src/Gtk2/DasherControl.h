@@ -20,6 +20,7 @@
 #include "mouse_input.h"
 
 #include "GtkDasherControl.h"
+#include "dasher_editor.h"
 //#include "KeyboardHelper.h"
 
 //#include "../DasherCore/DasherSettingsInterface.h"
@@ -130,9 +131,10 @@ public:
    * Instantiate the Game Display object with a reference to the Gtk 
    * table it will be populating.
    *
-   * @param pGameDisplay the reference
+   * @param pGameDisplay reference to gtk widget
+   * @param pEditor reference to dasher editor
    */ 
-  void CreateGameDisplay(void* pGameDisplay);
+  void CreateGameDisplay(GtkWidget *pGameDisplay, void* pEditor);
   
   gboolean ExposeEvent();
 

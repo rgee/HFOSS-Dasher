@@ -15,12 +15,6 @@ void GtkGameDisplay::DisplayChunkText(std::string text, std::vector<std::string>
 	gtk_label_set_markup(GTK_LABEL(m_pChunkDisplay), markup.c_str());	
 }
 
-void GtkGameDisplay::Hide() {
-	
-	gtk_label_set_markup(GTK_LABEL(m_pChunkDisplay), "");
-	gtk_widget_set_visible(GTK_WIDGET(m_pContainer), false);
-}
-
 void GtkGameDisplay::Alert(std::string message) {
 	
 	GtkWidget *dialog =	gtk_message_dialog_new(NULL,
@@ -32,4 +26,15 @@ void GtkGameDisplay::Alert(std::string message) {
 
 	gtk_dialog_run(GTK_DIALOG(dialog));
 	gtk_widget_destroy(GTK_WIDGET(dialog));
+}
+
+void GtkGameDisplay::ClearEditor() {
+	dasher_editor_clear_text(m_pEditor);
+}
+
+void GtkGameDisplay::SetVisible(bool visibility) {
+  if(!visibility) {
+    gtk_label_set_markup(GTK_LABEL(m_pChunkDisplay), "");
+  }
+  gtk_widget_set_visible(m_pContainer, visibility);
 }
